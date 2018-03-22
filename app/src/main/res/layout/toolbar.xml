@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:elevation="4dp"
     android:background="@color/colorPrimary"
+    app:titleTextColor="@android:color/white"
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 

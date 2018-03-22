@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Tic Tac Toe</string>
+    <string-array name="level_or_player_type_array">
+        <item>Easy</item>
+        <item>Medium</item>
+        <item>Impossible</item>
+        <item>Play Against a friend</item>
+    </string-array>
 </resources>

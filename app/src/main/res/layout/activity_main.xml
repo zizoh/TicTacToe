@@ -12,11 +12,12 @@
         layout="@layout/toolbar" />
 
     <android.support.v7.widget.AppCompatSpinner
+        android:id="@+id/spinner"
+        android:layout_marginLeft="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp">
 
-    </android.support.v7.widget.AppCompatSpinner>
+        android:layout_marginTop="16dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -116,8 +117,8 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="56dp"
-            android:layout_marginRight="56dp"
+            android:layout_marginLeft="48dp"
+            android:layout_marginRight="48dp"
             android:background="#388E3C">
 
             <Button
@@ -133,6 +134,7 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="x"
+                android:textColor="#ffffff"
                 android:textSize="56sp" />
 
             <Button
@@ -144,6 +146,7 @@
                 android:layout_toRightOf="@id/row1_col1"
                 android:background="#81C784"
                 android:gravity="center"
+                android:textColor="#ffffff"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="o"
@@ -160,6 +163,7 @@
                 android:background="#81C784"
                 android:gravity="center"
                 android:paddingLeft="16dp"
+                android:textColor="#ffffff"
                 android:paddingRight="16dp"
                 android:text="x"
                 android:textSize="56sp" />
@@ -174,6 +178,7 @@
                 android:layout_marginRight="4dp"
                 android:background="#81C784"
                 android:gravity="center"
+                android:textColor="#ffffff"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="o"
@@ -190,6 +195,7 @@
                 android:gravity="center"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
+                android:textColor="#ffffff"
                 android:text="x"
                 android:textSize="56sp" />
 
@@ -201,6 +207,7 @@
                 android:layout_marginLeft="4dp"
                 android:layout_toRightOf="@id/row2_col2"
                 android:background="#81C784"
+                android:textColor="#ffffff"
                 android:gravity="center"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
@@ -218,6 +225,7 @@
                 android:gravity="center"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
+                android:textColor="#ffffff"
                 android:text="x"
                 android:textSize="56sp" />
 
@@ -231,6 +239,7 @@
                 android:background="#81C784"
                 android:gravity="center"
                 android:paddingLeft="16dp"
+                android:textColor="#ffffff"
                 android:paddingRight="16dp"
                 android:text="o"
                 android:textSize="56sp" />
@@ -246,6 +255,7 @@
                 android:gravity="center"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
+                android:textColor="#ffffff"
                 android:text="x"
                 android:textSize="56sp" />
 
