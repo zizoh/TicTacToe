@@ -1,5 +1,11 @@
 package com.example.android.tictactoe;
 
+/*
+*  Board is initialized with -1
+*  For PLAYERX, board[][] = 1
+*    For PLAYER0, board[][] = 0
+* */
+
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,13 +19,27 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Random;
+
 @SuppressWarnings("RedundantCast")
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private final static String TAG = MainActivity.class.getSimpleName();
-    boolean PLAYER_X = true;
+    boolean PLAYER_X_TURN = true;
 
     static final int BOARD_SIZE = 3;
+    int EASY_MODE = 1;
+    int MEDIUM_MODE = 2;
+    int IMPOSSIBLE_MODE = 3;
+    int TWO_PLAYER_MODE = 4;
+    int GAME_MODE = EASY_MODE;
+    int iIndex = 0;
+    int jIndex = 1;
+    int iIndexForSecondToLastMove;
+    int jIndexForSecondToLastMove;
+    int iIndexForLastMove = 1;
+    int jIndexForLastMove = 1;
+    Random randomNumberForBoardIndex = new Random();
 
     private int numberOfMoves = 0;
     private int playerXScore = 0;
@@ -45,8 +65,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private LinearLayout playerOToMoveButton;
 
     Button resetButton;
-
-    TextView tvInfo;
 
     int[][] board = new int[BOARD_SIZE][BOARD_SIZE];
 
@@ -75,9 +93,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         playerToMoveTextView = (TextView) findViewById(R.id.player_to_move_textview);
 
         playerXToMoveButton = (LinearLayout) findViewById(R.id.player_x_to_move);
+        playerXToMoveButton.isSelected();
         playerOToMoveButton = (LinearLayout) findViewById(R.id.player_o_to_move);
 
-        initGame();
+        initGame(GAME_MODE);
 
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         spinner.setOnItemSelectedListener(this);
@@ -95,128 +114,75 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         playerOToMoveButton.setEnabled(false);
         switch (view.getId()) {
             case R.id.row0_col0:
-                if (PLAYER_X) {
+                setMoveByPlayerAt(0, 0);
+                /*if (PLAYER_X_TURN_TURN) {
                     row0col0.setText("X");
                     board[0][0] = 1;
                 } else {
                     row0col0.setText("O");
                     board[0][0] = 0;
                 }
-                row0col0.setEnabled(false);
+                row0col0.setEnabled(false);*/
                 break;
             case R.id.row0_col1:
-                if (PLAYER_X) {
-                    row0col1.setText("X");
-                    board[0][1] = 1;
-                } else {
-                    row0col1.setText("O");
-                    board[0][1] = 0;
-                }
-                row0col1.setEnabled(false);
+                setMoveByPlayerAt(0, 1);
                 break;
             case R.id.row0_col2:
-                if (PLAYER_X) {
-                    row0col2.setText("X");
-                    board[0][2] = 1;
-                } else {
-                    row0col2.setText("O");
-                    board[0][2] = 0;
-                }
-                row0col2.setEnabled(false);
+                setMoveByPlayerAt(0, 2);
                 break;
 
             case R.id.row1_col0:
-                if (PLAYER_X) {
-                    row1col0.setText("X");
-                    board[1][0] = 1;
-                } else {
-                    row1col0.setText("O");
-                    board[1][0] = 0;
-                }
-                row1col0.setEnabled(false);
+                setMoveByPlayerAt(1, 0);
                 break;
 
             case R.id.row1_col1:
-                if (PLAYER_X) {
-                    row1col1.setText("X");
-                    board[1][1] = 1;
-                } else {
-                    row1col1.setText("O");
-                    board[1][1] = 0;
-                }
-                row1col1.setEnabled(false);
+                setMoveByPlayerAt(1, 1);
                 break;
 
             case R.id.row1_col2:
-                if (PLAYER_X) {
-                    row1col2.setText("X");
-                    board[1][2] = 1;
-                } else {
-                    row1col2.setText("O");
-                    board[1][2] = 0;
-                }
-                row1col2.setEnabled(false);
+                setMoveByPlayerAt(1, 2);
                 break;
 
             case R.id.row2_col0:
-                if (PLAYER_X) {
-                    row2col0.setText("X");
-                    board[2][0] = 1;
-                } else {
-                    row2col0.setText("O");
-                    board[2][0] = 0;
-                }
-                row2col0.setEnabled(false);
+                setMoveByPlayerAt(2, 0);
                 break;
 
             case R.id.row2_col1:
-                if (PLAYER_X) {
-                    row2col1.setText("X");
-                    board[2][1] = 1;
-                } else {
-                    row2col1.setText("O");
-                    board[2][1] = 0;
-                }
-                row2col1.setEnabled(false);
+                setMoveByPlayerAt(2, 1);
                 break;
             case R.id.row2_col2:
-                if (PLAYER_X) {
-                    row2col2.setText("X");
-                    board[2][2] = 1;
-                } else {
-                    row2col2.setText("O");
-                    board[2][2] = 0;
-                }
-                row2col2.setEnabled(false);
+                setMoveByPlayerAt(2, 2);
                 break;
         }
         numberOfMoves++;
-        if (!PLAYER_X) {
+        if (PLAYER_X_TURN) {
             playerToMoveTextView.setText("X Move");
         } else {
             playerToMoveTextView.setText("O Move");
         }
-        PLAYER_X = !PLAYER_X;
+        PLAYER_X_TURN = !PLAYER_X_TURN;
 
         if (numberOfMoves == BOARD_SIZE * BOARD_SIZE) {
-            //result("Game Draw");
-            playerToMoveTextView.setText("Game Draw");
-            Toast.makeText(this, "Game Draw", Toast.LENGTH_SHORT).show();
+            if (isThereAWinner()) {
+                isThereAWinner();
+                return;
+            } else {
+                playerToMoveTextView.setText("Game Draw");
+                Toast.makeText(this, "Game Draw", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
-
-        checkWinner();
+        if (GAME_MODE == EASY_MODE || GAME_MODE == MEDIUM_MODE || GAME_MODE == IMPOSSIBLE_MODE) {
+            computerPlay();
+        }
     }
 
-    private void checkWinner() {
-
-        Log.d(TAG, "Inside checkWinner");
-
-        //Horizontal --- rows
+    private boolean isThereAWinner() {
+        // Horizontal --- rows
         for (int i = 0; i < BOARD_SIZE; i++) {
             if (board[i][0] == board[i][1] && board[i][0] == board[i][2]) {
                 if (board[i][0] == 1) {
                     enableAllBoxes(false);
-                    //result("Player X winner\n" + (i + 1) + " row");
                     playerToMoveTextView.setText("Game Over");
                     Toast.makeText(this, "Player X Wins!\n" + (i + 1) + " row", Toast.LENGTH_SHORT).show();
                     playerXScore++;
@@ -224,13 +190,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     break;
                 } else if (board[i][0] == 0) {
                     enableAllBoxes(false);
-                    //result("Player O winner\n" + (i + 1) + " row");
                     playerToMoveTextView.setText("Game Over");
                     Toast.makeText(this, "Player O Wins!\n" + (i + 1) + " row", Toast.LENGTH_SHORT).show();
                     playerOScore++;
                     playerOScoreboard.setText(String.valueOf(playerOScore));
                     break;
                 }
+                return true;
             }
         }
 
@@ -239,7 +205,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (board[0][j] == board[1][j] && board[0][j] == board[2][j]) {
                 if (board[0][j] == 1) {
                     enableAllBoxes(false);
-                    //result("Player X winner\n" + (j + 1) + " column");
                     playerToMoveTextView.setText("Game Over");
                     Toast.makeText(this, "Player X Wins!\n" + (j + 1) + " column", Toast.LENGTH_SHORT).show();
                     playerXScore++;
@@ -247,13 +212,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     break;
                 } else if (board[0][j] == 0) {
                     enableAllBoxes(false);
-                    //result("Player O winner\n" + (j + 1) + " column");
                     playerToMoveTextView.setText("Game Over");
                     Toast.makeText(this, "Player O Wins!\n" + (j + 1) + " column", Toast.LENGTH_SHORT).show();
                     playerOScore++;
                     playerOScoreboard.setText(String.valueOf(playerOScore));
                     break;
                 }
+                return true;
             }
         }
 
@@ -261,58 +226,156 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (board[0][0] == board[1][1] && board[0][0] == board[2][2]) {
             if (board[0][0] == 1) {
                 enableAllBoxes(false);
-                //result("Player X winner\nFirst Diagonal");
                 playerToMoveTextView.setText("Game Over");
                 Toast.makeText(this, "Player X Wins!\nFirst Diagonal", Toast.LENGTH_SHORT).show();
                 playerXScore++;
                 playerXScoreboard.setText(String.valueOf(playerXScore));
             } else if (board[0][0] == 0) {
                 enableAllBoxes(false);
-                //result("Player O winner\nFirst Diagonal");
                 playerToMoveTextView.setText("Game Over");
                 Toast.makeText(this, "Player O Wins!\nFirst Diagonal", Toast.LENGTH_SHORT).show();
                 playerOScore++;
                 playerOScoreboard.setText(String.valueOf(playerOScore));
             }
+            return true;
         }
 
         //Second diagonal
         if (board[0][2] == board[1][1] && board[0][2] == board[2][0]) {
             if (board[0][2] == 1) {
                 enableAllBoxes(false);
-                //result("Player X winner\nSecond Diagonal");
                 Toast.makeText(this, "Player X Wins!\nSecond Diagonal", Toast.LENGTH_SHORT).show();
                 playerXScore++;
                 playerXScoreboard.setText(String.valueOf(playerXScore));
             } else if (board[0][2] == 0) {
                 enableAllBoxes(false);
-                //result("Player O winner\nSecond Diagonal");
                 Toast.makeText(this, "Player O Wins!\nSecond Diagonal", Toast.LENGTH_SHORT).show();
                 playerOScore++;
                 playerOScoreboard.setText(String.valueOf(playerOScore));
             }
         }
+        return true;
     }
 
     public void resetButton(View view) {
-        resetBoard();
+        initGame(GAME_MODE);
     }
 
     public void playerXToMoveButton(View view) {
-        PLAYER_X = true;
+        playerXToMoveButton.setEnabled(false);
+        playerOToMoveButton.setEnabled(false);
+        PLAYER_X_TURN = true;
         playerToMoveTextView.setText("X Move");
+        if (GAME_MODE == EASY_MODE
+                || GAME_MODE == MEDIUM_MODE
+                || GAME_MODE == IMPOSSIBLE_MODE) {
+            computerPlay();
+        }
     }
 
     public void playerOToMoveButton(View view) {
-        PLAYER_X = false;
+        playerXToMoveButton.setEnabled(false);
+        playerOToMoveButton.setEnabled(false);
+        PLAYER_X_TURN = false;
         playerToMoveTextView.setText("O Move");
+        if (GAME_MODE == EASY_MODE
+                || GAME_MODE == MEDIUM_MODE
+                || GAME_MODE == IMPOSSIBLE_MODE) {
+            computerPlay();
+        }
     }
 
-    private void result(String winner) {
-        Log.d(TAG, "Inside result");
-
-        //setInfo(winner);
-        //enableAllBoxes(false);
+    public void setMoveByPlayerAt(int i, int j) {
+        if (i == 0 && j == 0) {
+            if (PLAYER_X_TURN) {
+                row0col0.setText("X");
+                board[i][j] = 1;
+            } else {
+                row0col0.setText("O");
+                board[i][j] = 0;
+            }
+            row0col0.setEnabled(false);
+        }
+        if (i == 0 && j == 1) {
+            if (PLAYER_X_TURN) {
+                row0col1.setText("X");
+                board[i][j] = 1;
+            } else {
+                row0col1.setText("O");
+                board[i][j] = 0;
+            }
+            row0col1.setEnabled(false);
+        }
+        if (i == 0 && j == 2) {
+            if (PLAYER_X_TURN) {
+                row0col2.setText("X");
+                board[i][j] = 1;
+            } else {
+                row0col2.setText("O");
+                board[i][j] = 0;
+            }
+            row0col2.setEnabled(false);
+        }
+        if (i == 1 && j == 0) {
+            if (PLAYER_X_TURN) {
+                row1col0.setText("X");
+                board[i][j] = 1;
+            } else {
+                row1col0.setText("O");
+                board[i][j] = 0;
+            }
+            row1col0.setEnabled(false);
+        }
+        if (i == 1 && j == 1) {
+            if (PLAYER_X_TURN) {
+                row1col1.setText("X");
+                board[i][j] = 1;
+            } else {
+                row1col1.setText("O");
+                board[i][j] = 0;
+            }
+            row1col1.setEnabled(false);
+        }
+        if (i == 1 && j == 2) {
+            if (PLAYER_X_TURN) {
+                row1col2.setText("X");
+                board[i][j] = 1;
+            } else {
+                row1col2.setText("O");
+                board[i][j] = 0;
+            }
+            row1col2.setEnabled(false);
+        }
+        if (i == 2 && j == 0) {
+            if (PLAYER_X_TURN) {
+                row2col0.setText("X");
+                board[i][j] = 1;
+            } else {
+                row2col0.setText("O");
+                board[i][j] = 0;
+            }
+            row2col0.setEnabled(false);
+        }
+        if (i == 2 && j == 1) {
+            if (PLAYER_X_TURN) {
+                row2col1.setText("X");
+                board[i][j] = 1;
+            } else {
+                row2col1.setText("O");
+                board[i][j] = 0;
+            }
+            row2col1.setEnabled(false);
+        }
+        if (i == 2 && j == 2) {
+            if (PLAYER_X_TURN) {
+                row2col2.setText("X");
+                board[i][j] = 1;
+            } else {
+                row2col2.setText("O");
+                board[i][j] = 0;
+            }
+            row2col2.setEnabled(false);
+        }
     }
 
     private void resetBoard() {
@@ -332,11 +395,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         enableAllBoxes(true);
         numberOfMoves = 0;
 
-        initGame();
-
         //setInfo("Start Again!!!");
 
-        Toast.makeText(this, "Board Reset", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Board Reset", Toast.LENGTH_SHORT).show();
     }
 
     private void enableAllBoxes(boolean value) {
@@ -354,47 +415,152 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         row2col2.setEnabled(value);
     }
 
-    private void setInfo(String text) {
-        tvInfo.setText(text);
-        tvInfo.setText(text);
-    }
-
-    private void initGame() {
+    private void initGame(int gameMode) {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 board[i][j] = -1;
             }
         }
-
-        PLAYER_X = true;
+        PLAYER_X_TURN = true;
         playerXToMoveButton.isSelected();
         playerToMoveTextView.setText("Start game or select player");
         playerXToMoveButton.setEnabled(true);
         playerOToMoveButton.setEnabled(true);
+        GAME_MODE = gameMode;
+        resetBoard();
     }
 
-    private void resetScoreBoard() {
+    private void computerPlay() {
+        if (GAME_MODE == EASY_MODE) {
+            playRandom();
+        }
+        numberOfMoves++;
+        isThereAWinner();
+        if (numberOfMoves == BOARD_SIZE * BOARD_SIZE && !(isThereAWinner())) {
+            playerToMoveTextView.setText("Game Draw");
+            Toast.makeText(this, "Game Draw", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (PLAYER_X_TURN) {
+            playerToMoveTextView.setText("X Move");
+        } else {
+            playerToMoveTextView.setText("O Move");
+        }
+        PLAYER_X_TURN = !PLAYER_X_TURN;
+        if (isThereAWinner()) {
+            //return;
+        }
+    }
+
+    private void playRandom() {
+        while (!(play(iIndex, jIndex))) {
+            // Keep trying until a successful move is played
+            iIndex = randomNumberForBoardIndex.nextInt(3);
+            jIndex = randomNumberForBoardIndex.nextInt(3);
+        }
+
+            /*switch (numberOfMoves) {
+                case 0:
+                    play(0, 0);// Some certain steps are used.
+                    break;
+                case 1:
+                    if (!(play(1, 1)))
+                        play(0, 0);
+                    break;
+                case 2:
+                    if (!(play(2, 2)))
+                        play(0, 2);
+                    break;
+                default:
+                    while (!(play(iIndex, jIndex))) {
+                        // Keep trying until a successful move is made
+                        iIndex = randomNumberForBoardIndex.nextInt(3);
+                        jIndex = randomNumberForBoardIndex.nextInt(3);
+                    }
+                    break;
+            }*/
+
+
+        /*
+        if (GAME_MODE == EASY_MODE) {
+            while ((board[iIndex][jIndex] == -1)) {
+                iIndex = randomNumberForBoardIndex.nextInt(3);
+                jIndex = randomNumberForBoardIndex.nextInt(3);
+            }
+            setMoveByPlayerAt(iIndex, jIndex);
+        */    /*switch (numberOfMoves) {
+                case 0:
+                    // Computer to make first move
+                    // Play any random square with index generated by computer
+                    iIndex = randomNumberForBoardIndex.nextInt(3);
+                    jIndex = randomNumberForBoardIndex.nextInt(3);
+                    board[iIndex][jIndex] = 0;
+                    setMoveByPlayerAt(iIndex, jIndex);
+                    break;
+                default:
+                    while (!(board[iIndex][jIndex] == -1)) {
+                        iIndex = randomNumberForBoardIndex.nextInt(3);
+                        jIndex = randomNumberForBoardIndex.nextInt(3);
+                    }
+                    setMoveByPlayerAt(iIndex, jIndex);
+                    break;
+            }*/
+            /*switch(numberOfMoves){
+                case 0:
+                    // Computer to make first move
+                    // Play any random square with index generated by computer
+                    int iIndex = randomNumberForBoardIndex.nextInt(3);
+                    int jIndex = randomNumberForBoardIndex.nextInt(3);
+                    board[iIndex][jIndex] = 0;
+                    break;
+                case 1:
+                    if (board[0][2] == -1) // If square at this index hasn't been played
+                        board[0][2] = 0;
+                    else if (board[1][0] == -1) // If square at this index hasn't been played
+                        board[1][0] = 0;
+                    break;
+                case 2:
+                    if (board[1][1] == -1) // If square at this index hasn't been played
+                        board[1][1] = 0;
+                    else if (board[2][2] == -1)
+                        board[2][2] = 0;
+                    break;
+            }*/
+    }
+
+    /*private void resetScoreBoard() {
         playerXScoreboard.setText("-");
         playerOScoreboard.setText("-");
-    }
+    }*/
 
     /*
     * Method to handle spinner selection
     */
     public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-
         switch (position) {
             case 0:
                 // Easy is clicked
+                GAME_MODE = EASY_MODE;
+                initGame(GAME_MODE);
+                //Toast.makeText(this, "Now Playing in Easy Mode", Toast.LENGTH_SHORT).show();
                 break;
             case 1:
                 // Medium is clicked
+                GAME_MODE = MEDIUM_MODE;
+                initGame(GAME_MODE);
+                Toast.makeText(this, "Now Playing in Medium Mode", Toast.LENGTH_SHORT).show();
                 break;
             case 2:
                 // Impossible is clicked
+                GAME_MODE = IMPOSSIBLE_MODE;
+                initGame(GAME_MODE);
+                Toast.makeText(this, "Now Playing in Impossible Mode", Toast.LENGTH_SHORT).show();
                 break;
             case 3:
                 // Two Players is clicked
+                GAME_MODE = TWO_PLAYER_MODE;
+                initGame(GAME_MODE);
+                Toast.makeText(this, "Now Playing in Two Players Mode", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -403,20 +569,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Another interface callback
     }
 
-    /*@Retention(SOURCE)
-    @IntDef({SPACE, MOVE_X, MOVE_O})
-    public @interface BoardState {
-        int SPACE = 0;
-        int MOVE_X = 1;
-        int MOVE_O = 2;
+    boolean play(int row, int column) {
+        // If square hasn't been played yet
+        if (board[row][column] == -1) {
+            iIndexForSecondToLastMove = iIndexForLastMove;
+            jIndexForSecondToLastMove = jIndexForLastMove;
+            iIndexForLastMove = row;
+            jIndexForLastMove = column;  // Store coordinates for 2nd last and the last move.
+            setMoveByPlayerAt(row, column);
+            return true;
+        } else
+            return false;  
     }
-
-    public enum BoardPlayer {
-        PLAYER_X(MOVE_X), PLAYER_O(MOVE_O);
-        public int move = SPACE;
-
-        BoardPlayer(int move) {
-            this.move = move;
-        }
-    }*/
 }
