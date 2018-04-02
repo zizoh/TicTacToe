@@ -16,7 +16,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-
         android:layout_marginTop="16dp" />
 
     <LinearLayout
@@ -120,14 +119,13 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:paddingTop="16dp"
+        android:gravity="center"
         android:paddingBottom="16dp"
         android:background="#00BFA5">
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
             android:background="#009688">
 
             <Button
@@ -275,8 +273,7 @@
                 android:paddingRight="16dp"
                 android:textColor="#ffffff"
                 android:textSize="56sp"
-                tools:text="x"
-                android:drawSelectorOnTop="true" />
+                tools:text="x" />
 
         </RelativeLayout>
     </LinearLayout>
@@ -295,10 +292,5 @@
         android:text="RESTART GAME"
         android:textColor="@color/colorPrimaryDark"
         android:textStyle="bold" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dip"
-        android:background="#00796B" />
 
 </LinearLayout>
