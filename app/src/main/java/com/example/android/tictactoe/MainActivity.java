@@ -25,6 +25,18 @@ import java.util.Random;
 
 @SuppressWarnings("RedundantCast")
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+
+    // Keys to identify the data saved
+    static final String STATE_BOARD = "BOARD";
+    static final String PLAYER_X_SCOREBOARD_KEY = "PLAYER_X_SCOREBOARD";
+    static final String PLAYER_O_SCOREBOARD_KEY = "PLAYER_O_SCOREBOARD";
+    static final String PLAYER_TO_MOVE_TEXTVIEW_KEY = "PLAYER_TO_MOVE_TEXTVIEW";
+    static final String STATE_GAME_MODE = "GAME_MODE";
+    static final String STATE_PLAYER_X_TURN = "PLAYER_X_TURN";
+    static final String STATE_NUMBER_OF_MOVES = "NUMBER_OF_MOVES";
+    static final String STATE_PLAYER_X_SCORE = "PLAYER_X_SCORE";
+    static final String STATE_PLAYER_O_SCORE = "PLAYER_O_SCORE";
+
     static final int BOARD_SIZE = 3;
     int[][] board = new int[BOARD_SIZE][BOARD_SIZE];
     private static final int EASY_MODE = 1;
@@ -40,6 +52,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private int numberOfMoves = 0;
     private int playerXScore = 0;
     private int playerOScore = 0;
+
+    int[] num = new int[BOARD_SIZE * BOARD_SIZE];
+    int count = 0;
+    int count1 = 0;
 
     private Button row0col0;
     private Button row0col1;
@@ -60,9 +76,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private LinearLayout playerXToMoveButton;
     private LinearLayout playerOToMoveButton;
 
+    private boolean userIsInteracting;
+
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -87,17 +107,64 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         playerXToMoveButton.isSelected();
         playerOToMoveButton = (LinearLayout) findViewById(R.id.player_o_to_move);
 
-        initGame(GAME_MODE);
+        if (savedInstanceState != null) {
+            // Restore value of members from saved state
+            num = savedInstanceState.getIntArray(STATE_BOARD);
+            for (int i = 0; i < BOARD_SIZE; i++) {
+                for (int j = 0; j < BOARD_SIZE; j++) {
+                    if (num != null) {
+                        board[i][j] = num[count];
+                        count++;
+                    }
+                }
+            }
+
+            playerXScoreboard.setText(savedInstanceState.getString(PLAYER_X_SCOREBOARD_KEY));
+            playerOScoreboard.setText(savedInstanceState.getString(PLAYER_O_SCOREBOARD_KEY));
+            playerToMoveTextView.setText(savedInstanceState.getString(PLAYER_TO_MOVE_TEXTVIEW_KEY));
+            GAME_MODE = savedInstanceState.getInt(STATE_GAME_MODE);
+            PLAYER_X_TURN = savedInstanceState.getBoolean(STATE_PLAYER_X_TURN);
+            numberOfMoves = savedInstanceState.getInt(STATE_NUMBER_OF_MOVES);
+            playerXScore = savedInstanceState.getInt(STATE_PLAYER_X_SCORE);
+            playerOScore = savedInstanceState.getInt(STATE_PLAYER_O_SCORE);
+        }
 
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         spinner.setOnItemSelectedListener(this);
-        // Create an ArrayAdapter using the string array and a default spinner layout
+        // Create an ArrayAdapter using the string array and a default spinner spinner_dropdown_item
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.level_or_player_type_array, android.R.layout.simple_spinner_item);
         // Layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+        // Save the current values
+        savedInstanceState.putIntArray(STATE_BOARD, num);
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (num != null) {
+                    num[count1] = board[i][j];
+                    count1++;
+                }
+            }
+        }
+
+        savedInstanceState.putCharSequence(PLAYER_X_SCOREBOARD_KEY, playerXScoreboard.getText());
+        savedInstanceState.putCharSequence(PLAYER_O_SCOREBOARD_KEY, playerOScoreboard.getText());
+        savedInstanceState.putCharSequence(PLAYER_TO_MOVE_TEXTVIEW_KEY, playerToMoveTextView.getText());
+        savedInstanceState.putInt(STATE_GAME_MODE, GAME_MODE);
+        savedInstanceState.putInt(STATE_NUMBER_OF_MOVES, numberOfMoves);
+        savedInstanceState.putBoolean(STATE_PLAYER_X_TURN, PLAYER_X_TURN);
+        savedInstanceState.putInt(STATE_PLAYER_X_SCORE, playerXScore);
+        savedInstanceState.putInt(STATE_PLAYER_O_SCORE, playerOScore);
+
+        // Call to superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     public void boardButtons(View view) {
@@ -291,7 +358,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             playMediumOrImpossibleMode(playerWithTurnNumber);
         }
         numberOfMoves++;
-        //isThereAWinner();
         boolean thereIsAWinner = isThereAWinner();
         if (thereIsAWinner) {
             setWinner();
@@ -321,7 +387,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void playMediumOrImpossibleMode(int playerWithTurnNumber) {
-        // playerWithTurnNumber: 1 for X and 4 for O
         boolean carry = true; // Is used so that only one module is executed.
         if (GAME_MODE == IMPOSSIBLE_MODE) {
             carry = winOrBlockMove(playerWithTurnNumber); // Checking for 2/3 win situation.
@@ -349,6 +414,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
                 return;
             } else if (numberOfMoves > 1) {
+                // playerWithTurnNumber: 1 for X and 4 for O
                 if (PLAYER_X_TURN) {
                     carry = winOrBlockMove(4); // Checking for situation where loss may occur.
                 } else {
@@ -372,24 +438,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
                 // Checking corresponding column for 2/3 situation.
                 else if (board[0][j] + board[1][j] + board[2][j] == playerWithTurnNumber * 2) {
-                    if (play(i, j)) {    // Play the move.
+                    if (play(i, j)) {
                         return false;
                     }
                 }
             }
         }
-        // Checking diagonal for 2/3.
+        // Checking first diagonal for 2/3.
         if (board[0][0] + board[1][1] + board[2][2] == playerWithTurnNumber * 2) {
             for (int i = 0; i < BOARD_SIZE; i++) {
-                if (play(i, i)) {    // Play the move.
+                if (play(i, i)) {
                     return false;
                 }
             }
         }
-        // Checking other diagonal for 2/3.
+        // Checking second diagonal for 2/3.
         else if (board[2][0] + board[1][1] + board[0][2] == playerWithTurnNumber * 2) {
             for (int i = 0, j = 2; i < BOARD_SIZE; i++, j--) {
-                if (play(i, j)) {   // Play the move.
+                if (play(i, j)) {
                     return false;
                 }
             }
@@ -407,34 +473,45 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     /*
+    * Method to to be used to prevent implementation of spinner until user interacts with it
+    */
+    @Override
+    public void onUserInteraction() {
+        super.onUserInteraction();
+        userIsInteracting = true;
+    }
+
+    /*
     * Method to handle spinner selection
     */
     public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-        switch (position) {
-            case 0:
-                // Easy is clicked
-                GAME_MODE = EASY_MODE;
-                initGame(GAME_MODE);
-                resetScoreBoard();
-                break;
-            case 1:
-                // Medium is clicked
-                GAME_MODE = MEDIUM_MODE;
-                initGame(GAME_MODE);
-                resetScoreBoard();
-                break;
-            case 2:
-                // Impossible is clicked
-                GAME_MODE = IMPOSSIBLE_MODE;
-                initGame(GAME_MODE);
-                resetScoreBoard();
-                break;
-            case 3:
-                // Two Players is clicked
-                GAME_MODE = TWO_PLAYER_MODE;
-                initGame(GAME_MODE);
-                resetScoreBoard();
-                break;
+        if (userIsInteracting) {
+            switch (position) {
+                case 0:
+                    // Easy is clicked
+                    GAME_MODE = EASY_MODE;
+                    initGame(GAME_MODE);
+                    resetScoreBoard();
+                    break;
+                case 1:
+                    // Medium is clicked
+                    GAME_MODE = MEDIUM_MODE;
+                    initGame(GAME_MODE);
+                    resetScoreBoard();
+                    break;
+                case 2:
+                    // Impossible is clicked
+                    GAME_MODE = IMPOSSIBLE_MODE;
+                    initGame(GAME_MODE);
+                    resetScoreBoard();
+                    break;
+                case 3:
+                    // Two Players is clicked
+                    GAME_MODE = TWO_PLAYER_MODE;
+                    initGame(GAME_MODE);
+                    resetScoreBoard();
+                    break;
+            }
         }
     }
 
@@ -459,8 +536,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void resetScoreBoard() {
         playerXScore = 0;
         playerOScore = 0;
-        playerXScoreboard.setText("-");
-        playerOScoreboard.setText("-");
         playerXScoreboard.setText("-");
         playerOScoreboard.setText("-");
     }
@@ -500,6 +575,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         enableAllBoxes(true);
         numberOfMoves = 0;
+        count = 0;
+        count1 = 0;
     }
 
     public void playerXToMoveButton(View view) {

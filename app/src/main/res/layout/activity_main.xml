@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
     tools:context="com.example.android.tictactoe.MainActivity">
 
@@ -15,8 +15,8 @@
         android:id="@+id/spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp" />
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,8 +24,7 @@
         android:layout_marginLeft="48dp"
         android:layout_marginRight="48dp"
         android:layout_marginTop="8dp"
-        android:orientation="horizontal"
-        android:padding="8dp">
+        android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/player_x_to_move"
@@ -143,7 +142,8 @@
                 android:paddingRight="16dp"
                 android:textColor="#ffffff"
                 android:textSize="56sp"
-                tools:text="x" />
+                tools:text="X"
+                android:freezesText="true" />
 
             <Button
                 android:id="@+id/row0_col1"
@@ -159,7 +159,8 @@
                 android:paddingRight="16dp"
                 android:textColor="#ffffff"
                 android:textSize="56sp"
-                tools:text="o" />
+                tools:text="O"
+                android:freezesText="true" />
 
             <Button
                 android:id="@+id/row0_col2"
@@ -176,7 +177,8 @@
                 android:paddingRight="16dp"
                 android:textColor="#ffffff"
                 android:textSize="56sp"
-                tools:text="x" />
+                tools:text="X"
+                android:freezesText="true" />
 
             <Button
                 android:id="@+id/row1_col0"
@@ -193,7 +195,8 @@
                 android:paddingRight="16dp"
                 android:textColor="#ffffff"
                 android:textSize="56sp"
-                tools:text="o" />
+                tools:text="O"
+                android:freezesText="true" />
 
             <Button
                 android:id="@+id/row1_col1"
@@ -209,7 +212,8 @@
                 android:paddingRight="16dp"
                 android:textColor="#ffffff"
                 android:textSize="56sp"
-                tools:text="x" />
+                tools:text="X"
+                android:freezesText="true" />
 
             <Button
                 android:id="@+id/row1_col2"
@@ -225,7 +229,8 @@
                 android:paddingRight="16dp"
                 android:textColor="#ffffff"
                 android:textSize="56sp"
-                tools:text="o" />
+                tools:text="O"
+                android:freezesText="true" />
 
             <Button
                 android:id="@+id/row2_col0"
@@ -241,7 +246,8 @@
                 android:paddingRight="16dp"
                 android:textColor="#ffffff"
                 android:textSize="56sp"
-                tools:text="x" />
+                tools:text="X"
+                android:freezesText="true" />
 
             <Button
                 android:id="@+id/row2_col1"
@@ -257,7 +263,8 @@
                 android:paddingRight="16dp"
                 android:textColor="#ffffff"
                 android:textSize="56sp"
-                tools:text="o" />
+                tools:text="O"
+                android:freezesText="true" />
 
             <Button
                 android:id="@+id/row2_col2"
@@ -273,7 +280,8 @@
                 android:paddingRight="16dp"
                 android:textColor="#ffffff"
                 android:textSize="56sp"
-                tools:text="x" />
+                tools:text="X"
+                android:freezesText="true" />
 
         </RelativeLayout>
     </LinearLayout>
@@ -283,7 +291,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
         android:background="@android:color/white"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
@@ -294,3 +302,15 @@
         android:textStyle="bold" />
 
 </LinearLayout>
+
+    <!-- <com.example.android.autofill.app.view.widget.InfoButton
+            android:id="@+id/imageButton"
+            tools:text="x" />
+            android:text="" />
+            android:freezesText="true" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_normal"
+            android:background="@drawable/ic_info_black_24dp"
+            app:dialogText="@string/date_picker_credit_card_info"
+            /> -->
