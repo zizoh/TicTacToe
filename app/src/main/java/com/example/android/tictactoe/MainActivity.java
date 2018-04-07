@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     boolean PLAYER_X_TURN = true;
     private static final int PLAYER_X = 1;
     private static final int PLAYER_O = 4;
+    public static final int EMPTY = 0;
     Random randomNumberForBoardIndex = new Random();
 
     private int numberOfMoves = 0;
@@ -54,8 +55,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private int playerOScore = 0;
 
     int[] num = new int[BOARD_SIZE * BOARD_SIZE];
-    int count = 0;
-    int count1 = 0;
 
     private Button row0col0;
     private Button row0col1;
@@ -110,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (savedInstanceState != null) {
             // Restore value of members from saved state
             num = savedInstanceState.getIntArray(STATE_BOARD);
+            int count = 0;
             for (int i = 0; i < BOARD_SIZE; i++) {
                 for (int j = 0; j < BOARD_SIZE; j++) {
                     if (num != null) {
@@ -145,11 +145,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         // Save the current values
         savedInstanceState.putIntArray(STATE_BOARD, num);
+        int count = 0;
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 if (num != null) {
-                    num[count1] = board[i][j];
-                    count1++;
+                    num[count] = board[i][j];
+                    count++;
                 }
             }
         }
@@ -214,10 +215,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         if (numberOfMoves == BOARD_SIZE * BOARD_SIZE) {
             if ((isThereAWinner())) {
-                playerToMoveTextView.setText("Game Over");
+                playerToMoveTextView.setText(R.string.game_over);
             } else {
-                playerToMoveTextView.setText("Game Draw");
-                Toast.makeText(this, "Game Draw", Toast.LENGTH_SHORT).show();
+                playerToMoveTextView.setText(R.string.game_draw);
+                Toast.makeText(this, R.string.game_draw, Toast.LENGTH_SHORT).show();
             }
             return;
         }
@@ -230,9 +231,44 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    /* get the board value for position (i,j) */
+    public int getBoardValue(int i, int j) {
+        if (i < 0 || i >= 3) {
+            return EMPTY;
+        }
+        if (j < 0 || j >= 3) {
+            return EMPTY;
+        }
+        return board[i][j];
+    }
+
     private boolean isThereAWinner() {
+        int token;
+        if (PLAYER_X_TURN) {
+            token = 1;
+        } else {
+            token = 4;
+        }
+        final int DI[] = {-1, 0, 1, 1};
+        final int DJ[] = {1, 1, 1, 0};
+        for (int i = 0; i < BOARD_SIZE; i++)
+            for (int j = 0; j < BOARD_SIZE; j++) {
+
+                // Skip if the token in board[i][j] is not equal to current token
+                if (board[i][j] != token) continue;
+                for (int k = 0; k < 4; k++) {
+                    int count = 0;
+                    while (getBoardValue(i + DI[k] * count, j + DJ[k] * count) == token) {
+                        count++;
+                        if (count == 3) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        return false;
         // Horizontal --- rows
-        for (int i = 0; i < BOARD_SIZE; i++) {
+        /*for (int i = 0; i < BOARD_SIZE; i++) {
             if (board[i][0] == board[i][1] && board[i][0] == board[i][2] && board[i][0] != 0) {
                 return true;
             }
@@ -254,18 +290,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (board[0][2] == board[1][1] && board[0][2] == board[2][0] && board[0][2] != 0) {
             return true;
         }
-        return false;
+        return false;*/
     }
 
     private void setWinner() {
         enableAllBoxes(false);
-        playerToMoveTextView.setText("Game Over");
+        playerToMoveTextView.setText(R.string.game_over);
         if (PLAYER_X_TURN) {
-            Toast.makeText(this, "Player X Wins!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.player_x_wins, Toast.LENGTH_SHORT).show();
             playerXScore++;
             playerXScoreboard.setText(String.valueOf(playerXScore));
         } else {
-            Toast.makeText(this, "Player O Wins!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.player_o_wins, Toast.LENGTH_SHORT).show();
             playerOScore++;
             playerOScoreboard.setText(String.valueOf(playerOScore));
         }
@@ -364,8 +400,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             return;
         }
         if (numberOfMoves == BOARD_SIZE * BOARD_SIZE && !(isThereAWinner())) {
-            playerToMoveTextView.setText("Game Draw");
-            Toast.makeText(this, "Game Draw", Toast.LENGTH_SHORT).show();
+            playerToMoveTextView.setText(R.string.game_draw);
+            Toast.makeText(this, R.string.game_draw, Toast.LENGTH_SHORT).show();
             return;
         }
         if (!PLAYER_X_TURN) {
@@ -393,7 +429,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (!carry) {
                 //isThereAWinner();
                 enableAllBoxes(false);
-                playerToMoveTextView.setText("Game Over");
+                playerToMoveTextView.setText(R.string.game_over);
                 return;
             }
         }
@@ -553,7 +589,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         PLAYER_X_TURN = true;
         playerXToMoveButton.isSelected();
-        playerToMoveTextView.setText("Start game or select player");
+        playerToMoveTextView.setText(R.string.notice_board);
         playerXToMoveButton.setEnabled(true);
         playerOToMoveButton.setEnabled(true);
         GAME_MODE = gameMode;
@@ -575,8 +611,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         enableAllBoxes(true);
         numberOfMoves = 0;
-        count = 0;
-        count1 = 0;
     }
 
     public void playerXToMoveButton(View view) {

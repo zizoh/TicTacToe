@@ -1,9 +1,19 @@
 <resources>
     <string name="app_name">Tic Tac Toe</string>
+    <string name="notice_board">Start game or select player</string>
+    <string name="string_x">X</string>
+    <string name="string_o">O</string>
     <string-array name="level_or_player_type_array">
         <item>Easy</item>
         <item>Medium</item>
         <item>Impossible</item>
         <item>Two Players</item>
     </string-array>
+
+
+    <string name="game_over">Game Over</string>
+    <string name="game_draw">Game Draw</string>
+    <string name="player_x_wins">Player X Wins!</string>
+    <string name="player_o_wins">Player O Wins!</string>
+    <string name="restart_game">RESTART GAME</string>
 </resources>

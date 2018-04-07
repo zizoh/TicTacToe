@@ -46,7 +46,7 @@
                 android:layout_gravity="left"
                 android:layout_marginLeft="16dp"
                 android:layout_weight="1"
-                android:text="X"
+                android:text="@string/string_x"
                 android:textColor="@android:color/black"
                 android:textSize="24sp" />
 
@@ -84,7 +84,7 @@
                 android:layout_gravity="left"
                 android:layout_marginLeft="16dp"
                 android:layout_weight="1"
-                android:text="O"
+                android:text="@string/string_o"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                 android:textColor="@android:color/black"
                 android:textSize="24sp" />
@@ -111,7 +111,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="16dp"
-        android:text="Start game or select player" />
+        android:text="@string/notice_board" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -297,7 +297,7 @@
         android:paddingRight="16dp"
         android:clickable="true"
         android:onClick="resetButton"
-        android:text="RESTART GAME"
+        android:text="@string/restart_game"
         android:textColor="@color/colorPrimaryDark"
         android:textStyle="bold" />
 
