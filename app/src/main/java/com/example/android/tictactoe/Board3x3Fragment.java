@@ -1,5 +1,6 @@
 package com.example.android.tictactoe;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -12,9 +13,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -78,6 +77,19 @@ public class Board3x3Fragment extends Fragment implements View.OnClickListener, 
     private LinearLayout playerXToMoveButton;
     private LinearLayout playerOToMoveButton;
 
+    public Board3x3Fragment() {
+    }
+
+    public static Board3x3Fragment newInstance() {
+        Board3x3Fragment fragment = new Board3x3Fragment();
+        return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +98,13 @@ public class Board3x3Fragment extends Fragment implements View.OnClickListener, 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.layout_board_3x3, container, false);
+
+        if (getView() != null) {
+        }
+
+        View view = getView() != null ? getView() :
+                inflater.inflate(R.layout.layout_board_3x3, container, false);
+        //View view = inflater.inflate(R.layout.layout_board_3x3, container, false);
 
         playerXScoreboard = (TextView) view.findViewById(R.id.player_x_scoreboard);
         playerOScoreboard = (TextView) view.findViewById(R.id.player_o_scoreboard);
@@ -109,30 +127,6 @@ public class Board3x3Fragment extends Fragment implements View.OnClickListener, 
         row2col2 = (Button) view.findViewById(R.id.row2_col2);
 
         Button resetButton = (Button) view.findViewById(R.id.reset);
-
-        if (savedInstanceState != null) {
-            // Restore value of members from saved state
-            //Toast.makeText(getActivity(), "comingIn", Toast.LENGTH_SHORT).show();
-            num = savedInstanceState.getIntArray(STATE_BOARD);
-            int count = 0;
-            for (int i = 0; i < BOARD_SIZE; i++) {
-                for (int j = 0; j < BOARD_SIZE; j++) {
-                    if (num != null) {
-                        board[i][j] = num[count];
-                        count++;
-                    }
-                }
-            }
-
-            playerXScoreboard.setText(savedInstanceState.getString(PLAYER_X_SCOREBOARD_KEY));
-            playerOScoreboard.setText(savedInstanceState.getString(PLAYER_O_SCOREBOARD_KEY));
-            playerToMoveTextView.setText(savedInstanceState.getString(PLAYER_TO_MOVE_TEXTVIEW_KEY));
-            GAME_MODE = savedInstanceState.getInt(STATE_GAME_MODE);
-            PLAYER_X_TURN = savedInstanceState.getBoolean(STATE_PLAYER_X_TURN);
-            numberOfMoves = savedInstanceState.getInt(STATE_NUMBER_OF_MOVES);
-            playerXScore = savedInstanceState.getInt(STATE_PLAYER_X_SCORE);
-            playerOScore = savedInstanceState.getInt(STATE_PLAYER_O_SCORE);
-        }
 
         row0col0.setOnClickListener(this);
         row0col1.setOnClickListener(this);
@@ -164,12 +158,62 @@ public class Board3x3Fragment extends Fragment implements View.OnClickListener, 
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            // Restore value of members from saved state
+            num = savedInstanceState.getIntArray(STATE_BOARD);
+            int count = 0;
+            for (int i = 0; i < BOARD_SIZE; i++) {
+                for (int j = 0; j < BOARD_SIZE; j++) {
+                    if (num != null) {
+                        board[i][j] = num[count];
+                        count++;
+                    }
+                }
+            }
+
+            PLAYER_X_TURN = savedInstanceState.getBoolean(STATE_PLAYER_X_TURN);
+            numberOfMoves = savedInstanceState.getInt(STATE_NUMBER_OF_MOVES);
+            playerXScore = savedInstanceState.getInt(STATE_PLAYER_X_SCORE);
+            playerOScore = savedInstanceState.getInt(STATE_PLAYER_O_SCORE);
+            GAME_MODE = savedInstanceState.getInt(STATE_GAME_MODE);
+            playerXScoreboard.setText(savedInstanceState.getString(PLAYER_X_SCOREBOARD_KEY));
+            playerOScoreboard.setText(savedInstanceState.getString(PLAYER_O_SCOREBOARD_KEY));
+            playerToMoveTextView.setText(savedInstanceState.getString(PLAYER_TO_MOVE_TEXTVIEW_KEY));
+        }
+
+        /*if (savedInstanceState != null) {
+            // Restore value of members from saved state
+            num = savedInstanceState.getIntArray(STATE_BOARD);
+            int count = 0;
+            for (int i = 0; i < BOARD_SIZE; i++) {
+                for (int j = 0; j < BOARD_SIZE; j++) {
+                    if (num != null) {
+                        board[i][j] = num[count];
+                        count++;
+                    }
+                }
+            }
+
+            playerXScoreboard.setText(savedInstanceState.getString(PLAYER_X_SCOREBOARD_KEY));
+            playerOScoreboard.setText(savedInstanceState.getString(PLAYER_O_SCOREBOARD_KEY));
+            playerToMoveTextView.setText(savedInstanceState.getString(PLAYER_TO_MOVE_TEXTVIEW_KEY));
+            GAME_MODE = savedInstanceState.getInt(STATE_GAME_MODE);
+            PLAYER_X_TURN = savedInstanceState.getBoolean(STATE_PLAYER_X_TURN);
+            numberOfMoves = savedInstanceState.getInt(STATE_NUMBER_OF_MOVES);
+            playerXScore = savedInstanceState.getInt(STATE_PLAYER_X_SCORE);
+            playerOScore = savedInstanceState.getInt(STATE_PLAYER_O_SCORE);
+        }*/
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         // Call to superclass so it can save the view hierarchy state
         super.onSaveInstanceState(outState);
 
         // Save the current values
-        outState.putIntArray(STATE_BOARD, num);
         int count = 0;
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
@@ -179,8 +223,7 @@ public class Board3x3Fragment extends Fragment implements View.OnClickListener, 
                 }
             }
         }
-
-        Toast.makeText(getActivity(), "goingOut" + Arrays.toString(num), Toast.LENGTH_SHORT).show();
+        outState.putIntArray(STATE_BOARD, num);
         outState.putCharSequence(PLAYER_X_SCOREBOARD_KEY, playerXScoreboard.getText());
         outState.putCharSequence(PLAYER_O_SCOREBOARD_KEY, playerOScoreboard.getText());
         outState.putCharSequence(PLAYER_TO_MOVE_TEXTVIEW_KEY, playerToMoveTextView.getText());
@@ -471,7 +514,9 @@ public class Board3x3Fragment extends Fragment implements View.OnClickListener, 
                 return;
             } else if (numberOfMoves == 1) {
                 if (!(play(1, 1))) {
-                    // If the square at the center is already played, play any of the the corner squares
+                    // If the square at the center is already played, play any of the corner squares
+                    // (0,0) (0,2)
+                    // (2,0) (2,2)
                     int i = 0;
                     int j = 2;
                     int c = randomNumberForBoardIndex.nextBoolean() ? i : j;
@@ -663,4 +708,46 @@ public class Board3x3Fragment extends Fragment implements View.OnClickListener, 
             }
         }
     };
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //Log.d(TAG, "onStart: ");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Log.d(TAG, "onResume: ");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //Log.d(TAG, "onPause: ");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        //Log.d(TAG, "onStop: ");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //Log.d(TAG, "onDestroyView: ");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //Log.d(TAG, "onDestroy: ");
+    }
+
+    @Override
+    public void onDetach() {
+        //Log.d(TAG, "onDetach: ");
+        super.onDetach();
+    }
 }

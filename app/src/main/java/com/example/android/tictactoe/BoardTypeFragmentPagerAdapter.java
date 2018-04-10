@@ -3,9 +3,9 @@ package com.example.android.tictactoe;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
-public class BoardTypeFragmentPagerAdapter extends FragmentPagerAdapter {
+public class BoardTypeFragmentPagerAdapter extends FragmentStatePagerAdapter {
     final int PAGE_COUNT = 2;
     private String tabTitles[] = new String[]{"3x3 Board", "5x5 Board"};
     private Context context;

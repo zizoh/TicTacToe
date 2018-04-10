@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         app:tabTextColor="@color/tabTextColor"
         app:tabSelectedTextColor="@color/white"
+        app:tabIndicatorHeight="4dp"
         app:tabIndicatorColor="@color/white" />
 
 </LinearLayout>

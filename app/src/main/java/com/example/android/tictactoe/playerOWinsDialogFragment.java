@@ -12,12 +12,6 @@ public class playerOWinsDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.AlertDialogCustom));
         builder.setMessage(R.string.player_o_wins);
 
-        /*builder.setPositiveButton(R.string.x_move, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK button
-            }
-        });*/
-
         // Create the AlertDialog
         return builder.create();
     }
