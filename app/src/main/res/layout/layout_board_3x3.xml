@@ -3,9 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorPrimary"
-    android:gravity="center"
-    android:orientation="vertical">
+    style="@style/BoardTheme">
 
     <android.support.v7.widget.AppCompatSpinner
         android:id="@+id/spinner"

@@ -688,7 +688,7 @@ public class Board5x5Fragment extends Fragment implements View.OnClickListener, 
         }
     }
 
-    private void playMediumOrImpossibleMode(int playerWithTurnNumber) {
+    /*private void playMediumOrImpossibleMode(int playerWithTurnNumber) {
         boolean carry = true; // Is used so that only one module is executed.
         if (GAME_MODE == IMPOSSIBLE_MODE) {
             carry = winOrBlockMove(playerWithTurnNumber); // Checking for 2/3 win situation.
@@ -714,7 +714,53 @@ public class Board5x5Fragment extends Fragment implements View.OnClickListener, 
                     setMoveByPlayerAt(1, 1);
                 }
                 return;
-            } else if (numberOfMoves >= 1) {
+            } else if (numberOfMoves > 1) {
+                // playerWithTurnNumber: 1 for X and 4 for O
+                if (PLAYER_X_TURN) {
+                    carry = winOrBlockMove(4); // Checking for situation where loss may occur.
+                } else {
+                    carry = winOrBlockMove(1);
+                }
+            }
+        }
+        if (carry) {
+            playRandom();
+        }
+    }*/
+
+    private void playMediumOrImpossibleMode(int playerWithTurnNumber) {
+        boolean carry = true; // Is used so that only one module is executed.
+        if (GAME_MODE == IMPOSSIBLE_MODE) {
+            carry = winOrBlockMove(playerWithTurnNumber); // Checking for 2/3 win situation.
+            if (!carry) {
+                enableAllBoxes(false);
+                playerToMoveTextView.setText(R.string.game_over);
+                return;
+            }
+        }
+        if ((GAME_MODE == MEDIUM_MODE || GAME_MODE == IMPOSSIBLE_MODE) && carry) {
+            //Toast.makeText(this, "Inside if(!carry)", Toast.LENGTH_SHORT).show();
+            if (numberOfMoves == 0) {
+                playRandom();
+                return;
+            } else if (numberOfMoves == 1) {
+                if (!(play(2, 2))) {
+                    // If the square at the center is already played, play any of the squares indicated below
+                    // (  ) (   ) (   ) (  )  (  )
+                    // (  ) (1,1) (   ) (1,3) (  )
+                    // (  ) (   ) (   ) (   ) (  )
+                    // (  ) (3,1) (   ) (3,3) (  )
+                    // (  ) (   ) (   ) (  )  (  )
+                    int i = 1;
+                    int j = 3;
+                    int c = randomNumberForBoardIndex.nextBoolean() ? i : j;
+                    int d = randomNumberForBoardIndex.nextBoolean() ? i : j;
+                    setMoveByPlayerAt(c, d);
+                } else {
+                    setMoveByPlayerAt(2, 2);
+                }
+                return;
+            } else if (numberOfMoves > 1) {
                 // playerWithTurnNumber: 1 for X and 4 for O
                 if (PLAYER_X_TURN) {
                     carry = winOrBlockMove(4); // Checking for situation where loss may occur.
@@ -728,7 +774,7 @@ public class Board5x5Fragment extends Fragment implements View.OnClickListener, 
         }
     }
 
-    boolean winOrBlockMove(int playerWithTurnNumber) {
+    /*boolean winOrBlockMove(int playerWithTurnNumber) {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 // Checking corresponding row for 2/3 situation.
@@ -758,6 +804,183 @@ public class Board5x5Fragment extends Fragment implements View.OnClickListener, 
             for (int i = 0, j = 2; i < BOARD_SIZE; i++, j--) {
                 if (play(i, j)) {
                     return false;
+                }
+            }
+        }
+        return true;
+    }*/
+
+    boolean winOrBlockMove(int playerWithTurnNumber) {
+        if (GAME_MODE == IMPOSSIBLE_MODE) {
+            if (numberOfMoves < 2) {
+                // (  ) (   ) (   ) (  )  (  )
+                // (  ) (1,1) (1,2) (1,3) (  )
+                // (  ) (2,1) (2,2) (2,3) (  )
+                // (  ) (3,1) (3,2) (3,3) (  )
+                // (  ) (   ) (   ) (  )  (  )
+                for (int i = 1; i < BOARD_SIZE - 1; i++) {
+                    for (int j = 1; j < BOARD_SIZE - 1; j++) {
+                        //Checking corresponding row for 2/3 situation.
+                        // (  ) (   ) (   ) (  )  (  )
+                        // (  ) (1,1) (1,2) (1,3) (  )
+                        // (  ) (   ) (   ) (  )  (  )
+                        // (  ) (   ) (   ) (  )  (  )
+                        // (  ) (   ) (   ) (  )  (  )
+                        if (board[i][1] + board[i][2] + board[i][3] == playerWithTurnNumber * 2) {
+                            if (play(i, j)) {   // Play the move.
+                                return false;
+                            }
+                        }
+                        // Checking corresponding column for 2/3 situation.
+                        // (  ) (   ) (   ) (   )  (  )
+                        // (  ) (1,1) (   ) (   )  (  )
+                        // (  ) (2,1) (   ) (   )  (  )
+                        // (  ) (3,1) (   ) (   )  (  )
+                        // (  ) (   ) (   ) (   )  (  )
+                        else if (board[1][j] + board[2][j] + board[3][j] == playerWithTurnNumber * 2) {
+                            if (play(i, j)) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                // Checking first diagonal for 2/3 situation.
+                // (  ) (   ) (   ) (  )  (  )
+                // (  ) (1,1) (   ) (  ) (  )
+                // (  ) (   ) (2,2) (  ) (  )
+                // (  ) (   ) (   ) (3,3) (  )
+                // (  ) (   ) (   ) (  )  (  )
+                if (board[1][1] + board[2][2] + board[3][3] == playerWithTurnNumber * 2) {
+                    for (int i = 1; i < BOARD_SIZE - 1; i++) {
+                        if (play(i, i)) {
+                            return false;
+                        }
+                    }
+                }
+                // Checking second diagonal for 2/3 situation.
+                // (  ) (   ) (   ) (   )  (  )
+                // (  ) (   ) (   ) (1,3) (  )
+                // (  ) (   ) (2,2) (   ) (  )
+                // (  ) (3,1) (   ) (   ) (  )
+                // (  ) (   ) (   ) (  )  (  )
+                else if (board[1][3] + board[2][2] + board[3][1] == playerWithTurnNumber * 2) {
+                    for (int i = 1, j = 3; i < BOARD_SIZE - 1; i++, j--) {
+                        if (play(i, j)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        } else if (GAME_MODE == MEDIUM_MODE || GAME_MODE == IMPOSSIBLE_MODE) {
+            // (0,0) (0,1) (0,2) (0,3) (0,4)
+            // (1,0) (1,1) (1,2) (1,3) (1,4)
+            // (2,0) (2,1) (2,2) (2,3) (2,4)
+            // (3,0) (3,1) (3,2) (3,3) (3,4)
+            // (4,0) (4,1) (4,2) (4,3) (4,4)
+            for (int i = 0; i < BOARD_SIZE; i++) {
+                for (int j = 0; j < BOARD_SIZE; j++) {
+                    // Checking corresponding row for 3/4 situation
+                    // (0,0) (0,1) (0,2) (0,3) (   )
+                    // (   ) (   ) (   ) (   ) (   )
+                    // (   ) (   ) (   ) (   ) (   )
+                    // (   ) (   ) (   ) (   ) (   )
+                    // (   ) (   ) (   ) (   ) (   )
+                    if (board[i][0] + board[i][1] + board[i][2] + board[i][3] == playerWithTurnNumber * 3) {
+                        if (play(i, j)) {   // Play the move.
+                            return false;
+                        }
+                    }
+
+                    // Checking corresponding column for 3/4 situation
+                    // (0,0) (  ) (  ) (  ) (  )
+                    // (1,0) (  ) (  ) (  ) (  )
+                    // (2,0) (  ) (  ) (  ) (  )
+                    // (3,0) (  ) (  ) (  ) (  )
+                    // (   ) (  ) (  ) (  ) (  )
+                    else if (board[0][j] + board[1][j] + board[2][j] + board[3][j] == playerWithTurnNumber * 3) {
+                        if (play(i, j)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            for (int i = 1; i < BOARD_SIZE; i++) {
+                for (int j = 0; j < BOARD_SIZE; j++) {
+                    // Checking corresponding row for 3/4 situation
+                    // (  ) (0,1) (0,2) (0,3) (0,4)
+                    // (  ) (   ) (   ) (   ) (   )
+                    // (  ) (   ) (   ) (   ) (   )
+                    // (  ) (   ) (   ) (   ) (   )
+                    // (  ) (   ) (   ) (   ) (   )
+                    if (board[i][1] + board[i][2] + board[i][3] + board[i][4] == playerWithTurnNumber * 3) {
+                        if (play(i, j)) {   // Play the move.
+                            return false;
+                        }
+                    }
+
+                    // Checking corresponding column for 3/4 situation
+                    // (   ) (  ) (  ) (  ) (  )
+                    // (1,0) (  ) (  ) (  ) (  )
+                    // (2,0) (  ) (  ) (  ) (  )
+                    // (3,0) (  ) (  ) (  ) (  )
+                    // (4,0) (  ) (  ) (  ) (  )
+                    if (board[1][j] + board[2][j] + board[3][j] + board[4][j] == playerWithTurnNumber * 3) {
+                        if (play(i, j)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            // Checking first diagonal for 3/4 situation
+            // (0,0) (   ) (   ) (   ) (  )
+            // (   ) (1,1) (   ) (   ) (  )
+            // (   ) (   ) (2,2) (   ) (  )
+            // (   ) (   ) (   ) (3,3) (  )
+            // (   ) (   ) (   ) (   ) (  )
+            if (board[0][0] + board[1][1] + board[2][2] + board[3][3] == playerWithTurnNumber * 3) {
+                for (int i = 0; i < BOARD_SIZE - 1; i++) {
+                    if (play(i, i)) {
+                        return false;
+                    }
+                }
+            }
+            // (  ) (   ) (   ) (   ) (   )
+            // (  ) (1,1) (   ) (   ) (   )
+            // (  ) (   ) (2,2) (   ) (   )
+            // (  ) (   ) (   ) (3,3) (   )
+            //    ) (   ) (   ) (   ) (4,4)
+            if (board[1][1] + board[2][2] + board[3][3] + board[4][4] == playerWithTurnNumber * 3) {
+                for (int i = 1; i < BOARD_SIZE; i++) {
+                    if (play(i, i)) {
+                        return false;
+                    }
+                }
+            }
+            // Checking second diagonal for 3/4 situation
+            // (  ) (   ) (   ) (   ) (0,4)
+            // (  ) (   ) (   ) (1,3) (   )
+            // (  ) (   ) (2,2) (   ) (   )
+            // (  ) (3,1) (   ) (   ) (   )
+            // (  ) (   ) (   ) (   ) (   )
+            if (board[0][4] + board[1][3] + board[2][2] + board[3][1] == playerWithTurnNumber * 3) {
+                for (int i = 0, j = 4; i < BOARD_SIZE - 1; i++, j--) {
+                    if (play(i, j)) {
+                        return false;
+                    }
+                }
+            }
+            // (   ) (   ) (   ) (   ) (  )
+            // (   ) (   ) (   ) (1,3) (  )
+            // (   ) (   ) (2,2) (   ) (  )
+            // (   ) (3,1) (   ) (   ) (  )
+            // (4,0) (   ) (   ) (   ) (  )
+            else if (board[1][3] + board[2][2] + board[3][1] + board[4][0] == playerWithTurnNumber * 3) {
+                for (int i = 1, j = 3; i < BOARD_SIZE; i++, j--) {
+                    if (play(i, j)) {
+                        return false;
+                    }
                 }
             }
         }

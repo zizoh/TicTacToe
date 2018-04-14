@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -502,6 +503,7 @@ public class Board3x3Fragment extends Fragment implements View.OnClickListener, 
         boolean carry = true; // Is used so that only one module is executed.
         if (GAME_MODE == IMPOSSIBLE_MODE) {
             carry = winOrBlockMove(playerWithTurnNumber); // Checking for 2/3 win situation.
+            Toast.makeText(getActivity(), "" + carry, Toast.LENGTH_SHORT).show();
             if (!carry) {
                 enableAllBoxes(false);
                 playerToMoveTextView.setText(R.string.game_over);

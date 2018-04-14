@@ -9,6 +9,12 @@
         <item name="windowActionBar">false</item>
     </style>
 
+    <style name="BoardTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:gravity">center</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
     <!-- Style for 3x3 board buttons. -->
     <style name="Button3x3" parent="Widget.AppCompat.Button">
         <item name="android:paddingLeft">16dp</item>

@@ -12,6 +12,16 @@
         <item>Two Players</item>
     </string-array>
 
+    <string-array name="board_size_3x3_array">
+        <item>3x3 Board</item>
+        <item>5x5 Board</item>
+    </string-array>
+
+    <string-array name="board_size_5x5_array">
+        <item>5x5 Board</item>
+        <item>3x3 Board</item>
+    </string-array>
+
     <string name="game_over">Game Over</string>
     <string name="game_draw">Game Draw!</string>
     <string name="player_x_wins">Player X\nWins!</string>
