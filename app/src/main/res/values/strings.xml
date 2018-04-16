@@ -5,6 +5,10 @@
     <string name="string_o">O</string>
     <string name="x_move">X Move</string>
     <string name="o_move">O Move</string>
+
+    <!-- ================ -->
+    <!-- GAMEMODE spinner -->
+    <!-- ================ -->
     <string-array name="level_or_player_type_array">
         <item>Easy</item>
         <item>Medium</item>
@@ -12,19 +16,29 @@
         <item>Two Players</item>
     </string-array>
 
-    <string-array name="board_size_3x3_array">
-        <item>3x3 Board</item>
-        <item>5x5 Board</item>
-    </string-array>
-
-    <string-array name="board_size_5x5_array">
-        <item>5x5 Board</item>
-        <item>3x3 Board</item>
-    </string-array>
-
+    <!-- ================== -->
+    <!-- Win or Draw dialog -->
+    <!-- ================== -->
     <string name="game_over">Game Over</string>
     <string name="game_draw">Game Draw!</string>
     <string name="player_x_wins">Player X\nWins!</string>
     <string name="player_o_wins">Player O\nWins!</string>
     <string name="restart_game">RESTART GAME</string>
+
+    <!-- ============================ -->
+    <!-- MainActivity toolbar spinner -->
+    <!-- ============================ -->
+    <string-array name="board_size_3x3_array">
+        <item>3x3 Board</item>
+        <item>5x5 Board</item>
+    </string-array>
+
+    <!-- ================================ -->
+    <!-- Board5x5Activity toolbar spinner -->
+    <!-- ================================ -->
+    <string-array name="board_size_5x5_array">
+        <item>5x5 Board</item>
+        <item>3x3 Board</item>
+    </string-array>
+
 </resources>

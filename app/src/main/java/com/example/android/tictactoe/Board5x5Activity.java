@@ -1,11 +1,11 @@
 package com.example.android.tictactoe;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -27,7 +27,7 @@ import java.util.Random;
  */
 
 @SuppressWarnings("RedundantCast")
-public class Board5x5Fragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class Board5x5Activity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     // Keys to identify the data saved
     static final String STATE_BOARD = "BOARD";
@@ -96,90 +96,56 @@ public class Board5x5Fragment extends Fragment implements View.OnClickListener, 
     private LinearLayout playerXToMoveButton;
     private LinearLayout playerOToMoveButton;
 
-    public Board5x5Fragment() {
-        // Required empty public constructor
-    }
-
-    public static Board5x5Fragment newInstance() {
-        Board5x5Fragment fragment = new Board5x5Fragment();
-
-        return fragment;
-    }
+    private boolean userIsInteracting;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState != null) {
-            // Restore value of members from saved state
-            num = savedInstanceState.getIntArray(STATE_BOARD);
-            int count = 0;
-            for (int i = 0; i < BOARD_SIZE; i++) {
-                for (int j = 0; j < BOARD_SIZE; j++) {
-                    if (num != null) {
-                        board[i][j] = num[count];
-                        count++;
-                    }
-                }
-            }
+        setContentView(R.layout.activity_board_5_5);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-            PLAYER_X_TURN = savedInstanceState.getBoolean(STATE_PLAYER_X_TURN);
-            numberOfMoves = savedInstanceState.getInt(STATE_NUMBER_OF_MOVES);
-            playerXScore = savedInstanceState.getInt(STATE_PLAYER_X_SCORE);
-            playerOScore = savedInstanceState.getInt(STATE_PLAYER_O_SCORE);
-            GAME_MODE = savedInstanceState.getInt(STATE_GAME_MODE);
-        }
-    }
+        playerXScoreboard = (TextView) findViewById(R.id.player_x_scoreboard);
+        playerOScoreboard = (TextView) findViewById(R.id.player_o_scoreboard);
+        playerToMoveTextView = (TextView) findViewById(R.id.player_to_move_textview);
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        if (getView() != null) {
-        }
-        View view = getView() != null ? getView() :
-                inflater.inflate(R.layout.layout_board_5x5, container, false);
-        //View view = inflater.inflate(R.layout.layout_board_5x5, container, false);
-
-        playerXScoreboard = (TextView) view.findViewById(R.id.player_x_scoreboard);
-        playerOScoreboard = (TextView) view.findViewById(R.id.player_o_scoreboard);
-        playerToMoveTextView = (TextView) view.findViewById(R.id.player_to_move_textview);
-
-        playerXToMoveButton = (LinearLayout) view.findViewById(R.id.player_x_to_move);
+        playerXToMoveButton = (LinearLayout) findViewById(R.id.player_x_to_move);
         playerXToMoveButton.isSelected();
-        playerOToMoveButton = (LinearLayout) view.findViewById(R.id.player_o_to_move);
+        playerOToMoveButton = (LinearLayout) findViewById(R.id.player_o_to_move);
 
-        row0col0 = (Button) view.findViewById(R.id.row0_col0);
-        row0col1 = (Button) view.findViewById(R.id.row0_col1);
-        row0col2 = (Button) view.findViewById(R.id.row0_col2);
-        row0col3 = (Button) view.findViewById(R.id.row0_col3);
-        row0col4 = (Button) view.findViewById(R.id.row0_col4);
+        row0col0 = (Button) findViewById(R.id.row0_col0);
+        row0col1 = (Button) findViewById(R.id.row0_col1);
+        row0col2 = (Button) findViewById(R.id.row0_col2);
+        row0col3 = (Button) findViewById(R.id.row0_col3);
+        row0col4 = (Button) findViewById(R.id.row0_col4);
 
-        row1col0 = (Button) view.findViewById(R.id.row1_col0);
-        row1col1 = (Button) view.findViewById(R.id.row1_col1);
-        row1col2 = (Button) view.findViewById(R.id.row1_col2);
-        row1col3 = (Button) view.findViewById(R.id.row1_col3);
-        row1col4 = (Button) view.findViewById(R.id.row1_col4);
+        row1col0 = (Button) findViewById(R.id.row1_col0);
+        row1col1 = (Button) findViewById(R.id.row1_col1);
+        row1col2 = (Button) findViewById(R.id.row1_col2);
+        row1col3 = (Button) findViewById(R.id.row1_col3);
+        row1col4 = (Button) findViewById(R.id.row1_col4);
 
-        row2col0 = (Button) view.findViewById(R.id.row2_col0);
-        row2col1 = (Button) view.findViewById(R.id.row2_col1);
-        row2col2 = (Button) view.findViewById(R.id.row2_col2);
-        row2col3 = (Button) view.findViewById(R.id.row2_col3);
-        row2col4 = (Button) view.findViewById(R.id.row2_col4);
+        row2col0 = (Button) findViewById(R.id.row2_col0);
+        row2col1 = (Button) findViewById(R.id.row2_col1);
+        row2col2 = (Button) findViewById(R.id.row2_col2);
+        row2col3 = (Button) findViewById(R.id.row2_col3);
+        row2col4 = (Button) findViewById(R.id.row2_col4);
 
-        row3col0 = (Button) view.findViewById(R.id.row3_col0);
-        row3col1 = (Button) view.findViewById(R.id.row3_col1);
-        row3col2 = (Button) view.findViewById(R.id.row3_col2);
-        row3col3 = (Button) view.findViewById(R.id.row3_col3);
-        row3col4 = (Button) view.findViewById(R.id.row3_col4);
+        row3col0 = (Button) findViewById(R.id.row3_col0);
+        row3col1 = (Button) findViewById(R.id.row3_col1);
+        row3col2 = (Button) findViewById(R.id.row3_col2);
+        row3col3 = (Button) findViewById(R.id.row3_col3);
+        row3col4 = (Button) findViewById(R.id.row3_col4);
 
-        row4col0 = (Button) view.findViewById(R.id.row4_col0);
-        row4col1 = (Button) view.findViewById(R.id.row4_col1);
-        row4col2 = (Button) view.findViewById(R.id.row4_col2);
-        row4col3 = (Button) view.findViewById(R.id.row4_col3);
-        row4col4 = (Button) view.findViewById(R.id.row4_col4);
+        row4col0 = (Button) findViewById(R.id.row4_col0);
+        row4col1 = (Button) findViewById(R.id.row4_col1);
+        row4col2 = (Button) findViewById(R.id.row4_col2);
+        row4col3 = (Button) findViewById(R.id.row4_col3);
+        row4col4 = (Button) findViewById(R.id.row4_col4);
 
-        Button resetButton = (Button) view.findViewById(R.id.reset);
+        Button resetButton = (Button) findViewById(R.id.reset);
 
         row0col0.setOnClickListener(this);
         row0col1.setOnClickListener(this);
@@ -215,6 +181,63 @@ public class Board5x5Fragment extends Fragment implements View.OnClickListener, 
         playerOToMoveButton.setOnClickListener(playerOToMoveButtonListener);
         resetButton.setOnClickListener(resetButtonListener);
 
+        if (savedInstanceState != null) {
+            // Restore value of members from saved state
+            num = savedInstanceState.getIntArray(STATE_BOARD);
+            int count = 0;
+            for (int i = 0; i < BOARD_SIZE; i++) {
+                for (int j = 0; j < BOARD_SIZE; j++) {
+                    if (num != null) {
+                        board[i][j] = num[count];
+                        count++;
+                    }
+                }
+            }
+
+            PLAYER_X_TURN = savedInstanceState.getBoolean(STATE_PLAYER_X_TURN);
+            numberOfMoves = savedInstanceState.getInt(STATE_NUMBER_OF_MOVES);
+            playerXScore = savedInstanceState.getInt(STATE_PLAYER_X_SCORE);
+            playerOScore = savedInstanceState.getInt(STATE_PLAYER_O_SCORE);
+            GAME_MODE = savedInstanceState.getInt(STATE_GAME_MODE);
+            playerXScoreboard.setText(savedInstanceState.getString(PLAYER_X_SCOREBOARD_KEY));
+            playerOScoreboard.setText(savedInstanceState.getString(PLAYER_O_SCOREBOARD_KEY));
+            playerToMoveTextView.setText(savedInstanceState.getString(PLAYER_TO_MOVE_TEXTVIEW_KEY));
+        }
+
+        Spinner spinnerBoard5x5 = (Spinner) findViewById(R.id.board_size_spinner);
+        spinnerBoard5x5.setOnItemSelectedListener(this);
+        // Create an ArrayAdapter using the string array and a default spinner spinner_dropdown_item
+        ArrayAdapter<CharSequence> adapterBoardSpinner = ArrayAdapter.createFromResource(this,
+                R.array.board_size_5x5_array, R.layout.spinner_item);
+        // Layout to use when the list of choices appears
+        adapterBoardSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinnerBoard5x5.setAdapter(adapterBoardSpinner);
+
+        Spinner spinnerGameMode = (Spinner) findViewById(R.id.spinner);
+
+        spinnerGameMode.setOnItemSelectedListener(gameModeOnItemSelectedListener);
+        // Create an ArrayAdapter using the string array and a default spinner spinner_dropdown_item
+        ArrayAdapter<CharSequence> adapterGameMode = ArrayAdapter.createFromResource(this,
+                R.array.level_or_player_type_array, android.R.layout.simple_spinner_item);
+        // Layout to use when the list of choices appears
+        adapterGameMode.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinnerGameMode.setAdapter(adapterGameMode);
+    }
+
+    /*@Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        if (getView() != null) {
+        }
+        View view = getView() != null ? getView() :
+                inflater.inflate(R.layout.layout_board_5x5, container, false);
+        //View view = inflater.inflate(R.layout.layout_board_5x5, container, false);
+
+
+
         Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
         spinner.setOnItemSelectedListener(this);
         // Create an ArrayAdapter using the string array and a default spinner spinner_dropdown_item
@@ -226,9 +249,9 @@ public class Board5x5Fragment extends Fragment implements View.OnClickListener, 
         spinner.setAdapter(adapter);
 
         return view;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -248,7 +271,7 @@ public class Board5x5Fragment extends Fragment implements View.OnClickListener, 
             playerOScoreboard.setText(savedInstanceState.getString(PLAYER_O_SCOREBOARD_KEY));
             playerToMoveTextView.setText(savedInstanceState.getString(PLAYER_TO_MOVE_TEXTVIEW_KEY));
         }
-    }
+    }*/
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -377,7 +400,7 @@ public class Board5x5Fragment extends Fragment implements View.OnClickListener, 
             } else {
                 playerToMoveTextView.setText(R.string.game_draw);
                 DialogFragment newFragment = new gameDrawDialogFragment();
-                newFragment.show(getFragmentManager(), "gameDraw");
+                newFragment.show(getSupportFragmentManager(), "gameDraw");
             }
             return;
         }
@@ -435,12 +458,12 @@ public class Board5x5Fragment extends Fragment implements View.OnClickListener, 
             playerXScore++;
             playerXScoreboard.setText(String.valueOf(playerXScore));
             DialogFragment newFragment = new playerXWinsDialogFragment();
-            newFragment.show(getFragmentManager(), "playerXWins");
+            newFragment.show(getSupportFragmentManager(), "playerXWins");
         } else {
             playerOScore++;
             playerOScoreboard.setText(String.valueOf(playerOScore));
             DialogFragment newFragment = new playerOWinsDialogFragment();
-            newFragment.show(getFragmentManager(), "playerOWins");
+            newFragment.show(getSupportFragmentManager(), "playerOWins");
         }
     }
 
@@ -667,7 +690,7 @@ public class Board5x5Fragment extends Fragment implements View.OnClickListener, 
         if (numberOfMoves == BOARD_SIZE * BOARD_SIZE && !(isThereAWinner())) {
             playerToMoveTextView.setText(R.string.game_draw);
             DialogFragment newFragment = new gameDrawDialogFragment();
-            newFragment.show(getFragmentManager(), "gameDraw");
+            newFragment.show(getSupportFragmentManager(), "gameDraw");
             return;
         }
         if (PLAYER_X_TURN) {
@@ -996,42 +1019,6 @@ public class Board5x5Fragment extends Fragment implements View.OnClickListener, 
             return false;
     }
 
-    /*
-    * Method to handle spinner selection
-    */
-    public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-        switch (position) {
-            case 0:
-                // Easy is clicked
-                GAME_MODE = EASY_MODE;
-                initGame(GAME_MODE);
-                resetScoreBoard();
-                break;
-            case 1:
-                // Medium is clicked
-                GAME_MODE = MEDIUM_MODE;
-                initGame(GAME_MODE);
-                resetScoreBoard();
-                break;
-            case 2:
-                // Impossible is clicked
-                GAME_MODE = IMPOSSIBLE_MODE;
-                initGame(GAME_MODE);
-                resetScoreBoard();
-                break;
-            case 3:
-                // Two Players is clicked
-                GAME_MODE = TWO_PLAYER_MODE;
-                initGame(GAME_MODE);
-                resetScoreBoard();
-                break;
-        }
-    }
-
-    public void onNothingSelected(AdapterView<?> parent) {
-        // Another interface callback
-    }
-
     private void enableAllBoxes(boolean value) {
         row0col0.setEnabled(value);
         row0col1.setEnabled(value);
@@ -1157,44 +1144,69 @@ public class Board5x5Fragment extends Fragment implements View.OnClickListener, 
     };
 
     @Override
-    public void onStart() {
-        super.onStart();
-        //Log.d(TAG, "onStart: ");
+    public void onUserInteraction() {
+        super.onUserInteraction();
+        userIsInteracting = true;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        //Log.d(TAG, "onResume: ");
+    /*
+    * Method to handle spinner selection
+    */
+    public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+        if (userIsInteracting) {
+            switch (position) {
+                case 0:
+                    // 5x5 Board is clicked
+                    break;
+                case 1:
+                    // 3x3 Board is clicked
+                    Intent myIntent = new Intent(Board5x5Activity.this, MainActivity.class);
+                    Board5x5Activity.this.startActivity(myIntent);
+                    break;
+            }
+        }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        //Log.d(TAG, "onPause: ");
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        //Log.d(TAG, "onStop: ");
-    }
+    private AdapterView.OnItemSelectedListener gameModeOnItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (userIsInteracting) {
+                switch (position) {
+                    case 0:
+                        // Easy is clicked
+                        GAME_MODE = EASY_MODE;
+                        initGame(GAME_MODE);
+                        resetScoreBoard();
+                        break;
+                    case 1:
+                        // Medium is clicked
+                        GAME_MODE = MEDIUM_MODE;
+                        initGame(GAME_MODE);
+                        resetScoreBoard();
+                        break;
+                    case 2:
+                        // Impossible is clicked
+                        GAME_MODE = IMPOSSIBLE_MODE;
+                        initGame(GAME_MODE);
+                        resetScoreBoard();
+                        break;
+                    case 3:
+                        // Two Players is clicked
+                        GAME_MODE = TWO_PLAYER_MODE;
+                        initGame(GAME_MODE);
+                        resetScoreBoard();
+                        break;
+                }
+            }
+        }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        //Log.d(TAG, "onDestroyView: ");
-    }
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        //Log.d(TAG, "onDestroy: ");
-    }
-
-    @Override
-    public void onDetach() {
-        //Log.d(TAG, "onDetach: ");
-        super.onDetach();
-    }
+        }
+    };
 }
