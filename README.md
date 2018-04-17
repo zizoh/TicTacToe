@@ -16,10 +16,7 @@ Pre-requisites
 App Features
 -------------
 
-- Fragments
 - Spinners 
-- TabLayout
-- ViewPager
 - Dialog
 - UserInteraction
 
