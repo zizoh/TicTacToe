@@ -3,6 +3,7 @@
     <string name="notice_board">Start game or select player</string>
     <string name="string_x">X</string>
     <string name="string_o">O</string>
+    <string name="string_dash">-</string>
     <string name="x_move">X Move</string>
     <string name="o_move">O Move</string>
 

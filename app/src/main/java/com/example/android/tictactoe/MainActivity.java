@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         spinnerGameMode.setOnItemSelectedListener(gameModeOnItemSelectedListener);
         // Create an ArrayAdapter using the string array and a default spinner spinner_dropdown_item
         ArrayAdapter<CharSequence> adapterGameMode = ArrayAdapter.createFromResource(this,
-                R.array.level_or_player_type_array, android.R.layout.simple_spinner_item);
+                R.array.level_or_player_type_array, R.layout.spinner_item);
         // Layout to use when the list of choices appears
         adapterGameMode.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner

@@ -219,59 +219,12 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         spinnerGameMode.setOnItemSelectedListener(gameModeOnItemSelectedListener);
         // Create an ArrayAdapter using the string array and a default spinner spinner_dropdown_item
         ArrayAdapter<CharSequence> adapterGameMode = ArrayAdapter.createFromResource(this,
-                R.array.level_or_player_type_array, android.R.layout.simple_spinner_item);
+                R.array.level_or_player_type_array, R.layout.spinner_item);
         // Layout to use when the list of choices appears
         adapterGameMode.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinnerGameMode.setAdapter(adapterGameMode);
     }
-
-    /*@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        if (getView() != null) {
-        }
-        View view = getView() != null ? getView() :
-                inflater.inflate(R.layout.layout_board_5x5, container, false);
-        //View view = inflater.inflate(R.layout.layout_board_5x5, container, false);
-
-
-
-        Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
-        spinner.setOnItemSelectedListener(this);
-        // Create an ArrayAdapter using the string array and a default spinner spinner_dropdown_item
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.level_or_player_type_array, android.R.layout.simple_spinner_item);
-        // Layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
-
-        return view;
-    }*/
-
-    /*@Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            // Restore value of members from saved state
-            num = savedInstanceState.getIntArray(STATE_BOARD);
-            int count = 0;
-            for (int i = 0; i < BOARD_SIZE; i++) {
-                for (int j = 0; j < BOARD_SIZE; j++) {
-                    if (num != null) {
-                        board[i][j] = num[count];
-                        count++;
-                    }
-                }
-            }
-            playerXScoreboard.setText(savedInstanceState.getString(PLAYER_X_SCOREBOARD_KEY));
-            playerOScoreboard.setText(savedInstanceState.getString(PLAYER_O_SCOREBOARD_KEY));
-            playerToMoveTextView.setText(savedInstanceState.getString(PLAYER_TO_MOVE_TEXTVIEW_KEY));
-        }
-    }*/
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
