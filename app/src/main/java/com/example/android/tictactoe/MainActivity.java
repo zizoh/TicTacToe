@@ -15,6 +15,15 @@ import android.widget.TextView;
 
 import java.util.Random;
 
+/**
+ * TicTacToe coordinates for each square on 3x3 Board
+ * -----------------
+ * (0,0) (0,1) (0,2)
+ * (1,0) (1,1) (1,2)
+ * (2,0) (2,1) (2,2)
+ * -----------------
+ */
+
 @SuppressWarnings("RedundantCast")
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
@@ -76,7 +85,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
 
         playerXScoreboard = (TextView) findViewById(R.id.player_x_scoreboard);
         playerOScoreboard = (TextView) findViewById(R.id.player_o_scoreboard);
@@ -114,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (savedInstanceState != null) {
             // Restore value of members from saved state
+            // Put back values stored in 1D oneDimArrayOfBoard into 2D board
             num = savedInstanceState.getIntArray(STATE_BOARD);
             int count = 0;
             for (int i = 0; i < BOARD_SIZE; i++) {
@@ -140,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Spinner spinnerBoard3x3 = (Spinner) findViewById(R.id.board_size_spinner);
         spinnerBoard3x3.setOnItemSelectedListener(this);
-        // Create an ArrayAdapter using the string array and a default spinner spinner_dropdown_item
+        // Create an ArrayAdapter using the string array defined and spinner_item.xml
         ArrayAdapter<CharSequence> adapterBoardSpinner = ArrayAdapter.createFromResource(this,
                 R.array.board_size_3x3_array, R.layout.spinner_item);
         // Layout to use when the list of choices appears
@@ -150,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Spinner spinnerGameMode = (Spinner) findViewById(R.id.spinner);
         spinnerGameMode.setOnItemSelectedListener(gameModeOnItemSelectedListener);
-        // Create an ArrayAdapter using the string array and a default spinner spinner_dropdown_item
+        // Create an ArrayAdapter using the string array defined and spinner_item.xml
         ArrayAdapter<CharSequence> adapterGameMode = ArrayAdapter.createFromResource(this,
                 R.array.level_or_player_type_array, R.layout.spinner_item);
         // Layout to use when the list of choices appears
@@ -163,6 +175,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onSaveInstanceState(Bundle outState) {
 
         // Save the current values
+        // Put the values in each square of board to 1D oneDimArrayOfBoard array
+        // Since 2D board array can't be put in outState
         int count = 0;
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
@@ -439,8 +453,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (GAME_MODE == IMPOSSIBLE_MODE) {
                     if (!(play(1, 1))) {
                         // If the square at the center is already played, play any of the corner squares
-                        // (0,0) (0,2)
-                        // (2,0) (2,2)
+                        // (0,0) (  ) (0,2)
+                        // (   ) (  ) (   )
+                        // (2,0) (  ) (2,2)
                         int i = 0;
                         int j = 2;
                         int c = randomNumberForBoardIndex.nextBoolean() ? i : j;
@@ -470,13 +485,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     boolean winOrBlockMove(int playerWithTurnNumber) {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                //Checking corresponding row for 2/3 situation.
+                //Checking corresponding row for 2/3 situation
+                // (0,0) (0,2) (0,2)
+                // (   ) (   ) (   )
+                // (   ) (   ) (   )
                 if (board[i][0] + board[i][1] + board[i][2] == playerWithTurnNumber * 2) {
                     if (play(i, j)) {   // Play the move.
                         return false;
                     }
                 }
-                // Checking corresponding column for 2/3 situation.
+                // Checking corresponding column for 2/3 situation
+                // (0,0) (   ) (   )
+                // (1,0) (   ) (   )
+                // (2,0) (   ) (   )
                 else if (board[0][j] + board[1][j] + board[2][j] == playerWithTurnNumber * 2) {
                     if (play(i, j)) {
                         return false;
@@ -484,7 +505,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
-        // Checking first diagonal for 2/3.
+        // Checking left-to-right diagonal for 2/3
+        // (0,0) (   ) (   )
+        // (   ) (1,1) (   )
+        // (   ) (   ) (2,2)
         if (board[0][0] + board[1][1] + board[2][2] == playerWithTurnNumber * 2) {
             for (int i = 0; i < BOARD_SIZE; i++) {
                 if (play(i, i)) {
@@ -492,7 +516,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
-        // Checking second diagonal for 2/3.
+        // Checking right-to-left diagonal for 2/3
+        // (   ) (   ) (0,2)
+        // (   ) (1,1) (   )
+        // (2,0) (   ) (   )
         else if (board[0][2] + board[1][1] + board[2][0] == playerWithTurnNumber * 2) {
             for (int i = 0, j = 2; i < BOARD_SIZE; i++, j--) {
                 if (play(i, j)) {
@@ -607,7 +634,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /*
-    * Method to handle spinner selection
+    * Method to handle board size spinner selection
     */
     public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
         if (userIsInteracting) {
@@ -628,6 +655,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Another interface callback
     }
 
+    /*
+    * Listener to handle game mode spinner selection
+    */
     private AdapterView.OnItemSelectedListener gameModeOnItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
