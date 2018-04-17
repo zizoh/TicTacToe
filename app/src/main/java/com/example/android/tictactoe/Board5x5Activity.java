@@ -664,46 +664,6 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    /*private void playMediumOrImpossibleMode(int playerWithTurnNumber) {
-        boolean carry = true; // Is used so that only one module is executed.
-        if (GAME_MODE == IMPOSSIBLE_MODE) {
-            carry = winOrBlockMove(playerWithTurnNumber); // Checking for 2/3 win situation.
-            if (!carry) {
-                enableAllBoxes(false);
-                playerToMoveTextView.setText(R.string.game_over);
-                return;
-            }
-        }
-        if ((GAME_MODE == MEDIUM_MODE || GAME_MODE == IMPOSSIBLE_MODE) && carry) {
-            if (numberOfMoves == 0) {
-                playRandom();
-                return;
-            } else if (numberOfMoves == 1) {
-                if (!(play(1, 1))) {
-                    // If the square at the center is already played, play any of the corner squares
-                    int i = 0;
-                    int j = 2;
-                    int c = randomNumberForBoardIndex.nextBoolean() ? i : j;
-                    int d = randomNumberForBoardIndex.nextBoolean() ? i : j;
-                    setMoveByPlayerAt(c, d);
-                } else {
-                    setMoveByPlayerAt(1, 1);
-                }
-                return;
-            } else if (numberOfMoves > 1) {
-                // playerWithTurnNumber: 1 for X and 4 for O
-                if (PLAYER_X_TURN) {
-                    carry = winOrBlockMove(4); // Checking for situation where loss may occur.
-                } else {
-                    carry = winOrBlockMove(1);
-                }
-            }
-        }
-        if (carry) {
-            playRandom();
-        }
-    }*/
-
     private void playMediumOrImpossibleMode(int playerWithTurnNumber) {
         boolean carry = true; // Is used so that only one module is executed.
         if (GAME_MODE == IMPOSSIBLE_MODE) {
@@ -749,42 +709,6 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
             playRandom();
         }
     }
-
-    /*boolean winOrBlockMove(int playerWithTurnNumber) {
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
-                // Checking corresponding row for 2/3 situation.
-                if (board[i][0] + board[i][1] + board[i][2] + board[i][3] + board[i][4] == playerWithTurnNumber * 3) {
-                    if (play(i, j)) {   // Play the move.
-                        return false;
-                    }
-                }
-                // Checking corresponding column for 2/3 situation.
-                else if (board[0][j] + board[1][j] + board[2][j] + board[3][j] + board[4][j] == playerWithTurnNumber * 3) {
-                    if (play(i, j)) {
-                        return false;
-                    }
-                }
-            }
-        }
-        // Checking first diagonal for 2/3.
-        if (board[0][0] + board[1][1] + board[2][2] + board[3][3] + board[4][4] == playerWithTurnNumber * 3) {
-            for (int i = 0; i < BOARD_SIZE; i++) {
-                if (play(i, i)) {
-                    return false;
-                }
-            }
-        }
-        // Checking second diagonal for 2/3.
-        else if (board[4][0] + board[3][1] + board[2][2] + board[1][3] + board[0][4] == playerWithTurnNumber * 3) {
-            for (int i = 0, j = 2; i < BOARD_SIZE; i++, j--) {
-                if (play(i, j)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }*/
 
     boolean winOrBlockMove(int playerWithTurnNumber) {
         if (GAME_MODE == IMPOSSIBLE_MODE) {
@@ -1103,7 +1027,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
     }
 
     /*
-    * Method to handle spinner selection
+    * Method to handle board size spinner selection
     */
     public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
         if (userIsInteracting) {
@@ -1124,6 +1048,9 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         // Another interface callback
     }
 
+    /*
+    * Listener to handle game mode spinner selection
+    */
     private AdapterView.OnItemSelectedListener gameModeOnItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

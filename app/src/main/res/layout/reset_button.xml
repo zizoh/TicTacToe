@@ -12,3 +12,5 @@
     android:text="@string/restart_game"
     android:textColor="@color/colorPrimaryDark"
     android:textStyle="bold" />
+
+

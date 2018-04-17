@@ -26,8 +26,8 @@ App Features
 Screenshots
 -------------
 
-<img src="screenshots/1_Board3x3.png" height="400" alt="Screenshot"/> 
-<img src="screenshots/2_Board5x5.png" height="400" alt="Screenshot"/>
+<img src="screenshots/1_Board3x3.png" height="400" alt="Screenshot"/> <img src="screenshots/2_Board5x5.png" height="400" alt="Screenshot"/>
+<img src="screenshots/3_LandscapeBoard5x5.png" height="400" alt="Screenshot"/>
 
 Getting Started
 ---------------

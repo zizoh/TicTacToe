@@ -13,9 +13,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         tools:text="X" />
 
     <Button
@@ -26,7 +28,9 @@
         android:layout_alignParentTop="true"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         android:layout_toRightOf="@id/row0_col0"
+        android:layout_toEndOf="@id/row0_col0"
         tools:text="O" />
 
     <Button
@@ -37,7 +41,9 @@
         android:layout_alignParentTop="true"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         android:layout_toRightOf="@id/row0_col1"
+        android:layout_toEndOf="@id/row0_col1"
         tools:text="X" />
 
     <Button
@@ -48,7 +54,9 @@
         android:layout_alignParentTop="true"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         android:layout_toRightOf="@id/row0_col2"
+        android:layout_toEndOf="@id/row0_col2"
         tools:text="O" />
 
     <Button
@@ -59,6 +67,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginBottom="2dp"
         android:layout_toRightOf="@id/row0_col3"
+        android:layout_toEndOf="@id/row0_col3"
         tools:text="X" />
 
     <Button
@@ -67,9 +76,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@id/row0_col0"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         tools:text="O" />
 
     <Button
@@ -80,7 +91,9 @@
         android:layout_below="@id/row0_col1"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         android:layout_toRightOf="@id/row1_col0"
+        android:layout_toEndOf="@id/row1_col0"
         tools:text="X" />
 
     <Button
@@ -90,7 +103,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/row0_col2"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         android:layout_toRightOf="@id/row1_col1"
+        android:layout_toEndOf="@id/row1_col1"
         tools:text="O" />
 
     <Button
@@ -101,7 +116,9 @@
         android:layout_below="@id/row0_col2"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         android:layout_toRightOf="@id/row1_col2"
+        android:layout_toEndOf="@id/row1_col2"
         tools:text="X" />
 
     <Button
@@ -121,9 +138,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@id/row1_col0"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         tools:text="X" />
 
     <Button
@@ -134,6 +153,7 @@
         android:layout_below="@+id/row1_col0"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         android:layout_toEndOf="@+id/row2_col0"
         android:layout_toRightOf="@+id/row2_col0"
         tools:text="O" />
@@ -146,8 +166,10 @@
         android:layout_below="@id/row1_col2"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         android:layout_marginTop="2dp"
         android:layout_toRightOf="@id/row2_col1"
+        android:layout_toEndOf="@id/row2_col1"
         tools:text="X" />
 
     <Button
@@ -157,6 +179,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/row1_col0"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         android:layout_toEndOf="@+id/row2_col2"
         android:layout_toRightOf="@+id/row2_col2"
         tools:text="O" />
@@ -178,9 +201,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@id/row2_col0"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         tools:text="O" />
 
     <Button
@@ -191,7 +216,9 @@
         android:layout_below="@id/row2_col1"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         android:layout_toRightOf="@id/row3_col0"
+        android:layout_toEndOf="@id/row3_col0"
         tools:text="X" />
 
     <Button
@@ -201,7 +228,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/row2_col2"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         android:layout_toRightOf="@id/row3_col1"
+        android:layout_toEndOf="@id/row3_col1"
         tools:text="O" />
 
     <Button
@@ -212,7 +241,9 @@
         android:layout_below="@id/row2_col2"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         android:layout_toRightOf="@id/row1_col2"
+        android:layout_toEndOf="@id/row1_col2"
         tools:text="X" />
 
     <Button
@@ -232,8 +263,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@id/row3_col0"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         tools:text="X" />
 
     <Button
@@ -243,6 +276,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/row3_col0"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         android:layout_toEndOf="@+id/row4_col0"
         android:layout_toRightOf="@+id/row4_col0"
         tools:text="O" />
@@ -254,8 +288,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/row3_col2"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         android:layout_marginTop="2dp"
         android:layout_toRightOf="@id/row4_col1"
+        android:layout_toEndOf="@id/row4_col1"
         tools:text="X" />
 
     <Button
@@ -265,6 +301,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/row3_col0"
         android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
         android:layout_toEndOf="@+id/row4_col2"
         android:layout_toRightOf="@+id/row4_col2"
         tools:text="O" />
