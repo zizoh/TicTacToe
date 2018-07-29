@@ -1,11 +1,16 @@
 package com.example.android.tictactoe;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,7 +18,20 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.example.android.tictactoe.Utils.TicTacToeUtils;
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
+
 import java.util.Random;
+
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.PLAYER_O_PLAYED_VALUE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.PLAYER_X_PLAYED_VALUE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.SINGLE_PLAYER_EASY_MODE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.SINGLE_PLAYER_MEDIUM_MODE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.TWO_PLAYER_MODE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.disableButton;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.isSinglePlayerMode;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.setTextOnButtonPlayed;
 
 /**
  * TicTacToe coordinates for each square on 3x3 Board
@@ -40,22 +58,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     static final int BOARD_SIZE = 3;
     int[][] board = new int[BOARD_SIZE][BOARD_SIZE];
-    private static final int EASY_MODE = 1;
-    private static final int MEDIUM_MODE = 2;
-    private static final int IMPOSSIBLE_MODE = 3;
-    private static final int TWO_PLAYER_MODE = 4;
-    int GAME_MODE = EASY_MODE;
+    int GAME_MODE = SINGLE_PLAYER_EASY_MODE;
     boolean PLAYER_X_TURN = true;
-    private static final int PLAYER_X = 1;
-    private static final int PLAYER_O = 4;
-    public static final int EMPTY = 0;
     Random randomNumberForBoardIndex = new Random();
 
     private int numberOfMoves = 0;
     private int playerXScore = 0;
     private int playerOScore = 0;
 
-    int[] num = new int[BOARD_SIZE * BOARD_SIZE];
+    int[] oneDimArrayBoard = new int[BOARD_SIZE * BOARD_SIZE];
 
     private Button row0col0;
     private Button row0col1;
@@ -126,16 +137,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (savedInstanceState != null) {
             // Restore value of members from saved state
             // Put back values stored in 1D oneDimArrayOfBoard into 2D board
-            num = savedInstanceState.getIntArray(STATE_BOARD);
-            int count = 0;
-            for (int i = 0; i < BOARD_SIZE; i++) {
-                for (int j = 0; j < BOARD_SIZE; j++) {
-                    if (num != null) {
-                        board[i][j] = num[count];
-                        count++;
-                    }
-                }
-            }
+            oneDimArrayBoard = savedInstanceState.getIntArray(STATE_BOARD);
+            board = TicTacToeUtils.convertBoardToTwoDim(BOARD_SIZE, oneDimArrayBoard);
+
             PLAYER_X_TURN = savedInstanceState.getBoolean(STATE_PLAYER_X_TURN);
             numberOfMoves = savedInstanceState.getInt(STATE_NUMBER_OF_MOVES);
             playerXScore = savedInstanceState.getInt(STATE_PLAYER_X_SCORE);
@@ -174,19 +178,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onSaveInstanceState(Bundle outState) {
 
-        // Save the current values
-        // Put the values in each square of board to 1D oneDimArrayOfBoard array
+        // Put the values in each square of board to oneDimArrayOfBoard array
         // Since 2D board array can't be put in outState
-        int count = 0;
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
-                if (num != null) {
-                    num[count] = board[i][j];
-                    count++;
-                }
-            }
-        }
-        outState.putIntArray(STATE_BOARD, num);
+        oneDimArrayBoard = TicTacToeUtils.convertBoardToOneDim(BOARD_SIZE, board);
+
+        outState.putIntArray(STATE_BOARD, oneDimArrayBoard);
         outState.putCharSequence(PLAYER_X_SCOREBOARD_KEY, playerXScoreboard.getText());
         outState.putCharSequence(PLAYER_O_SCOREBOARD_KEY, playerOScoreboard.getText());
         outState.putCharSequence(PLAYER_TO_MOVE_TEXTVIEW_KEY, playerToMoveTextView.getText());
@@ -202,8 +198,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        playerXToMoveButton.setEnabled(false);
-        playerOToMoveButton.setEnabled(false);
+        enablePlayerToMoveButtons(false);
         switch (v.getId()) {
             case R.id.row0_col0:
                 setMoveByPlayerAt(0, 0);
@@ -233,49 +228,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 setMoveByPlayerAt(2, 2);
                 break;
         }
-        numberOfMoves++;
-        boolean thereIsAWinner = isThereAWinner();
-        if (thereIsAWinner) {
+
+        if (isThereAWinner()) {
             setWinner();
-            return;
+        } else {
+            indicatePlayerWithTurn(PLAYER_X_TURN);
+            switchTurn();
+            numberOfMoves++;
+            if (numberOfMoves == BOARD_SIZE * BOARD_SIZE) {
+                gameDraw();
+            } else {
+                gameOn();
+            }
         }
-        if (PLAYER_X_TURN) {
+    }
+
+    public void gameOn() {
+        if (isSinglePlayerMode(GAME_MODE)) {
+            if (PLAYER_X_TURN) {
+                computerPlay(PLAYER_X_PLAYED_VALUE);
+            } else {
+                computerPlay(PLAYER_O_PLAYED_VALUE);
+            }
+        }
+    }
+
+    private void indicatePlayerWithTurn(Boolean playerWithTurn) {
+        if (playerWithTurn) {
             playerToMoveTextView.setText(R.string.o_move);
         } else {
             playerToMoveTextView.setText(R.string.x_move);
         }
-        PLAYER_X_TURN = !PLAYER_X_TURN; // Switch the turn to next player
-
-        if (numberOfMoves == BOARD_SIZE * BOARD_SIZE) {
-            if ((isThereAWinner())) {
-                playerToMoveTextView.setText(R.string.game_over);
-            } else {
-                playerToMoveTextView.setText(R.string.game_draw);
-                DialogFragment newFragment = new gameDrawDialogFragment();
-                newFragment.show(getSupportFragmentManager(), "gameDraw");
-            }
-            return;
-        }
-        if (GAME_MODE == EASY_MODE || GAME_MODE == MEDIUM_MODE || GAME_MODE == IMPOSSIBLE_MODE) {
-            if (PLAYER_X_TURN) {
-                computerPlay(PLAYER_X);
-            } else {
-                computerPlay(PLAYER_O);
-            }
-        }
     }
 
-    /* get the board value for position (i,j) */
-    public int getBoardValue(int i, int j) {
+    private void enablePlayerToMoveButtons(Boolean enableButtons) {
+        playerXToMoveButton.setEnabled(enableButtons);
+        playerOToMoveButton.setEnabled(enableButtons);
+    }
+
+    /*
+    * Get the board value for position (i,j)
+    */
+    private int getBoardValue(int i, int j) {
         if (i < 0 || i >= BOARD_SIZE) {
-            return EMPTY;
+            return TicTacToeUtils.NON_PLAYED_VALUE;
         }
         if (j < 0 || j >= BOARD_SIZE) {
-            return EMPTY;
+            return TicTacToeUtils.NON_PLAYED_VALUE;
         }
         return board[i][j];
     }
 
+    /*
+    * Returns true if the last canPlay was a win
+    */
     private boolean isThereAWinner() {
         int token;
         if (PLAYER_X_TURN) {
@@ -309,88 +315,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (PLAYER_X_TURN) {
             playerXScore++;
             playerXScoreboard.setText(String.valueOf(playerXScore));
-            DialogFragment newFragment = new playerXWinsDialogFragment();
-            newFragment.show(getSupportFragmentManager(), "playerXWins");
+            showWinOrDrawDialog(getString(R.string.player_x_wins));
         } else {
             playerOScore++;
             playerOScoreboard.setText(String.valueOf(playerOScore));
-            DialogFragment newFragment = new playerOWinsDialogFragment();
-            newFragment.show(getSupportFragmentManager(), "playerOWins");
+            showWinOrDrawDialog(getString(R.string.player_o_wins));
         }
     }
 
-    public void setMoveByPlayerAt(int row, int column) {
+    private void showWinOrDrawDialog(String message) {
+        DialogFragment newFragment = new WinOrDrawDialog(message);
+        newFragment.show(getSupportFragmentManager(), "WinOrDrawDialog");
+    }
+
+    private void setMoveByPlayerAt(int row, int column) {
         if (row == 0 && column == 0) {
-            if (PLAYER_X_TURN) {
-                row0col0.setText(R.string.string_x);
-            } else {
-                row0col0.setText(R.string.string_o);
-            }
-            row0col0.setEnabled(false);
-        }
-        if (row == 0 && column == 1) {
-            if (PLAYER_X_TURN) {
-                row0col1.setText(R.string.string_x);
-            } else {
-                row0col1.setText(R.string.string_o);
-            }
-            row0col1.setEnabled(false);
-        }
-        if (row == 0 && column == 2) {
-            if (PLAYER_X_TURN) {
-                row0col2.setText(R.string.string_x);
-            } else {
-                row0col2.setText(R.string.string_o);
-            }
-            row0col2.setEnabled(false);
-        }
-        if (row == 1 && column == 0) {
-            if (PLAYER_X_TURN) {
-                row1col0.setText(R.string.string_x);
-            } else {
-                row1col0.setText(R.string.string_o);
-            }
-            row1col0.setEnabled(false);
-        }
-        if (row == 1 && column == 1) {
-            if (PLAYER_X_TURN) {
-                row1col1.setText(R.string.string_x);
-            } else {
-                row1col1.setText(R.string.string_o);
-            }
-            row1col1.setEnabled(false);
-        }
-        if (row == 1 && column == 2) {
-            if (PLAYER_X_TURN) {
-                row1col2.setText(R.string.string_x);
-            } else {
-                row1col2.setText(R.string.string_o);
-            }
-            row1col2.setEnabled(false);
-        }
-        if (row == 2 && column == 0) {
-            if (PLAYER_X_TURN) {
-                row2col0.setText(R.string.string_x);
-            } else {
-                row2col0.setText(R.string.string_o);
-            }
-            row2col0.setEnabled(false);
-        }
-        if (row == 2 && column == 1) {
-            if (PLAYER_X_TURN) {
-                row2col1.setText(R.string.string_x);
-            } else {
-                row2col1.setText(R.string.string_o);
-            }
-            row2col1.setEnabled(false);
-        }
-        if (row == 2 && column == 2) {
-            if (PLAYER_X_TURN) {
-                row2col2.setText(R.string.string_x);
-            } else {
-                row2col2.setText(R.string.string_o);
-            }
-            row2col2.setEnabled(false);
+            setTextOnButtonPlayed(PLAYER_X_TURN, row0col0);
+            disableButton(row0col0);
+        } else if (row == 0 && column == 1) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row0col1);
+            disableButton(row0col1);
+        } else if (row == 0 && column == 2) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row0col2);
+            disableButton(row0col2);
+        } else if (row == 1 && column == 0) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row1col0);
+            disableButton(row1col0);
+        } else if (row == 1 && column == 1) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row1col1);
+            disableButton(row1col1);
+        } else if (row == 1 && column == 2) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row1col2);
+            disableButton(row1col2);
+        } else if (row == 2 && column == 0) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row2col0);
+            disableButton(row2col0);
+        } else if (row == 2 && column == 1) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row2col1);
+            disableButton(row2col1);
+        } else if (row == 2 && column == 2) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row2col2);
+            disableButton(row2col2);
         }
         if (PLAYER_X_TURN) {
             board[row][column] = 1;
@@ -400,35 +365,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void computerPlay(int playerWithTurnNumber) {
-        if (GAME_MODE == EASY_MODE) {
+        if (GAME_MODE == SINGLE_PLAYER_EASY_MODE) {
             playRandom();
-        } else if (GAME_MODE == MEDIUM_MODE || GAME_MODE == IMPOSSIBLE_MODE) {
+        } else if (GAME_MODE == SINGLE_PLAYER_MEDIUM_MODE
+                || GAME_MODE == SINGLE_PLAYER_IMPOSSIBLE_MODE) {
             playMediumOrImpossibleMode(playerWithTurnNumber);
         }
-        numberOfMoves++;
-        boolean thereIsAWinner = isThereAWinner();
-        if (thereIsAWinner) {
+
+        if (isThereAWinner()) {
             setWinner();
-            return;
-        }
-        if (numberOfMoves == BOARD_SIZE * BOARD_SIZE && !(isThereAWinner())) {
-            playerToMoveTextView.setText(R.string.game_draw);
-            DialogFragment newFragment = new gameDrawDialogFragment();
-            newFragment.show(getSupportFragmentManager(), "gameDraw");
-            return;
-        }
-        if (PLAYER_X_TURN) {
-            playerToMoveTextView.setText(R.string.o_move);
         } else {
-            playerToMoveTextView.setText(R.string.x_move);
+            numberOfMoves++;
+            if (numberOfMoves == BOARD_SIZE * BOARD_SIZE) {
+                gameDraw();
+            } else {
+                indicatePlayerWithTurn(PLAYER_X_TURN);
+                switchTurn();
+            }
         }
+    }
+
+    private void switchTurn() {
         PLAYER_X_TURN = !PLAYER_X_TURN;
+    }
+
+    private void gameDraw() {
+        playerToMoveTextView.setText(R.string.game_draw);
+        showWinOrDrawDialog(getString(R.string.game_draw));
     }
 
     private void playRandom() {
         int iIndex = 0;
         int jIndex = 1;
-        while (!(play(iIndex, jIndex))) {
+        while (!(canPlay(iIndex, jIndex))) {
             // Keep trying until a successful move is played
             iIndex = randomNumberForBoardIndex.nextInt(BOARD_SIZE);
             jIndex = randomNumberForBoardIndex.nextInt(BOARD_SIZE);
@@ -436,31 +405,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void playMediumOrImpossibleMode(int playerWithTurnNumber) {
-        boolean carry = true; // Is used so that only one module is executed.
-        if (GAME_MODE == IMPOSSIBLE_MODE) {
-            carry = winOrBlockMove(playerWithTurnNumber); // Checking for 2/3 win situation.
-            if (!carry) {
+        boolean noWinOrBlock = true; // Is used so that only one module is executed.
+        if (GAME_MODE == SINGLE_PLAYER_IMPOSSIBLE_MODE) {
+            noWinOrBlock = winOrBlockMove(playerWithTurnNumber); // Checking for 2/3 win situation.
+            if (!noWinOrBlock) {
                 enableAllBoxes(false);
                 playerToMoveTextView.setText(R.string.game_over);
                 return;
             }
         }
-        if ((GAME_MODE == MEDIUM_MODE || GAME_MODE == IMPOSSIBLE_MODE) && carry) {
+        if ((GAME_MODE == SINGLE_PLAYER_MEDIUM_MODE || GAME_MODE == SINGLE_PLAYER_IMPOSSIBLE_MODE) && noWinOrBlock) {
             if (numberOfMoves == 0) {
                 playRandom();
                 return;
             } else if (numberOfMoves == 1) {
-                if (GAME_MODE == IMPOSSIBLE_MODE) {
-                    if (!(play(1, 1))) {
-                        // If the square at the center is already played, play any of the corner squares
-                        // (0,0) (  ) (0,2)
-                        // (   ) (  ) (   )
-                        // (2,0) (  ) (2,2)
-                        int i = 0;
-                        int j = 2;
-                        int c = randomNumberForBoardIndex.nextBoolean() ? i : j;
-                        int d = randomNumberForBoardIndex.nextBoolean() ? i : j;
-                        setMoveByPlayerAt(c, d);
+                if (GAME_MODE == SINGLE_PLAYER_IMPOSSIBLE_MODE) {
+                    if (!(canPlay(1, 1))) {
+                        playAnyCornerButton();
                     } else {
                         setMoveByPlayerAt(1, 1);
                     }
@@ -471,58 +432,54 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else if (numberOfMoves > 1) {
                 // playerWithTurnNumber: 1 for X and 4 for O
                 if (PLAYER_X_TURN) {
-                    carry = winOrBlockMove(4); // Checking for situation where loss may occur.
+                    noWinOrBlock = winOrBlockMove(4); // Checking for situation where loss may occur.
                 } else {
-                    carry = winOrBlockMove(1);
+                    noWinOrBlock = winOrBlockMove(1);
                 }
             }
         }
-        if (carry) {
+        if (noWinOrBlock) {
             playRandom();
         }
     }
 
-    boolean winOrBlockMove(int playerWithTurnNumber) {
+    private void playAnyCornerButton() {
+        int i = 0;
+        int j = 2;
+        int c = randomNumberForBoardIndex.nextBoolean() ? i : j;
+        int d = randomNumberForBoardIndex.nextBoolean() ? i : j;
+        setMoveByPlayerAt(c, d);
+    }
+
+    private boolean winOrBlockMove(int playerWithTurnNumber) {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 //Checking corresponding row for 2/3 situation
-                // (0,0) (0,2) (0,2)
-                // (   ) (   ) (   )
-                // (   ) (   ) (   )
                 if (board[i][0] + board[i][1] + board[i][2] == playerWithTurnNumber * 2) {
-                    if (play(i, j)) {   // Play the move.
+                    if (canPlay(i, j)) {   // Play the move.
                         return false;
                     }
                 }
                 // Checking corresponding column for 2/3 situation
-                // (0,0) (   ) (   )
-                // (1,0) (   ) (   )
-                // (2,0) (   ) (   )
                 else if (board[0][j] + board[1][j] + board[2][j] == playerWithTurnNumber * 2) {
-                    if (play(i, j)) {
+                    if (canPlay(i, j)) {
                         return false;
                     }
                 }
             }
         }
         // Checking left-to-right diagonal for 2/3
-        // (0,0) (   ) (   )
-        // (   ) (1,1) (   )
-        // (   ) (   ) (2,2)
         if (board[0][0] + board[1][1] + board[2][2] == playerWithTurnNumber * 2) {
             for (int i = 0; i < BOARD_SIZE; i++) {
-                if (play(i, i)) {
+                if (canPlay(i, i)) {
                     return false;
                 }
             }
         }
         // Checking right-to-left diagonal for 2/3
-        // (   ) (   ) (0,2)
-        // (   ) (1,1) (   )
-        // (2,0) (   ) (   )
         else if (board[0][2] + board[1][1] + board[2][0] == playerWithTurnNumber * 2) {
             for (int i = 0, j = 2; i < BOARD_SIZE; i++, j--) {
-                if (play(i, j)) {
+                if (canPlay(i, j)) {
                     return false;
                 }
             }
@@ -530,7 +487,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
-    boolean play(int row, int column) {
+    private boolean canPlay(int row, int column) {
         // If square hasn't been played yet
         if (board[row][column] == 0) {
             setMoveByPlayerAt(row, column);
@@ -539,18 +496,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return false;
     }
 
-    private void enableAllBoxes(boolean value) {
-        row0col0.setEnabled(value);
-        row0col1.setEnabled(value);
-        row0col2.setEnabled(value);
+    private void enableAllBoxes(boolean enableBoxes) {
+        row0col0.setEnabled(enableBoxes);
+        row0col1.setEnabled(enableBoxes);
+        row0col2.setEnabled(enableBoxes);
 
-        row1col0.setEnabled(value);
-        row1col1.setEnabled(value);
-        row1col2.setEnabled(value);
+        row1col0.setEnabled(enableBoxes);
+        row1col1.setEnabled(enableBoxes);
+        row1col2.setEnabled(enableBoxes);
 
-        row2col0.setEnabled(value);
-        row2col1.setEnabled(value);
-        row2col2.setEnabled(value);
+        row2col0.setEnabled(enableBoxes);
+        row2col1.setEnabled(enableBoxes);
+        row2col2.setEnabled(enableBoxes);
     }
 
     private void resetScoreBoard() {
@@ -567,17 +524,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
 
     private void initGame(int gameMode) {
-        for (int row = 0; row < BOARD_SIZE; row++) {
-            for (int column = 0; column < BOARD_SIZE; column++) {
-                // Fill the board with zeros(0)
-                board[row][column] = 0;
-            }
-        }
+        board = TicTacToeUtils.initBoardWithZeros(BOARD_SIZE);
+
         PLAYER_X_TURN = true;
         playerXToMoveButton.isSelected();
         playerToMoveTextView.setText(R.string.notice_board);
-        playerXToMoveButton.setEnabled(true);
-        playerOToMoveButton.setEnabled(true);
+        enablePlayerToMoveButtons(true);
         GAME_MODE = gameMode;
         resetBoard();
     }
@@ -601,28 +553,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private View.OnClickListener playerXToMoveButtonListener = new View.OnClickListener() {
         public void onClick(View player_x_to_move) {
-            playerXToMoveButton.setEnabled(false);
-            playerOToMoveButton.setEnabled(false);
+            enablePlayerToMoveButtons(false);
             PLAYER_X_TURN = true;
             playerToMoveTextView.setText(R.string.x_move);
-            if (GAME_MODE == EASY_MODE
-                    || GAME_MODE == MEDIUM_MODE
-                    || GAME_MODE == IMPOSSIBLE_MODE) {
-                computerPlay(PLAYER_X);
+            if (isSinglePlayerMode(GAME_MODE)) {
+                computerPlay(PLAYER_X_PLAYED_VALUE);
             }
         }
     };
 
     private View.OnClickListener playerOToMoveButtonListener = new View.OnClickListener() {
         public void onClick(View player_o_to_move) {
-            playerXToMoveButton.setEnabled(false);
-            playerOToMoveButton.setEnabled(false);
+            enablePlayerToMoveButtons(false);
             PLAYER_X_TURN = false;
             playerToMoveTextView.setText(R.string.o_move);
-            if (GAME_MODE == EASY_MODE
-                    || GAME_MODE == MEDIUM_MODE
-                    || GAME_MODE == IMPOSSIBLE_MODE) {
-                computerPlay(PLAYER_O);
+            if (isSinglePlayerMode(GAME_MODE)) {
+                computerPlay(PLAYER_O_PLAYED_VALUE);
             }
         }
     };
@@ -634,16 +580,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /*
-    * Method to handle board size spinner selection
-    */
+     * Method to handle board size spinner selection
+     */
     public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
         if (userIsInteracting) {
             switch (position) {
                 case 0:
-                    // 3x3 Board is clicked
                     break;
                 case 1:
-                    // 3x3 Board is clicked
                     Intent myIntent = new Intent(MainActivity.this, Board5x5Activity.class);
                     MainActivity.this.startActivity(myIntent);
                     break;
@@ -652,12 +596,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
-        // Another interface callback
     }
 
     /*
-    * Listener to handle game mode spinner selection
-    */
+     * Listener to handle game mode spinner selection
+     */
     private AdapterView.OnItemSelectedListener gameModeOnItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -665,19 +608,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 switch (position) {
                     case 0:
                         // Easy is clicked
-                        GAME_MODE = EASY_MODE;
+                        GAME_MODE = SINGLE_PLAYER_EASY_MODE;
                         initGame(GAME_MODE);
                         resetScoreBoard();
                         break;
                     case 1:
                         // Medium is clicked
-                        GAME_MODE = MEDIUM_MODE;
+                        GAME_MODE = SINGLE_PLAYER_MEDIUM_MODE;
                         initGame(GAME_MODE);
                         resetScoreBoard();
                         break;
                     case 2:
                         // Impossible is clicked
-                        GAME_MODE = IMPOSSIBLE_MODE;
+                        GAME_MODE = SINGLE_PLAYER_IMPOSSIBLE_MODE;
                         initGame(GAME_MODE);
                         resetScoreBoard();
                         break;
@@ -695,4 +638,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void onNothingSelected(AdapterView<?> parent) {
         }
     };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.how_to_menu:
+                WebView webView = new WebView(this);
+                webView.loadUrl("file:///android_asset/how_to.html");
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.how_to_dialog_title)
+                        .setView(webView)
+                        .setCancelable(true)
+                        .show();
+                return true;
+            case R.id.license_menu:
+                startActivity(new Intent(this, OssLicensesMenuActivity.class));
+                OssLicensesMenuActivity.setActivityTitle(getString(R.string.open_source_license));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 }

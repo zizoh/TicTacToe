@@ -4,112 +4,102 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_marginBottom="24dp"
-    android:background="@color/colorPrimaryDark"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:background="@color/colorPrimaryDark">
 
-    <Button
+    <include
         android:id="@+id/row0_col0"
+        layout="@layout/board_3x3_button_x"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="4dp"
-        style="@style/Button3x3"
-        android:layout_marginRight="4dp"
         android:layout_marginEnd="4dp"
-        tools:text="X" />
+        android:layout_marginRight="4dp" />
 
-    <Button
+    <include
         android:id="@+id/row0_col1"
+        layout="@layout/board_3x3_button_o"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="4dp"
-        style="@style/Button3x3"
-        android:layout_toRightOf="@id/row0_col0"
         android:layout_toEndOf="@id/row0_col0"
-        tools:text="O" />
+        android:layout_toRightOf="@id/row0_col0" />
 
-    <Button
+    <include
         android:id="@+id/row0_col2"
+        layout="@layout/board_3x3_button_x"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginStart="4dp"
-        style="@style/Button3x3"
-        android:layout_toRightOf="@id/row0_col1"
         android:layout_toEndOf="@id/row0_col1"
-        tools:text="X" />
+        android:layout_toRightOf="@id/row0_col1" />
 
-    <Button
+    <include
         android:id="@+id/row1_col0"
+        layout="@layout/board_3x3_button_o"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@id/row0_col0"
         android:layout_marginBottom="4dp"
-        android:layout_marginRight="4dp"
         android:layout_marginEnd="4dp"
-        style="@style/Button3x3"
-        tools:text="O" />
+        android:layout_marginRight="4dp" />
 
-    <Button
+    <include
         android:id="@+id/row1_col1"
+        layout="@layout/board_3x3_button_x"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/row0_col1"
         android:layout_marginBottom="4dp"
-        android:layout_toRightOf="@id/row1_col0"
         android:layout_toEndOf="@id/row1_col0"
-        style="@style/Button3x3"
-        tools:text="X" />
+        android:layout_toRightOf="@id/row1_col0" />
 
-    <Button
+    <include
         android:id="@+id/row1_col2"
+        layout="@layout/board_3x3_button_o"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/row0_col2"
         android:layout_marginLeft="4dp"
         android:layout_marginStart="4dp"
-        android:layout_toRightOf="@id/row1_col1"
         android:layout_toEndOf="@id/row1_col1"
-        style="@style/Button3x3"
-        tools:text="O" />
+        android:layout_toRightOf="@id/row1_col1" />
 
-    <Button
+    <include
         android:id="@+id/row2_col0"
+        layout="@layout/board_3x3_button_x"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@id/row1_col0"
-        android:layout_marginRight="4dp"
         android:layout_marginEnd="4dp"
-        style="@style/Button3x3"
-        tools:text="X" />
+        android:layout_marginRight="4dp" />
 
-    <Button
+    <include
         android:id="@+id/row2_col1"
+        layout="@layout/board_3x3_button_o"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/row1_col0"
         android:layout_toEndOf="@+id/row2_col0"
-        android:layout_toRightOf="@+id/row2_col0"
-        style="@style/Button3x3"
-        tools:text="O" />
+        android:layout_toRightOf="@+id/row2_col0" />
 
-    <Button
+    <include
         android:id="@+id/row2_col2"
+        layout="@layout/board_3x3_button_x"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/row1_col2"
         android:layout_alignStart="@+id/row1_col2"
-        android:layout_below="@+id/row1_col1"
-        style="@style/Button3x3"
-        tools:text="X" />
+        android:layout_below="@+id/row1_col1" />
 
 </RelativeLayout>

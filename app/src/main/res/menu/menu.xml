@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Items should always be in the overflow -->
+    <item android:id="@+id/how_to_menu"
+        android:title="@string/how_to"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/license_menu"
+        android:title="@string/open_source_license"
+        app:showAsAction="never" />
+
+</menu>

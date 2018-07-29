@@ -1,11 +1,16 @@
 package com.example.android.tictactoe;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,7 +18,20 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.example.android.tictactoe.Utils.TicTacToeUtils;
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
+
 import java.util.Random;
+
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.PLAYER_O_PLAYED_VALUE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.PLAYER_X_PLAYED_VALUE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.SINGLE_PLAYER_EASY_MODE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.SINGLE_PLAYER_MEDIUM_MODE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.TWO_PLAYER_MODE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.disableButton;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.isSinglePlayerMode;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.setTextOnButtonPlayed;
 
 /**
  * TicTacToe coordinates for each square on 5x5 Board
@@ -42,15 +60,8 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
 
     static final int BOARD_SIZE = 5;
     int[][] board = new int[BOARD_SIZE][BOARD_SIZE];
-    private static final int EASY_MODE = 1;
-    private static final int MEDIUM_MODE = 2;
-    private static final int IMPOSSIBLE_MODE = 3;
-    private static final int TWO_PLAYER_MODE = 4;
-    int GAME_MODE = EASY_MODE;
-    public boolean PLAYER_X_TURN = true;
-    private static final int PLAYER_X = 1;
-    private static final int PLAYER_O = 4;
-    public static final int EMPTY = 0;
+    int GAME_MODE = SINGLE_PLAYER_EASY_MODE;
+    private boolean PLAYER_X_TURN = true;
     Random randomNumberForBoardIndex = new Random();
 
     private int numberOfMoves = 0;
@@ -187,14 +198,8 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
             // Restore value of members from saved state
             // Put back values stored in 1D oneDimArrayOfBoard into 2D board
             oneDimArrayOfBoard = savedInstanceState.getIntArray(STATE_BOARD);
-            int count = 0;
-            for (int i = 0; i < BOARD_SIZE; i++) {
-                for (int j = 0; j < BOARD_SIZE; j++) {
-                    if (oneDimArrayOfBoard != null) {
-                        board[i][j] = oneDimArrayOfBoard[count];
-                        count++;
-                    }
-                }
+            if (null != oneDimArrayOfBoard) {
+                board = TicTacToeUtils.convertBoardToTwoDim(BOARD_SIZE, oneDimArrayOfBoard);
             }
 
             PLAYER_X_TURN = savedInstanceState.getBoolean(STATE_PLAYER_X_TURN);
@@ -232,18 +237,10 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onSaveInstanceState(Bundle outState) {
 
-        // Save the current values
-        // Put the values in each square of board to 1D oneDimArrayOfBoard array
-        // Since 2D board array can't be put in outState
-        int count = 0;
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
-                if (oneDimArrayOfBoard != null) {
-                    oneDimArrayOfBoard[count] = board[i][j];
-                    count++;
-                }
-            }
+        if (null != board){
+          oneDimArrayOfBoard = TicTacToeUtils.convertBoardToOneDim(BOARD_SIZE, board);
         }
+
         outState.putIntArray(STATE_BOARD, oneDimArrayOfBoard);
         outState.putCharSequence(PLAYER_X_SCOREBOARD_KEY, playerXScoreboard.getText());
         outState.putCharSequence(PLAYER_O_SCOREBOARD_KEY, playerOScoreboard.getText());
@@ -260,8 +257,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        playerXToMoveButton.setEnabled(false);
-        playerOToMoveButton.setEnabled(false);
+        enablePlayerToMoveButtons(false);
         switch (v.getId()) {
             case R.id.row0_col0:
                 setMoveByPlayerAt(0, 0);
@@ -339,45 +335,49 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
                 setMoveByPlayerAt(4, 4);
                 break;
         }
-        numberOfMoves++;
-        boolean thereIsAWinner = isThereAWinner();
-        if (thereIsAWinner) {
+        if (isThereAWinner()) {
             setWinner();
-            return;
-        }
-        if (PLAYER_X_TURN) {
-            playerToMoveTextView.setText(R.string.o_move);
         } else {
-            playerToMoveTextView.setText(R.string.x_move);
-        }
-        PLAYER_X_TURN = !PLAYER_X_TURN; // Switch the turn to next player
-
-        if (numberOfMoves == BOARD_SIZE * BOARD_SIZE) {
-            if ((isThereAWinner())) {
-                playerToMoveTextView.setText(R.string.game_over);
+            indicatePlayerWithTurn(PLAYER_X_TURN);
+            switchTurn();
+            numberOfMoves++;
+            if (numberOfMoves == BOARD_SIZE * BOARD_SIZE) {
+                gameDraw();
             } else {
-                playerToMoveTextView.setText(R.string.game_draw);
-                DialogFragment newFragment = new gameDrawDialogFragment();
-                newFragment.show(getSupportFragmentManager(), "gameDraw");
-            }
-            return;
-        }
-        if (GAME_MODE == EASY_MODE || GAME_MODE == MEDIUM_MODE || GAME_MODE == IMPOSSIBLE_MODE) {
-            if (PLAYER_X_TURN) {
-                computerPlay(PLAYER_X);
-            } else {
-                computerPlay(PLAYER_O);
+                gameOn();
             }
         }
     }
 
-    /* get the board value for position (i,j) */
+    private void switchTurn() {
+        PLAYER_X_TURN = !PLAYER_X_TURN;
+    }
+
+    public void gameOn() {
+        if (isSinglePlayerMode(GAME_MODE)) {
+            if (PLAYER_X_TURN) {
+                computerPlay(PLAYER_X_PLAYED_VALUE);
+            } else {
+                computerPlay(PLAYER_O_PLAYED_VALUE);
+            }
+        }
+    }
+
+    private void indicatePlayerWithTurn(Boolean playerWithTurn) {
+        if (playerWithTurn) {
+            playerToMoveTextView.setText(R.string.o_move);
+        } else {
+            playerToMoveTextView.setText(R.string.x_move);
+        }
+    }
+
+    /* Get the board value for position (i,j) */
     public int getBoardValue(int i, int j) {
         if (i < 0 || i >= BOARD_SIZE) {
-            return EMPTY;
+            return TicTacToeUtils.NON_PLAYED_VALUE;
         }
         if (j < 0 || j >= BOARD_SIZE) {
-            return EMPTY;
+            return TicTacToeUtils.NON_PLAYED_VALUE;
         }
         return board[i][j];
     }
@@ -415,216 +415,100 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         if (PLAYER_X_TURN) {
             playerXScore++;
             playerXScoreboard.setText(String.valueOf(playerXScore));
-            DialogFragment newFragment = new playerXWinsDialogFragment();
-            newFragment.show(getSupportFragmentManager(), "playerXWins");
+            showWinOrDrawDialog(getString(R.string.player_x_wins));
         } else {
             playerOScore++;
             playerOScoreboard.setText(String.valueOf(playerOScore));
-            DialogFragment newFragment = new playerOWinsDialogFragment();
-            newFragment.show(getSupportFragmentManager(), "playerOWins");
+            showWinOrDrawDialog(getString(R.string.player_o_wins));
         }
     }
 
-    public void setMoveByPlayerAt(int row, int column) {
+    private void gameDraw() {
+        playerToMoveTextView.setText(R.string.game_draw);
+        showWinOrDrawDialog(getString(R.string.game_draw));
+    }
+
+    private void showWinOrDrawDialog(String message) {
+        DialogFragment newFragment = new WinOrDrawDialog(message);
+        newFragment.show(getSupportFragmentManager(), "WinOrDrawDialog");
+    }
+
+    private void setMoveByPlayerAt(int row, int column) {
         if (row == 0 && column == 0) {
-            if (PLAYER_X_TURN) {
-                row0col0.setText(R.string.string_x);
-            } else {
-                row0col0.setText(R.string.string_o);
-            }
-            row0col0.setEnabled(false);
-        }
-        if (row == 0 && column == 1) {
-            if (PLAYER_X_TURN) {
-                row0col1.setText(R.string.string_x);
-            } else {
-                row0col1.setText(R.string.string_o);
-            }
-            row0col1.setEnabled(false);
-        }
-        if (row == 0 && column == 2) {
-            if (PLAYER_X_TURN) {
-                row0col2.setText(R.string.string_x);
-            } else {
-                row0col2.setText(R.string.string_o);
-            }
-            row0col2.setEnabled(false);
-        }
-        if (row == 0 && column == 3) {
-            if (PLAYER_X_TURN) {
-                row0col3.setText(R.string.string_x);
-            } else {
-                row0col3.setText(R.string.string_o);
-            }
-            row0col3.setEnabled(false);
-        }
-        if (row == 0 && column == 4) {
-            if (PLAYER_X_TURN) {
-                row0col4.setText(R.string.string_x);
-            } else {
-                row0col4.setText(R.string.string_o);
-            }
-            row0col4.setEnabled(false);
-        }
-        if (row == 1 && column == 0) {
-            if (PLAYER_X_TURN) {
-                row1col0.setText(R.string.string_x);
-            } else {
-                row1col0.setText(R.string.string_o);
-            }
-            row1col0.setEnabled(false);
-        }
-        if (row == 1 && column == 1) {
-            if (PLAYER_X_TURN) {
-                row1col1.setText(R.string.string_x);
-            } else {
-                row1col1.setText(R.string.string_o);
-            }
-            row1col1.setEnabled(false);
-        }
-        if (row == 1 && column == 2) {
-            if (PLAYER_X_TURN) {
-                row1col2.setText(R.string.string_x);
-            } else {
-                row1col2.setText(R.string.string_o);
-            }
-            row1col2.setEnabled(false);
-        }
-        if (row == 1 && column == 3) {
-            if (PLAYER_X_TURN) {
-                row1col3.setText(R.string.string_x);
-            } else {
-                row1col3.setText(R.string.string_o);
-            }
-            row1col3.setEnabled(false);
-        }
-        if (row == 1 && column == 4) {
-            if (PLAYER_X_TURN) {
-                row1col4.setText(R.string.string_x);
-            } else {
-                row1col4.setText(R.string.string_o);
-            }
-            row1col4.setEnabled(false);
-        }
-        if (row == 2 && column == 0) {
-            if (PLAYER_X_TURN) {
-                row2col0.setText(R.string.string_x);
-            } else {
-                row2col0.setText(R.string.string_o);
-            }
-            row2col0.setEnabled(false);
-        }
-        if (row == 2 && column == 1) {
-            if (PLAYER_X_TURN) {
-                row2col1.setText(R.string.string_x);
-            } else {
-                row2col1.setText(R.string.string_o);
-            }
-            row2col1.setEnabled(false);
-        }
-        if (row == 2 && column == 2) {
-            if (PLAYER_X_TURN) {
-                row2col2.setText(R.string.string_x);
-            } else {
-                row2col2.setText(R.string.string_o);
-            }
-            row2col2.setEnabled(false);
-        }
-        if (row == 2 && column == 3) {
-            if (PLAYER_X_TURN) {
-                row2col3.setText(R.string.string_x);
-            } else {
-                row2col3.setText(R.string.string_o);
-            }
-            row2col3.setEnabled(false);
-        }
-        if (row == 2 && column == 4) {
-            if (PLAYER_X_TURN) {
-                row2col4.setText(R.string.string_x);
-            } else {
-                row2col4.setText(R.string.string_o);
-            }
-            row2col4.setEnabled(false);
-        }
-        if (row == 3 && column == 0) {
-            if (PLAYER_X_TURN) {
-                row3col0.setText(R.string.string_x);
-            } else {
-                row3col0.setText(R.string.string_o);
-            }
-            row3col0.setEnabled(false);
-        }
-        if (row == 3 && column == 1) {
-            if (PLAYER_X_TURN) {
-                row3col1.setText(R.string.string_x);
-            } else {
-                row3col1.setText(R.string.string_o);
-            }
-            row3col1.setEnabled(false);
-        }
-        if (row == 3 && column == 2) {
-            if (PLAYER_X_TURN) {
-                row3col2.setText(R.string.string_x);
-            } else {
-                row3col2.setText(R.string.string_o);
-            }
-            row3col2.setEnabled(false);
-        }
-        if (row == 3 && column == 3) {
-            if (PLAYER_X_TURN) {
-                row3col3.setText(R.string.string_x);
-            } else {
-                row3col3.setText(R.string.string_o);
-            }
-            row3col3.setEnabled(false);
-        }
-        if (row == 3 && column == 4) {
-            if (PLAYER_X_TURN) {
-                row3col4.setText(R.string.string_x);
-            } else {
-                row3col4.setText(R.string.string_o);
-            }
-            row3col4.setEnabled(false);
-        }
-        if (row == 4 && column == 0) {
-            if (PLAYER_X_TURN) {
-                row4col0.setText(R.string.string_x);
-            } else {
-                row4col0.setText(R.string.string_o);
-            }
-            row4col0.setEnabled(false);
-        }
-        if (row == 4 && column == 1) {
-            if (PLAYER_X_TURN) {
-                row4col1.setText(R.string.string_x);
-            } else {
-                row4col1.setText(R.string.string_o);
-            }
-            row4col1.setEnabled(false);
-        }
-        if (row == 4 && column == 2) {
-            if (PLAYER_X_TURN) {
-                row4col2.setText(R.string.string_x);
-            } else {
-                row4col2.setText(R.string.string_o);
-            }
-            row4col2.setEnabled(false);
-        }
-        if (row == 4 && column == 3) {
-            if (PLAYER_X_TURN) {
-                row4col3.setText(R.string.string_x);
-            } else {
-                row4col3.setText(R.string.string_o);
-            }
-            row4col3.setEnabled(false);
-        }
-        if (row == 4 && column == 4) {
-            if (PLAYER_X_TURN) {
-                row4col4.setText(R.string.string_x);
-            } else {
-                row4col4.setText(R.string.string_o);
-            }
-            row4col4.setEnabled(false);
+            setTextOnButtonPlayed(PLAYER_X_TURN, row0col0);
+            disableButton(row0col0);
+        } else if (row == 0 && column == 1) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row0col1);
+            disableButton(row0col1);
+        } else if (row == 0 && column == 2) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row0col2);
+            disableButton(row0col2);
+        } else if (row == 0 && column == 3) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row0col3);
+            disableButton(row0col3);
+        } else if (row == 0 && column == 4) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row0col4);
+            disableButton(row0col4);
+        } else if (row == 1 && column == 0) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row1col0);
+            disableButton(row1col0);
+        } else if (row == 1 && column == 1) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row1col1);
+            disableButton(row1col1);
+        } else if (row == 1 && column == 2) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row1col2);
+            disableButton(row1col2);
+        } else if (row == 1 && column == 3) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row1col3);
+            disableButton(row1col3);
+        } else if (row == 1 && column == 4) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row1col4);
+            disableButton(row1col4);
+        } else if (row == 2 && column == 0) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row2col0);
+            disableButton(row2col0);
+        } else if (row == 2 && column == 1) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row2col1);
+            disableButton(row2col1);
+        } else if (row == 2 && column == 2) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row2col2);
+            disableButton(row2col2);
+        } else if (row == 2 && column == 3) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row2col3);
+            disableButton(row2col3);
+        } else if (row == 2 && column == 4) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row2col4);
+            disableButton(row2col4);
+        } else if (row == 3 && column == 0) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row3col0);
+            disableButton(row3col0);
+        } else if (row == 3 && column == 1) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row3col1);
+            disableButton(row3col1);
+        } else if (row == 3 && column == 2) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row3col2);
+            disableButton(row3col2);
+        } else if (row == 3 && column == 3) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row3col3);
+            disableButton(row3col3);
+        } else if (row == 3 && column == 4) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row3col4);
+            disableButton(row3col4);
+        } else if (row == 4 && column == 0) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row4col0);
+            disableButton(row4col0);
+        } else if (row == 4 && column == 1) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row4col1);
+            disableButton(row4col1);
+        } else if (row == 4 && column == 2) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row4col2);
+            disableButton(row4col2);
+        } else if (row == 4 && column == 3) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row4col3);
+            disableButton(row4col3);
+        } else if (row == 4 && column == 4) {
+            setTextOnButtonPlayed(PLAYER_X_TURN, row4col4);
+            disableButton(row4col4);
         }
         if (PLAYER_X_TURN) {
             board[row][column] = 1;
@@ -634,35 +518,29 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
     }
 
     private void computerPlay(int playerWithTurnNumber) {
-        if (GAME_MODE == EASY_MODE) {
+        if (GAME_MODE == SINGLE_PLAYER_EASY_MODE) {
             playRandom();
-        } else if (GAME_MODE == MEDIUM_MODE || GAME_MODE == IMPOSSIBLE_MODE) {
+        } else if (GAME_MODE == SINGLE_PLAYER_MEDIUM_MODE
+                || GAME_MODE == SINGLE_PLAYER_IMPOSSIBLE_MODE) {
             playMediumOrImpossibleMode(playerWithTurnNumber);
         }
-        numberOfMoves++;
-        boolean thereIsAWinner = isThereAWinner();
-        if (thereIsAWinner) {
+        if (isThereAWinner()) {
             setWinner();
-            return;
-        }
-        if (numberOfMoves == BOARD_SIZE * BOARD_SIZE && !(isThereAWinner())) {
-            playerToMoveTextView.setText(R.string.game_draw);
-            DialogFragment newFragment = new gameDrawDialogFragment();
-            newFragment.show(getSupportFragmentManager(), "gameDraw");
-            return;
-        }
-        if (PLAYER_X_TURN) {
-            playerToMoveTextView.setText(R.string.o_move);
         } else {
-            playerToMoveTextView.setText(R.string.x_move);
+            numberOfMoves++;
+            if (numberOfMoves == BOARD_SIZE * BOARD_SIZE) {
+                gameDraw();
+            } else {
+                indicatePlayerWithTurn(PLAYER_X_TURN);
+                switchTurn();
+            }
         }
-        PLAYER_X_TURN = !PLAYER_X_TURN;
     }
 
     private void playRandom() {
         int iIndex = 0;
         int jIndex = 1;
-        while (!(play(iIndex, jIndex))) {
+        while (!(canPlay(iIndex, jIndex))) {
             // Keep trying until a successful move is played
             iIndex = randomNumberForBoardIndex.nextInt(BOARD_SIZE);
             jIndex = randomNumberForBoardIndex.nextInt(BOARD_SIZE);
@@ -671,16 +549,18 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
 
     private void playMediumOrImpossibleMode(int playerWithTurnNumber) {
         boolean noWinOrBlockMove = true; // Used so that only one module is executed.
-        if (GAME_MODE == IMPOSSIBLE_MODE) {
-            noWinOrBlockMove = winOrBlockMove(playerWithTurnNumber); // Checking for 2/3 win situation.
+        if (GAME_MODE == SINGLE_PLAYER_IMPOSSIBLE_MODE) {
+            noWinOrBlockMove = winOrBlockMove4By4(playerWithTurnNumber); // Checking for 2/3 win situation.
         }
-        if ((GAME_MODE == MEDIUM_MODE || GAME_MODE == IMPOSSIBLE_MODE) && noWinOrBlockMove) {
+        if ((GAME_MODE == SINGLE_PLAYER_MEDIUM_MODE
+                || GAME_MODE == SINGLE_PLAYER_IMPOSSIBLE_MODE)
+                && noWinOrBlockMove) {
             if (numberOfMoves == 0) {
                 playRandom();
                 return;
             } else if (numberOfMoves == 1) {
-                if (!(play(2, 2))) {
-                    // If the square at the center is already played, play any of the 4 squares indicated below
+                if (!(canPlay(2, 2))) {
+                    // If the square at the center is already played, play any of the 4 positions indicated below
                     // (  ) (   ) (   ) (   ) (  )
                     // (  ) (1,1) (   ) (1,3) (  )
                     // (  ) (   ) (   ) (   ) (  )
@@ -698,9 +578,10 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
             } else if (numberOfMoves > 1) {
                 // playerWithTurnNumber: 1 for X and 4 for O
                 if (PLAYER_X_TURN) {
-                    noWinOrBlockMove = winOrBlockMove(4); // Checking for situation where loss may occur.
+                    // Checking for situation where loss may occur.
+                    noWinOrBlockMove = winOrBlockMove4By4(4);
                 } else {
-                    noWinOrBlockMove = winOrBlockMove(1);
+                    noWinOrBlockMove = winOrBlockMove4By4(1);
                 }
             }
         }
@@ -709,21 +590,22 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    boolean winOrBlockMove(int playerWithTurnNumber) {
-        boolean noWinOrBlock3by4Move = true; // Used so that only one module is executed.
-        if (GAME_MODE == IMPOSSIBLE_MODE) {
-            noWinOrBlock3by4Move = winOrBlock3by4Move(playerWithTurnNumber);
-            if ((GAME_MODE == MEDIUM_MODE || GAME_MODE == IMPOSSIBLE_MODE) && noWinOrBlock3by4Move) {
+    boolean winOrBlockMove4By4(int playerWithTurnNumber) {
+        boolean noWinOrBlock3By4Move = true; // Used so that only one module is executed.
+        if (GAME_MODE == SINGLE_PLAYER_MEDIUM_MODE
+                || GAME_MODE == SINGLE_PLAYER_IMPOSSIBLE_MODE) {
+            noWinOrBlock3By4Move = winOrBlock3By4Move(playerWithTurnNumber);
+            if ((GAME_MODE == SINGLE_PLAYER_IMPOSSIBLE_MODE) && noWinOrBlock3By4Move) {
                 for (int i = 0; i < BOARD_SIZE; i++) {
                     for (int j = 1; j < BOARD_SIZE - 1; j++) {
-                        //Checking corresponding mid row for 2/3 situation from top to bottom.
+                        // Checking corresponding mid row for 2/3 situation from top to bottom.
                         // (  ) (0,1) (0,2) (0,3)  (  )
                         // (  ) (   ) (   ) (   )  (  )
                         // (  ) (   ) (   ) (   )  (  )
                         // (  ) (   ) (   ) (   )  (  )
                         // (  ) (   ) (   ) (   )  (  )
                         if (board[i][1] + board[i][2] + board[i][3] == playerWithTurnNumber * 2) {
-                            if (play(i, j)) {   // Play the move.
+                            if (canPlay(i, j)) {   // Play the move.
                                 return false;
                             }
                         }
@@ -734,7 +616,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
                         // (3,0) (  ) (  ) (  )  (  )
                         // (   ) (  ) (  ) (  )  (  )
                         else if (board[1][i] + board[2][i] + board[3][i] == playerWithTurnNumber * 2) {
-                            if (play(j, i)) {
+                            if (canPlay(j, i)) {
                                 return false;
                             }
                         }
@@ -748,7 +630,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
                 // (  ) (   ) (   ) (  )  (  )
                 if (board[1][1] + board[2][2] + board[3][3] == playerWithTurnNumber * 2) {
                     for (int i = 1; i < BOARD_SIZE - 1; i++) {
-                        if (play(i, i)) {
+                        if (canPlay(i, i)) {
                             return false;
                         }
                     }
@@ -761,20 +643,20 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
                 // (  ) (   ) (   ) (  )  (  )
                 else if (board[1][3] + board[2][2] + board[3][1] == playerWithTurnNumber * 2) {
                     for (int i = 1, j = 3; i < BOARD_SIZE - 1; i++, j--) {
-                        if (play(i, j)) {
+                        if (canPlay(i, j)) {
                             return false;
                         }
                     }
                 }
             }
         }
-        if (noWinOrBlock3by4Move) {
+        if (noWinOrBlock3By4Move) {
             return true;
         }
         return false;
     }
 
-    boolean winOrBlock3by4Move(int playerWithTurnNumber) {
+    boolean winOrBlock3By4Move(int playerWithTurnNumber) {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 // Checking left end of row for 3/4 situation from top to bottom
@@ -784,7 +666,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
                 // (   ) (   ) (   ) (   ) (   )
                 // (   ) (   ) (   ) (   ) (   )
                 if (board[i][0] + board[i][1] + board[i][2] + board[i][3] == playerWithTurnNumber * 3) {
-                    if (play(i, j)) {   // Play the move.
+                    if (canPlay(i, j)) {   // Play the move.
                         return false;
                     }
                 }
@@ -796,7 +678,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
                 // (3,0) (  ) (  ) (  ) (  )
                 // (   ) (  ) (  ) (  ) (  )
                 else if (board[0][j] + board[1][j] + board[2][j] + board[3][j] == playerWithTurnNumber * 3) {
-                    if (play(i, j)) {
+                    if (canPlay(i, j)) {
                         return false;
                     }
                 }
@@ -812,7 +694,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
                 // (  ) (   ) (   ) (   ) (   )
                 // (  ) (   ) (   ) (   ) (   )
                 if (board[i][1] + board[i][2] + board[i][3] + board[i][4] == playerWithTurnNumber * 3) {
-                    if (play(i, j + 1)) {   // Play the move.
+                    if (canPlay(i, j + 1)) {   // Play the move.
                         return false;
                     }
                 }
@@ -824,7 +706,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
                 // (3,0) (  ) (  ) (  ) (  )
                 // (4,0) (  ) (  ) (  ) (  )
                 if (board[1][j] + board[2][j] + board[3][j] + board[4][j] == playerWithTurnNumber * 3) {
-                    if (play(i + 1, j)) {
+                    if (canPlay(i + 1, j)) {
                         return false;
                     }
                 }
@@ -839,7 +721,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         // (  ) (   ) (   ) (   ) (   )
         if (board[0][1] + board[1][2] + board[2][3] + board[3][4] == playerWithTurnNumber * 3) {
             for (int i = 0, j = 1; i < BOARD_SIZE - 1; i++, j++) {
-                if (play(i, j)) {
+                if (canPlay(i, j)) {
                     return false;
                 }
             }
@@ -853,7 +735,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         // (   ) (   ) (   ) (   ) (  )
         if (board[0][0] + board[1][1] + board[2][2] + board[3][3] == playerWithTurnNumber * 3) {
             for (int i = 0; i < BOARD_SIZE - 1; i++) {
-                if (play(i, i)) {
+                if (canPlay(i, i)) {
                     return false;
                 }
             }
@@ -866,7 +748,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         //    ) (   ) (   ) (   ) (4,4)
         if (board[1][1] + board[2][2] + board[3][3] + board[4][4] == playerWithTurnNumber * 3) {
             for (int i = 1; i < BOARD_SIZE; i++) {
-                if (play(i, i)) {
+                if (canPlay(i, i)) {
                     return false;
                 }
             }
@@ -879,7 +761,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         // (   ) (   ) (   ) (4,3) (  )
         if (board[1][0] + board[2][1] + board[3][2] + board[4][3] == playerWithTurnNumber * 3) {
             for (int i = 1, j = 0; i < BOARD_SIZE; i++, j++) {
-                if (play(i, j)) {
+                if (canPlay(i, j)) {
                     return false;
                 }
             }
@@ -892,7 +774,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         // (   ) (   ) (   ) (   ) (  )
         if (board[0][3] + board[1][2] + board[2][1] + board[3][0] == playerWithTurnNumber * 3) {
             for (int i = 0, j = 3; i < BOARD_SIZE - 1; i++, j--) {
-                if (play(i, j)) {
+                if (canPlay(i, j)) {
                     return false;
                 }
             }
@@ -905,7 +787,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         // (  ) (   ) (   ) (   ) (   )
         if (board[0][4] + board[1][3] + board[2][2] + board[3][1] == playerWithTurnNumber * 3) {
             for (int i = 0, j = 4; i < BOARD_SIZE - 1; i++, j--) {
-                if (play(i, j)) {
+                if (canPlay(i, j)) {
                     return false;
                 }
             }
@@ -918,7 +800,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         // (4,0) (   ) (   ) (   ) (  )
         else if (board[1][3] + board[2][2] + board[3][1] + board[4][0] == playerWithTurnNumber * 3) {
             for (int i = 1, j = 3; i < BOARD_SIZE; i++, j--) {
-                if (play(i, j)) {
+                if (canPlay(i, j)) {
                     return false;
                 }
             }
@@ -931,7 +813,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         // (  ) (4,1) (   ) (   ) (   )
         if (board[1][4] + board[2][3] + board[3][2] + board[4][1] == playerWithTurnNumber * 3) {
             for (int i = 1, j = 4; i < BOARD_SIZE; i++, j--) {
-                if (play(i, j)) {
+                if (canPlay(i, j)) {
                     return false;
                 }
             }
@@ -939,70 +821,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         return true;
     }
 
-    boolean winOrBlock2by3Move(int playerWithTurnNumber) {
-        // (   ) (0,1) (0,2) (0,3) (   )
-        // (1,0) (   ) (   ) (   ) (1,4)
-        // (2,0) (   ) (   ) (   ) (2,4)
-        // (3,0) (   ) (   ) (   ) (3,4)
-        // (   ) (4,1) (4,2) (4,3) (4,4)
-
-        for (int j = 1; j < BOARD_SIZE - 1; j++) {
-            //Checking corresponding row for 2/3 situation on top row
-            // (  ) (0,1) (0,2) (0,3)  (  )
-            // (  ) (   ) (   ) (   )  (  )
-            // (  ) (   ) (   ) (   )  (  )
-            // (  ) (   ) (   ) (   )  (  )
-            // (  ) (   ) (   ) (   )  (  )
-            if (board[0][1] + board[0][2] + board[0][3] == playerWithTurnNumber * 2) {
-                if (play(0, j)) {   // Play the move.
-                    return false;
-                }
-            }
-        }
-        for (int i = 1; i < BOARD_SIZE - 1; i++) {
-            // Checking corresponding mid column for 2/3 situation on first column
-            // (   ) (  ) (  ) (  )  (  )
-            // (1,0) (  ) (  ) (  )  (  )
-            // (2,0) (  ) (  ) (  )  (  )
-            // (3,0) (  ) (  ) (  )  (  )
-            // (   ) (  ) (  ) (  )  (  )
-            if (board[1][0] + board[2][0] + board[3][0] == playerWithTurnNumber * 2) {
-                if (play(i, 0)) {
-                    return false;
-                }
-            }
-        }
-
-        for (int j = 1; j < BOARD_SIZE - 1; j++) {
-            //Checking corresponding row for 2/3 situation on bottom row
-            // (  ) (   ) (   ) (   )  (  )
-            // (  ) (   ) (   ) (   )  (  )
-            // (  ) (   ) (   ) (   )  (  )
-            // (  ) (   ) (   ) (   )  (  )
-            // (  ) (4,1) (4,2) (4,3)  (  )
-            if (board[4][1] + board[4][2] + board[4][3] == playerWithTurnNumber * 2) {
-                if (play(4, j)) {   // Play the move.
-                    return false;
-                }
-            }
-        }
-        for (int i = 1; i < BOARD_SIZE - 1; i++) {
-            // Checking corresponding mid column for 2/3 situation on last column
-            // (  ) (  ) (  ) (  )  (   )
-            // (  ) (  ) (  ) (  )  (1,4)
-            // (  ) (  ) (  ) (  )  (2,4)
-            // (  ) (  ) (  ) (  )  (3,4)
-            // (  ) (  ) (  ) (  )  (   )
-            if (board[1][4] + board[2][4] + board[3][4] == playerWithTurnNumber * 2) {
-                if (play(i, 4)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    boolean play(int row, int column) {
+    boolean canPlay(int row, int column) {
         // If square hasn't been played yet
         if (board[row][column] == 0) {
             setMoveByPlayerAt(row, column);
@@ -1011,36 +830,36 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
             return false;
     }
 
-    private void enableAllBoxes(boolean value) {
-        row0col0.setEnabled(value);
-        row0col1.setEnabled(value);
-        row0col2.setEnabled(value);
-        row0col3.setEnabled(value);
-        row0col4.setEnabled(value);
+    private void enableAllBoxes(boolean b) {
+        row0col0.setEnabled(b);
+        row0col1.setEnabled(b);
+        row0col2.setEnabled(b);
+        row0col3.setEnabled(b);
+        row0col4.setEnabled(b);
 
-        row1col0.setEnabled(value);
-        row1col1.setEnabled(value);
-        row1col2.setEnabled(value);
-        row1col3.setEnabled(value);
-        row1col4.setEnabled(value);
+        row1col0.setEnabled(b);
+        row1col1.setEnabled(b);
+        row1col2.setEnabled(b);
+        row1col3.setEnabled(b);
+        row1col4.setEnabled(b);
 
-        row2col0.setEnabled(value);
-        row2col1.setEnabled(value);
-        row2col2.setEnabled(value);
-        row2col3.setEnabled(value);
-        row2col4.setEnabled(value);
+        row2col0.setEnabled(b);
+        row2col1.setEnabled(b);
+        row2col2.setEnabled(b);
+        row2col3.setEnabled(b);
+        row2col4.setEnabled(b);
 
-        row3col0.setEnabled(value);
-        row3col1.setEnabled(value);
-        row3col2.setEnabled(value);
-        row3col3.setEnabled(value);
-        row3col4.setEnabled(value);
+        row3col0.setEnabled(b);
+        row3col1.setEnabled(b);
+        row3col2.setEnabled(b);
+        row3col3.setEnabled(b);
+        row3col4.setEnabled(b);
 
-        row4col0.setEnabled(value);
-        row4col1.setEnabled(value);
-        row4col2.setEnabled(value);
-        row4col3.setEnabled(value);
-        row4col4.setEnabled(value);
+        row4col0.setEnabled(b);
+        row4col1.setEnabled(b);
+        row4col2.setEnabled(b);
+        row4col3.setEnabled(b);
+        row4col4.setEnabled(b);
     }
 
     private void resetScoreBoard() {
@@ -1057,19 +876,18 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
     };
 
     private void initGame(int gameMode) {
-        for (int row = 0; row < BOARD_SIZE; row++) {
-            for (int column = 0; column < BOARD_SIZE; column++) {
-                // Fill the board with zeros(0)
-                board[row][column] = 0;
-            }
-        }
+        board = TicTacToeUtils.initBoardWithZeros(BOARD_SIZE);
         PLAYER_X_TURN = true;
         playerXToMoveButton.isSelected();
         playerToMoveTextView.setText(R.string.notice_board);
-        playerXToMoveButton.setEnabled(true);
-        playerOToMoveButton.setEnabled(true);
+        enablePlayerToMoveButtons(true);
         GAME_MODE = gameMode;
         resetBoard();
+    }
+
+    private void enablePlayerToMoveButtons(boolean enableButtons) {
+        playerXToMoveButton.setEnabled(enableButtons);
+        playerOToMoveButton.setEnabled(enableButtons);
     }
 
     private void resetBoard() {
@@ -1109,28 +927,22 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
 
     private View.OnClickListener playerXToMoveButtonListener = new View.OnClickListener() {
         public void onClick(View player_x_to_move) {
-            playerXToMoveButton.setEnabled(false);
-            playerOToMoveButton.setEnabled(false);
+            enablePlayerToMoveButtons(false);
             PLAYER_X_TURN = true;
             playerToMoveTextView.setText(R.string.x_move);
-            if (GAME_MODE == EASY_MODE
-                    || GAME_MODE == MEDIUM_MODE
-                    || GAME_MODE == IMPOSSIBLE_MODE) {
-                computerPlay(PLAYER_X);
+            if (isSinglePlayerMode(GAME_MODE)) {
+                computerPlay(TicTacToeUtils.PLAYER_X_PLAYED_VALUE);
             }
         }
     };
 
     private View.OnClickListener playerOToMoveButtonListener = new View.OnClickListener() {
         public void onClick(View player_o_to_move) {
-            playerXToMoveButton.setEnabled(false);
-            playerOToMoveButton.setEnabled(false);
+            enablePlayerToMoveButtons(false);
             PLAYER_X_TURN = false;
             playerToMoveTextView.setText(R.string.o_move);
-            if (GAME_MODE == EASY_MODE
-                    || GAME_MODE == MEDIUM_MODE
-                    || GAME_MODE == IMPOSSIBLE_MODE) {
-                computerPlay(PLAYER_O);
+            if (isSinglePlayerMode(GAME_MODE)) {
+                computerPlay(TicTacToeUtils.PLAYER_O_PLAYED_VALUE);
             }
         }
     };
@@ -1173,19 +985,19 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
                 switch (position) {
                     case 0:
                         // Easy is clicked
-                        GAME_MODE = EASY_MODE;
+                        GAME_MODE = SINGLE_PLAYER_EASY_MODE;
                         initGame(GAME_MODE);
                         resetScoreBoard();
                         break;
                     case 1:
                         // Medium is clicked
-                        GAME_MODE = MEDIUM_MODE;
+                        GAME_MODE = SINGLE_PLAYER_MEDIUM_MODE;
                         initGame(GAME_MODE);
                         resetScoreBoard();
                         break;
                     case 2:
                         // Impossible is clicked
-                        GAME_MODE = IMPOSSIBLE_MODE;
+                        GAME_MODE = SINGLE_PLAYER_IMPOSSIBLE_MODE;
                         initGame(GAME_MODE);
                         resetScoreBoard();
                         break;
@@ -1204,4 +1016,44 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
 
         }
     };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.how_to_menu:
+                // User chose the "How-to" item, show instructions on how to canPlay the game
+                WebView webView = new WebView(this);
+                webView.loadUrl("file:///android_asset/how_to.html");
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.how_to_dialog_title)
+                        .setView(webView)
+                        .setCancelable(true)
+                        .show();
+                return true;
+            case R.id.license_menu:
+                // User chose the "Licenses" item
+                // Start the Activity used to display a list of all third party licenses in
+                // res/raw/third_party_license_metadata generated by oss licenses gradle plugin.
+                startActivity(new Intent(this, OssLicensesMenuActivity.class));
+                OssLicensesMenuActivity.setActivityTitle(getString(R.string.open_source_license));
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Do nothing
+    }
 }

@@ -11,6 +11,14 @@
         <item name="windowActionBar">false</item>
     </style>
 
+    <!-- ============= -->
+    <!-- Toolbar theme -->
+    <!-- ============= -->
+    <style name="ToolbarTheme" parent="AppTheme">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
+    </style>
+
     <!-- =========== -->
     <!-- Board theme -->
     <!-- =========== -->
@@ -31,6 +39,53 @@
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">56sp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- ================================= -->
+    <!-- Style for 3x3 sw480 board buttons -->
+    <!-- ================================= -->
+    <style name="Button3x3_sw480" parent="Widget.AppCompat.Button">
+        <item name="android:paddingLeft">32dp</item>
+        <item name="android:paddingRight">32dp</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:freezesText">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">80sp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- ================================= -->
+    <!-- Style for 3x3 sw600 board buttons -->
+    <!-- ================================= -->
+    <style name="Button3x3_sw600" parent="Widget.AppCompat.Button">
+        <item name="android:paddingLeft">40dp</item>
+        <item name="android:paddingRight">40dp</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:freezesText">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">96sp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- ================================= -->
+    <!-- Style for 3x3 sw720 board buttons -->
+    <!-- ================================= -->
+    <style name="Button3x3_sw720" parent="Widget.AppCompat.Button">
+        <item name="android:paddingLeft">56dp</item>
+        <item name="android:paddingRight">56dp</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:freezesText">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">104sp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <!-- =========================== -->
@@ -46,6 +101,65 @@
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">32sp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- ================================= -->
+    <!-- Style for 5x5 sw480 board buttons -->
+    <!-- ================================= -->
+    <style name="Button5x5_sw480" parent="Widget.AppCompat.Button">
+        <item name="android:minHeight">32dp</item>
+        <item name="android:minWidth">56dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:freezesText">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">56sp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- ================================= -->
+    <!-- Style for 5x5 sw600 board buttons -->
+    <!-- ================================= -->
+    <style name="Button5x5_sw600" parent="Widget.AppCompat.Button">
+        <item name="android:minHeight">32dp</item>
+        <item name="android:minWidth">56dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">24dp</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:freezesText">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">64sp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- ================================= -->
+    <!-- Style for 5x5 sw720 board buttons -->
+    <!-- ================================= -->
+    <style name="Button5x5_sw720" parent="Widget.AppCompat.Button">
+        <item name="android:minHeight">64dp</item>
+        <item name="android:minWidth">64dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">24dp</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:freezesText">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">96sp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <!-- ======================= -->
@@ -58,6 +172,15 @@
         <item name="android:textSize">12sp</item>
         <item name="android:gravity">center</item>
         <item name="windowNoTitle">true</item>
+    </style>
+
+
+    <!-- ======================= -->
+    <!-- Style for custom dialog -->
+    <!-- ======================= -->
+    <style name="OssLicensesActivity" parent="@style/AppTheme">
+        <item name="windowNoTitle">false</item>
+        <item name="windowActionBar">true</item>
     </style>
 
 </resources>

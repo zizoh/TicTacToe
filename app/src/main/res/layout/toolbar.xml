@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="?attr/actionBarSize"
     android:background="@color/colorPrimary"
     android:elevation="4dp"
     app:titleTextColor="@android:color/white"
-    android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-    app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+    android:theme="@style/ToolbarTheme">
 
+    <!-- TODO: Find backgroundTint alternative for older API levels   -->
     <android.support.v7.widget.AppCompatSpinner
         android:id="@+id/board_size_spinner"
         android:layout_width="wrap_content"
