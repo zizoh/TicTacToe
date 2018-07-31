@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="board_3x3_layout_marginTop">40dp</dimen>
+    <dimen name="board_3x3_layout_marginBottom">40dp</dimen>
+
+    <dimen name="button_3x3_paddingLeft">40dp</dimen>
+    <dimen name="button_3x3_paddingStart">@dimen/button_3x3_paddingLeft</dimen>
+    <dimen name="button_3x3_paddingRight">40dp</dimen>
+    <dimen name="button_3x3_paddingEnd">@dimen/button_3x3_paddingRight</dimen>
+    <dimen name="button_3x3_textSize">96sp</dimen>
+
+    <dimen name="button_5x5_paddingLeft">24dp</dimen>
+    <dimen name="button_5x5_paddingStart">@dimen/button_5x5_paddingLeft</dimen>
+    <dimen name="button_5x5_paddingRight">24dp</dimen>
+    <dimen name="button_5x5_paddingEnd">@dimen/button_5x5_paddingRight</dimen>
+    <dimen name="button_5x5_textSize">32sp</dimen>
+
+    <!-- Layout top dimensions -->
+    <dimen name="layout_top_ll_marginLeft">80dp</dimen>
+    <dimen name="layout_top_ll_marginStart">@dimen/layout_top_ll_marginLeft</dimen>
+    <dimen name="layout_top_ll_marginRight">80dp</dimen>
+    <dimen name="layout_top_ll_marginEnd">@dimen/layout_top_ll_marginRight</dimen>
+    <dimen name="layout_top_ll_marginTop">16dp</dimen>
+    <dimen name="layout_top_tv_textSize">32sp</dimen>
+    <dimen name="layout_top_tv_player_to_move_textSize">24sp</dimen>
+
+    <!-- Reset button dimension -->
+    <dimen name="reset_button_marginTop">60dp</dimen>
+    <dimen name="reset_button_textSize">32sp</dimen>
+
+    <!-- Spinner item textview dimensions -->
+    <dimen name="spinner_tv_textSize">24sp</dimen>
+
+</resources>

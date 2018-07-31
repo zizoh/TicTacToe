@@ -16,8 +16,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="40dp" />
+        android:layout_marginBottom="@dimen/board_3x3_layout_marginBottom"
+        android:layout_marginTop="@dimen/board_3x3_layout_marginTop" />
 
     <include layout="@layout/reset_button" />
 

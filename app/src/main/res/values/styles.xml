@@ -3,20 +3,19 @@
     <!-- ====================== -->
     <!-- Base application theme -->
     <!-- ====================== -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
     </style>
 
     <!-- ============= -->
     <!-- Toolbar theme -->
     <!-- ============= -->
-    <style name="ToolbarTheme" parent="AppTheme">
+    <style name="ToolbarTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <!-- =========== -->
@@ -28,138 +27,42 @@
         <item name="android:orientation">vertical</item>
     </style>
 
+    <!-- ============================== -->
+    <!-- Parent style for board buttons -->
+    <!-- ============================== -->
+    <style name="BoardButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:freezesText">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <!-- =========================== -->
     <!-- Style for 3x3 board buttons -->
     <!-- =========================== -->
-    <style name="Button3x3" parent="Widget.AppCompat.Button">
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:freezesText">true</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">56sp</item>
-        <item name="android:fontFamily">monospace</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <!-- ================================= -->
-    <!-- Style for 3x3 sw480 board buttons -->
-    <!-- ================================= -->
-    <style name="Button3x3_sw480" parent="Widget.AppCompat.Button">
-        <item name="android:paddingLeft">32dp</item>
-        <item name="android:paddingRight">32dp</item>
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:freezesText">true</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">80sp</item>
-        <item name="android:fontFamily">monospace</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <!-- ================================= -->
-    <!-- Style for 3x3 sw600 board buttons -->
-    <!-- ================================= -->
-    <style name="Button3x3_sw600" parent="Widget.AppCompat.Button">
-        <item name="android:paddingLeft">40dp</item>
-        <item name="android:paddingRight">40dp</item>
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:freezesText">true</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">96sp</item>
-        <item name="android:fontFamily">monospace</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <!-- ================================= -->
-    <!-- Style for 3x3 sw720 board buttons -->
-    <!-- ================================= -->
-    <style name="Button3x3_sw720" parent="Widget.AppCompat.Button">
-        <item name="android:paddingLeft">56dp</item>
-        <item name="android:paddingRight">56dp</item>
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:freezesText">true</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">104sp</item>
-        <item name="android:fontFamily">monospace</item>
-        <item name="android:textStyle">bold</item>
+    <style name="Button3x3" parent="BoardButtonStyle">
+        <item name="android:paddingLeft">@dimen/button_3x3_paddingLeft</item>
+        <item name="android:paddingStart">@dimen/button_3x3_paddingStart</item>
+        <item name="android:paddingRight">@dimen/button_3x3_paddingRight</item>
+        <item name="android:paddingEnd">@dimen/button_3x3_paddingEnd</item>
+        <item name="android:textSize">@dimen/button_3x3_textSize</item>
     </style>
 
     <!-- =========================== -->
     <!-- Style for 5x5 board buttons -->
     <!-- =========================== -->
-    <style name="Button5x5" parent="Widget.AppCompat.Button">
-        <item name="android:minHeight">32dp</item>
-        <item name="android:minWidth">56dp</item>
-        <item name="android:paddingTop">4dp</item>
-        <item name="android:paddingBottom">4dp</item>
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:freezesText">true</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">32sp</item>
-        <item name="android:fontFamily">monospace</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <!-- ================================= -->
-    <!-- Style for 5x5 sw480 board buttons -->
-    <!-- ================================= -->
-    <style name="Button5x5_sw480" parent="Widget.AppCompat.Button">
-        <item name="android:minHeight">32dp</item>
-        <item name="android:minWidth">56dp</item>
-        <item name="android:paddingTop">4dp</item>
-        <item name="android:paddingBottom">4dp</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:freezesText">true</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">56sp</item>
-        <item name="android:fontFamily">monospace</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <!-- ================================= -->
-    <!-- Style for 5x5 sw600 board buttons -->
-    <!-- ================================= -->
-    <style name="Button5x5_sw600" parent="Widget.AppCompat.Button">
-        <item name="android:minHeight">32dp</item>
-        <item name="android:minWidth">56dp</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:paddingLeft">24dp</item>
-        <item name="android:paddingRight">24dp</item>
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:freezesText">true</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">64sp</item>
-        <item name="android:fontFamily">monospace</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <!-- ================================= -->
-    <!-- Style for 5x5 sw720 board buttons -->
-    <!-- ================================= -->
-    <style name="Button5x5_sw720" parent="Widget.AppCompat.Button">
-        <item name="android:minHeight">64dp</item>
-        <item name="android:minWidth">64dp</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:paddingLeft">24dp</item>
-        <item name="android:paddingRight">24dp</item>
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:freezesText">true</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">96sp</item>
-        <item name="android:fontFamily">monospace</item>
-        <item name="android:textStyle">bold</item>
+    <style name="Button5x5" parent="BoardButtonStyle">
+        <item name="android:minHeight">@dimen/button_5x5_minHeight</item>
+        <item name="android:minWidth">@dimen/button_5x5_minWidth</item>
+        <item name="android:paddingLeft">@dimen/button_5x5_paddingLeft</item>
+        <item name="android:paddingStart">@dimen/button_5x5_paddingStart</item>
+        <item name="android:paddingRight">@dimen/button_5x5_paddingRight</item>
+        <item name="android:paddingEnd">@dimen/button_5x5_paddingEnd</item>
+        <item name="android:paddingTop">@dimen/button_5x5_paddingTop</item>
+        <item name="android:paddingBottom">@dimen/button_5x5_paddingBottom</item>
+        <item name="android:textSize">@dimen/button_5x5_textSize</item>
     </style>
 
     <!-- ======================= -->
@@ -173,7 +76,6 @@
         <item name="android:gravity">center</item>
         <item name="windowNoTitle">true</item>
     </style>
-
 
     <!-- ======================= -->
     <!-- Style for custom dialog -->

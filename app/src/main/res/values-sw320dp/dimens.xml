@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="board_3x3_layout_marginTop">24dp</dimen>
+    <dimen name="board_3x3_layout_marginBottom">8dp</dimen>
+
+    <dimen name="board_5x5_layout_marginTop">16dp</dimen>
+    <dimen name="board_5x5_layout_marginBottom">16dp</dimen>
+
+    <!-- Layout top dimensions -->
+    <dimen name="layout_top_spinner_layout_marginTop">16dp</dimen>
+    <dimen name="layout_top_spinner_layout_marginBottom">8dp</dimen>
+
+    <dimen name="layout_top_ll_marginLeft">48dp</dimen>
+    <dimen name="layout_top_ll_marginStart">@dimen/layout_top_ll_marginLeft</dimen>
+    <dimen name="layout_top_ll_marginRight">48dp</dimen>
+    <dimen name="layout_top_ll_marginEnd">@dimen/layout_top_ll_marginRight</dimen>
+    <dimen name="layout_top_ll_marginTop">8dp</dimen>
+
+    <dimen name="layout_top_ll_player_to_move_margin">4dp</dimen>
+    <dimen name="layout_top_ll_player_to_move_paddingBottom">4dp</dimen>
+
+    <dimen name="layout_top_tv_player_marginLeft">16dp</dimen>
+    <dimen name="layout_top_tv_player_marginStart">@dimen/layout_top_tv_player_marginLeft</dimen>
+    <dimen name="layout_top_tv_textSize">24sp</dimen>
+    <dimen name="layout_top_tv_player_scoreboard_marginRight">16dp</dimen>
+    <dimen name="layout_top_tv_player_scoreboard_marginEnd">
+        @dimen/layout_top_tv_player_scoreboard_marginRight
+    </dimen>
+
+    <!-- Reset button dimension -->
+    <dimen name="reset_button_marginTop">24dp</dimen>
+    <dimen name="reset_button_paddingLeft">16dp</dimen>
+    <dimen name="reset_button_paddingStart">@dimen/reset_button_paddingLeft</dimen>
+    <dimen name="reset_button_paddingRight">16dp</dimen>
+    <dimen name="reset_button_paddingEnd">@dimen/reset_button_paddingRight</dimen>
+
+    <!-- Spinner item textview dimensions -->
+    <dimen name="spinner_tv_textSize">20sp</dimen>
+</resources>

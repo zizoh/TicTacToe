@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -93,16 +94,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_board_3x3);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
         }
 
         playerXScoreboard = (TextView) findViewById(R.id.player_x_scoreboard);
         playerOScoreboard = (TextView) findViewById(R.id.player_o_scoreboard);
-        playerToMoveTextView = (TextView) findViewById(R.id.player_to_move_textview);
+        playerToMoveTextView = (TextView) findViewById(R.id.player_to_move_tv);
 
         playerXToMoveButton = (LinearLayout) findViewById(R.id.player_x_to_move);
         playerXToMoveButton.isSelected();

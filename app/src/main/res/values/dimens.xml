@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="viewElevation">4dp</dimen>
+
+
+    <dimen name="board_3x3_layout_marginTop">32dp</dimen>
+    <dimen name="board_3x3_layout_marginBottom">40dp</dimen>
+    <dimen name="board_3x3_button_marginBottom">4dp</dimen>
+    <dimen name="board_3x3_button_marginRight">4dp</dimen>
+    <dimen name="board_3x3_button_marginEnd">@dimen/board_3x3_button_marginRight</dimen>
+    <dimen name="board_3x3_button_marginLeft">4dp</dimen>
+    <dimen name="board_3x3_button_marginStart">@dimen/board_3x3_button_marginLeft</dimen>
+
+    <dimen name="button_3x3_paddingLeft">16dp</dimen>
+    <dimen name="button_3x3_paddingStart">@dimen/button_3x3_paddingLeft</dimen>
+    <dimen name="button_3x3_paddingRight">16dp</dimen>
+    <dimen name="button_3x3_paddingEnd">@dimen/button_3x3_paddingRight</dimen>
+    <dimen name="button_3x3_textSize">56sp</dimen>
+
+    <dimen name="board_5x5_layout_marginTop">32dp</dimen>
+    <dimen name="board_5x5_layout_marginBottom">24dp</dimen>
+    <dimen name="board_5x5_button_marginTop">2dp</dimen>
+    <dimen name="board_5x5_button_marginBottom">2dp</dimen>
+    <dimen name="board_5x5_button_marginRight">2dp</dimen>
+    <dimen name="board_5x5_button_marginEnd">@dimen/board_5x5_button_marginRight</dimen>
+    <dimen name="board_5x5_button_marginLeft">2dp</dimen>
+    <dimen name="board_5x5_button_marginStart">@dimen/board_5x5_button_marginLeft</dimen>
+
+    <dimen name="button_5x5_minHeight">32dp</dimen>
+    <dimen name="button_5x5_minWidth">56dp</dimen>
+    <dimen name="button_5x5_paddingTop">4dp</dimen>
+    <dimen name="button_5x5_paddingBottom">4dp</dimen>
+    <dimen name="button_5x5_paddingLeft">16dp</dimen>
+    <dimen name="button_5x5_paddingStart">@dimen/button_5x5_paddingLeft</dimen>
+    <dimen name="button_5x5_paddingRight">16dp</dimen>
+    <dimen name="button_5x5_paddingEnd">@dimen/button_5x5_paddingRight</dimen>
+    <dimen name="button_5x5_textSize">32sp</dimen>
+
+    <!-- Layout top dimensions -->
+    <dimen name="layout_top_spinner_layout_marginTop">16dp</dimen>
+    <dimen name="layout_top_spinner_layout_marginBottom">8dp</dimen>
+
+    <dimen name="layout_top_ll_marginLeft">48dp</dimen>
+    <dimen name="layout_top_ll_marginStart">@dimen/layout_top_ll_marginLeft</dimen>
+    <dimen name="layout_top_ll_marginRight">48dp</dimen>
+    <dimen name="layout_top_ll_marginEnd">@dimen/layout_top_ll_marginRight</dimen>
+    <dimen name="layout_top_ll_marginTop">8dp</dimen>
+
+    <dimen name="layout_top_ll_player_to_move_margin">4dp</dimen>
+    <dimen name="layout_top_ll_player_to_move_paddingBottom">4dp</dimen>
+
+    <dimen name="layout_top_tv_player_marginLeft">16dp</dimen>
+    <dimen name="layout_top_tv_player_marginStart">@dimen/layout_top_tv_player_marginLeft</dimen>
+    <dimen name="layout_top_tv_textSize">24sp</dimen>
+    <dimen name="layout_top_tv_player_scoreboard_marginRight">16dp</dimen>
+    <dimen name="layout_top_tv_player_scoreboard_marginEnd">
+        @dimen/layout_top_tv_player_scoreboard_marginRight
+    </dimen>
+    <dimen name="layout_top_tv_player_to_move_textSize">16sp</dimen>
+
+    <!-- Reset button dimension -->
+    <dimen name="reset_button_marginTop">24dp</dimen>
+    <dimen name="reset_button_paddingLeft">16dp</dimen>
+    <dimen name="reset_button_paddingStart">@dimen/reset_button_paddingLeft</dimen>
+    <dimen name="reset_button_paddingRight">16dp</dimen>
+    <dimen name="reset_button_paddingEnd">@dimen/reset_button_paddingRight</dimen>
+    <dimen name="reset_button_textSize">16sp</dimen>
+
+    <!-- Spinner item textview dimensions -->
+    <dimen name="spinner_tv_textSize">20sp</dimen>
+    <dimen name="spinner_tv_padding">5dp</dimen>
+
+    <!-- Toolbar dimensions -->
+    <dimen name="toolbar_marginTop">0dp</dimen>
+    <dimen name="toolbar_marginBottom">8dp</dimen>
+
+</resources>

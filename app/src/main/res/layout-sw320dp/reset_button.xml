@@ -4,11 +4,16 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:background="@android:color/transparent"
+    android:layout_marginTop="@dimen/reset_button_marginTop"
+    android:background="@android:color/white"
     android:clickable="true"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:elevation="4dp"
+    android:paddingEnd="@dimen/reset_button_paddingEnd"
+    android:paddingLeft="@dimen/reset_button_paddingLeft"
+    android:paddingRight="@dimen/reset_button_paddingRight"
+    android:paddingStart="@dimen/reset_button_paddingStart"
     android:text="@string/restart_game"
     android:textColor="@color/colorPrimaryDark"
+    android:textSize="@dimen/reset_button_textSize"
     android:textStyle="bold" />
+
+

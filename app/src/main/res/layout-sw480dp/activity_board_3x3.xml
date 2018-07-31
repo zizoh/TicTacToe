@@ -5,19 +5,25 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     android:orientation="vertical"
-    tools:context="com.example.android.tictactoe.Board5x5Activity">
+    tools:context="com.example.android.tictactoe.MainActivity">
 
     <include layout="@layout/toolbar" />
 
     <include layout="@layout/layout_top" />
 
-    <include
-        layout="@layout/board_5x5"
+    <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="24dp" />
+        android:layout_height="wrap_content">
+
+        <include
+            layout="@layout/board_3x3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/board_3x3_layout_marginBottom"
+            android:layout_marginTop="@dimen/board_3x3_layout_marginTop" />
+
+    </FrameLayout>
 
     <include layout="@layout/reset_button" />
 

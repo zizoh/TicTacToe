@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="button_3x3_paddingLeft">32dp</dimen>
+    <dimen name="button_3x3_paddingStart">@dimen/button_3x3_paddingLeft</dimen>
+    <dimen name="button_3x3_paddingRight">32dp</dimen>
+    <dimen name="button_3x3_paddingEnd">@dimen/button_3x3_paddingRight</dimen>
+    <dimen name="button_3x3_textSize">80sp</dimen>
+
+    <dimen name="button_5x5_paddingTop">8dp</dimen>
+    <dimen name="button_5x5_paddingBottom">8dp</dimen>
+    <dimen name="button_5x5_textSize">56sp</dimen>
+
+    <!-- Layout top dimensions -->
+    <dimen name="layout_top_tv_textSize">32sp</dimen>
+    <dimen name="layout_top_tv_player_to_move_textSize">24sp</dimen>
+
+    <!-- Reset button dimension -->
+    <dimen name="reset_button_textSize">24sp</dimen>
+
+</resources>

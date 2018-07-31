@@ -19,8 +19,8 @@
         android:layout_marginLeft="@dimen/layout_top_ll_marginLeft"
         android:layout_marginRight="@dimen/layout_top_ll_marginRight"
         android:layout_marginTop="@dimen/layout_top_ll_marginTop"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:baselineAligned="false"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/player_x_to_move"

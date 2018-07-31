@@ -11,7 +11,7 @@
     <string name="open_source_license">Open Source Licenses</string>
 
     <!-- ================ -->
-    <!-- GAMEMODE spinner -->
+    <!-- Game mode spinner -->
     <!-- ================ -->
     <string-array name="level_or_player_type_array">
         <item>Easy</item>
