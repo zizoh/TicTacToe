@@ -12,10 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="keyboardHidden|orientation">
+        <activity android:name=".board3x3.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,10 +22,10 @@
         <activity android:name=".Board5x5Activity" />
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-            android:theme="@style/OssLicensesActivity" />
+            android:theme="@style/OssLicensesActivityStyle" />
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
-            android:theme="@style/OssLicensesActivity" />
+            android:theme="@style/OssLicensesActivityStyle" />
     </application>
 
 </manifest>

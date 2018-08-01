@@ -1,4 +1,4 @@
-package com.example.android.tictactoe;
+package com.example.android.tictactoe.board3x3;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -19,20 +19,23 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.android.tictactoe.Utils.TicTacToeUtils;
+import com.example.android.tictactoe.Board5x5Activity;
+import com.example.android.tictactoe.R;
+import com.example.android.tictactoe.WinOrDrawDialog;
+import com.example.android.tictactoe.utils.TicTacToeUtils;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 
 import java.util.Random;
 
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.PLAYER_O_PLAYED_VALUE;
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.PLAYER_X_PLAYED_VALUE;
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.SINGLE_PLAYER_EASY_MODE;
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE;
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.SINGLE_PLAYER_MEDIUM_MODE;
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.TWO_PLAYER_MODE;
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.disableButton;
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.isSinglePlayerMode;
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.setTextOnButtonPlayed;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.PLAYER_O_PLAYED_VALUE;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.PLAYER_X_PLAYED_VALUE;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.SINGLE_PLAYER_EASY_MODE;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.SINGLE_PLAYER_MEDIUM_MODE;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.TWO_PLAYER_MODE;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.disableButton;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.isSinglePlayerMode;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.setTextOnButtonPlayed;
 
 /**
  * TicTacToe coordinates for each square on 3x3 Board

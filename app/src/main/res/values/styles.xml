@@ -78,11 +78,12 @@
     </style>
 
     <!-- ======================= -->
-    <!-- Style for custom dialog -->
+    <!-- Style for Open Source Licences Activity -->
     <!-- ======================= -->
-    <style name="OssLicensesActivity" parent="@style/AppTheme">
-        <item name="windowNoTitle">false</item>
-        <item name="windowActionBar">true</item>
+    <style name="OssLicensesActivityStyle" parent="@style/Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
 </resources>

@@ -1,4 +1,4 @@
-package com.example.android.tictactoe.Utils;
+package com.example.android.tictactoe.utils;
 
 import android.widget.Button;
 
