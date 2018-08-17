@@ -1,4 +1,4 @@
-package com.example.android.tictactoe.board3x3;
+package com.example.android.tictactoe;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -19,23 +19,20 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.android.tictactoe.Board5x5Activity;
-import com.example.android.tictactoe.R;
-import com.example.android.tictactoe.WinOrDrawDialog;
-import com.example.android.tictactoe.utils.TicTacToeUtils;
+import com.example.android.tictactoe.Utils.TicTacToeUtils;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 
 import java.util.Random;
 
-import static com.example.android.tictactoe.utils.TicTacToeUtils.PLAYER_O_PLAYED_VALUE;
-import static com.example.android.tictactoe.utils.TicTacToeUtils.PLAYER_X_PLAYED_VALUE;
-import static com.example.android.tictactoe.utils.TicTacToeUtils.SINGLE_PLAYER_EASY_MODE;
-import static com.example.android.tictactoe.utils.TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE;
-import static com.example.android.tictactoe.utils.TicTacToeUtils.SINGLE_PLAYER_MEDIUM_MODE;
-import static com.example.android.tictactoe.utils.TicTacToeUtils.TWO_PLAYER_MODE;
-import static com.example.android.tictactoe.utils.TicTacToeUtils.disableButton;
-import static com.example.android.tictactoe.utils.TicTacToeUtils.isSinglePlayerMode;
-import static com.example.android.tictactoe.utils.TicTacToeUtils.setTextOnButtonPlayed;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.PLAYER_O_PLAYED_VALUE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.PLAYER_X_PLAYED_VALUE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.SINGLE_PLAYER_EASY_MODE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.SINGLE_PLAYER_MEDIUM_MODE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.TWO_PLAYER_MODE;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.disableButton;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.isSinglePlayerMode;
+import static com.example.android.tictactoe.Utils.TicTacToeUtils.setTextOnButtonPlayed;
 
 /**
  * TicTacToe coordinates for each square on 3x3 Board
@@ -65,13 +62,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int GAME_MODE = SINGLE_PLAYER_EASY_MODE;
     boolean PLAYER_X_TURN = true;
     Random randomNumberForBoardIndex = new Random();
-
+    int[] oneDimArrayBoard = new int[BOARD_SIZE * BOARD_SIZE];
     private int numberOfMoves = 0;
     private int playerXScore = 0;
     private int playerOScore = 0;
-
-    int[] oneDimArrayBoard = new int[BOARD_SIZE * BOARD_SIZE];
-
     private Button row0col0;
     private Button row0col1;
     private Button row0col2;
@@ -125,6 +119,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
+    private View.OnClickListener resetButtonListener = new View.OnClickListener() {
+        public void onClick(View reset) {
+            initGame(GAME_MODE);
+        }
+    };
+    private View.OnClickListener playerXToMoveButtonListener = new View.OnClickListener() {
+        public void onClick(View player_x_to_move) {
+            enablePlayerToMoveButtons(false);
+            PLAYER_X_TURN = true;
+            playerToMoveTextView.setText(R.string.x_move);
+            if (isSinglePlayerMode(GAME_MODE)) {
+                computerPlay(PLAYER_X_PLAYED_VALUE);
+            }
+        }
+    };
+    private View.OnClickListener playerOToMoveButtonListener = new View.OnClickListener() {
+        public void onClick(View player_o_to_move) {
+            enablePlayerToMoveButtons(false);
+            PLAYER_X_TURN = false;
+            playerToMoveTextView.setText(R.string.o_move);
+            if (isSinglePlayerMode(GAME_MODE)) {
+                computerPlay(PLAYER_O_PLAYED_VALUE);
+            }
         }
     };
 
@@ -544,12 +563,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         playerOScoreboard.setText("-");
     }
 
-    private View.OnClickListener resetButtonListener = new View.OnClickListener() {
-        public void onClick(View reset) {
-            initGame(GAME_MODE);
-        }
-    };
-
     private void initGame(int gameMode) {
         board = TicTacToeUtils.initBoardWithZeros(BOARD_SIZE);
 
@@ -577,28 +590,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         enableAllBoxes(true);
         numberOfMoves = 0;
     }
-
-    private View.OnClickListener playerXToMoveButtonListener = new View.OnClickListener() {
-        public void onClick(View player_x_to_move) {
-            enablePlayerToMoveButtons(false);
-            PLAYER_X_TURN = true;
-            playerToMoveTextView.setText(R.string.x_move);
-            if (isSinglePlayerMode(GAME_MODE)) {
-                computerPlay(PLAYER_X_PLAYED_VALUE);
-            }
-        }
-    };
-
-    private View.OnClickListener playerOToMoveButtonListener = new View.OnClickListener() {
-        public void onClick(View player_o_to_move) {
-            enablePlayerToMoveButtons(false);
-            PLAYER_X_TURN = false;
-            playerToMoveTextView.setText(R.string.o_move);
-            if (isSinglePlayerMode(GAME_MODE)) {
-                computerPlay(PLAYER_O_PLAYED_VALUE);
-            }
-        }
-    };
 
     @Override
     public void onUserInteraction() {
