@@ -19,20 +19,20 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.android.tictactoe.Utils.TicTacToeUtils;
+import com.example.android.tictactoe.utils.TicTacToeUtils;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 
 import java.util.Random;
 
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.PLAYER_O_PLAYED_VALUE;
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.PLAYER_X_PLAYED_VALUE;
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.SINGLE_PLAYER_EASY_MODE;
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE;
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.SINGLE_PLAYER_MEDIUM_MODE;
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.TWO_PLAYER_MODE;
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.disableButton;
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.isSinglePlayerMode;
-import static com.example.android.tictactoe.Utils.TicTacToeUtils.setTextOnButtonPlayed;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.PLAYER_O_PLAYED_VALUE;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.PLAYER_X_PLAYED_VALUE;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.SINGLE_PLAYER_EASY_MODE;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.SINGLE_PLAYER_MEDIUM_MODE;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.TWO_PLAYER_MODE;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.disableButton;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.isSinglePlayerMode;
+import static com.example.android.tictactoe.utils.TicTacToeUtils.setTextOnButtonPlayed;
 
 /**
  * TicTacToe coordinates for each square on 3x3 Board
@@ -48,9 +48,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // Keys to identify the data saved
     static final String STATE_BOARD = "BOARD";
-    static final String PLAYER_X_SCOREBOARD_KEY = "PLAYER_X_SCOREBOARD";
-    static final String PLAYER_O_SCOREBOARD_KEY = "PLAYER_O_SCOREBOARD";
-    static final String PLAYER_TO_MOVE_TEXTVIEW_KEY = "PLAYER_TO_MOVE_TEXTVIEW";
+    static final String STATE_PLAYER_X_SCOREBOARD = "PLAYER_X_SCOREBOARD";
+    static final String STATE_PLAYER_O_SCOREBOARD = "PLAYER_O_SCOREBOARD";
+    static final String STATE_PLAYER_TO_MOVE_TEXTVIEW = "PLAYER_TO_MOVE_TEXTVIEW";
     static final String STATE_GAME_MODE = "GAME_MODE";
     static final String STATE_PLAYER_X_TURN = "PLAYER_X_TURN";
     static final String STATE_NUMBER_OF_MOVES = "NUMBER_OF_MOVES";
@@ -201,9 +201,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             playerXScore = savedInstanceState.getInt(STATE_PLAYER_X_SCORE);
             playerOScore = savedInstanceState.getInt(STATE_PLAYER_O_SCORE);
             GAME_MODE = savedInstanceState.getInt(STATE_GAME_MODE);
-            playerXScoreboard.setText(savedInstanceState.getString(PLAYER_X_SCOREBOARD_KEY));
-            playerOScoreboard.setText(savedInstanceState.getString(PLAYER_O_SCOREBOARD_KEY));
-            playerToMoveTextView.setText(savedInstanceState.getString(PLAYER_TO_MOVE_TEXTVIEW_KEY));
+            playerXScoreboard.setText(savedInstanceState.getString(STATE_PLAYER_X_SCOREBOARD));
+            playerOScoreboard.setText(savedInstanceState.getString(STATE_PLAYER_O_SCOREBOARD));
+            playerToMoveTextView.setText(savedInstanceState.getString(STATE_PLAYER_TO_MOVE_TEXTVIEW));
         }
 
         playerXToMoveButton.setOnClickListener(playerXToMoveButtonListener);
@@ -247,9 +247,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         oneDimArrayBoard = TicTacToeUtils.convertBoardToOneDim(BOARD_SIZE, board);
 
         outState.putIntArray(STATE_BOARD, oneDimArrayBoard);
-        outState.putCharSequence(PLAYER_X_SCOREBOARD_KEY, playerXScoreboard.getText());
-        outState.putCharSequence(PLAYER_O_SCOREBOARD_KEY, playerOScoreboard.getText());
-        outState.putCharSequence(PLAYER_TO_MOVE_TEXTVIEW_KEY, playerToMoveTextView.getText());
+        outState.putCharSequence(STATE_PLAYER_X_SCOREBOARD, playerXScoreboard.getText());
+        outState.putCharSequence(STATE_PLAYER_O_SCOREBOARD, playerOScoreboard.getText());
+        outState.putCharSequence(STATE_PLAYER_TO_MOVE_TEXTVIEW, playerToMoveTextView.getText());
         outState.putInt(STATE_GAME_MODE, GAME_MODE);
         outState.putInt(STATE_NUMBER_OF_MOVES, numberOfMoves);
         outState.putBoolean(STATE_PLAYER_X_TURN, PLAYER_X_TURN);
