@@ -93,18 +93,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private boolean userIsInteracting;
 
+    /*
+     * Listener to handle game mode spinner selection
+     */
+    private AdapterView.OnItemSelectedListener gameModeOnItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (userIsInteracting) {
+                switch (position) {
+                    case 0:
+                        // Easy is selected
+                        GAME_MODE = SINGLE_PLAYER_EASY_MODE;
+                        break;
+                    case 1:
+                        // Medium is selected
+                        GAME_MODE = SINGLE_PLAYER_MEDIUM_MODE;
+                        break;
+                    case 2:
+                        // Impossible is selected
+                        GAME_MODE = SINGLE_PLAYER_IMPOSSIBLE_MODE;
+                        break;
+                    case 3:
+                        // Two Players is selected
+                        GAME_MODE = TWO_PLAYER_MODE;
+                        break;
+                }
+                initGame(GAME_MODE);
+                resetScoreBoard();
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
+
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_board_3x3);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayShowTitleEnabled(false);
-        }
+        setToolbar();
+        hideToolbarTitle();
 
         playerXScoreboard = (TextView) findViewById(R.id.player_x_scoreboard);
         playerOScoreboard = (TextView) findViewById(R.id.player_o_scoreboard);
@@ -126,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         row2col1 = (Button) findViewById(R.id.row2_col1);
         row2col2 = (Button) findViewById(R.id.row2_col2);
 
-        Button resetButton = (Button) findViewById(R.id.reset);
+        Button resetButton = (Button) findViewById(R.id.btn_reset);
 
         row0col0.setOnClickListener(this);
         row0col1.setOnClickListener(this);
@@ -160,6 +191,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         playerOToMoveButton.setOnClickListener(playerOToMoveButtonListener);
         resetButton.setOnClickListener(resetButtonListener);
 
+        setBoardSizeSpinner();
+
+        setGameModeSpinner();
+    }
+
+    private void setToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    private void hideToolbarTitle() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
+    }
+
+    private void setBoardSizeSpinner() {
         Spinner spinnerBoard3x3 = (Spinner) findViewById(R.id.board_size_spinner);
         spinnerBoard3x3.setOnItemSelectedListener(this);
         // Create an ArrayAdapter using the string array defined and spinner_item.xml
@@ -169,16 +218,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         adapterBoardSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinnerBoard3x3.setAdapter(adapterBoardSpinner);
-
-        Spinner spinnerGameMode = (Spinner) findViewById(R.id.spinner);
-        spinnerGameMode.setOnItemSelectedListener(gameModeOnItemSelectedListener);
-        // Create an ArrayAdapter using the string array defined and spinner_item.xml
-        ArrayAdapter<CharSequence> adapterGameMode = ArrayAdapter.createFromResource(this,
-                R.array.level_or_player_type_array, R.layout.spinner_item);
-        // Layout to use when the list of choices appears
-        adapterGameMode.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinnerGameMode.setAdapter(adapterGameMode);
     }
 
     @Override
@@ -272,9 +311,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         playerOToMoveButton.setEnabled(enableButtons);
     }
 
+    private void setGameModeSpinner() {
+        Spinner spinnerGameMode = (Spinner) findViewById(R.id.spinner);
+        spinnerGameMode.setOnItemSelectedListener(gameModeOnItemSelectedListener);
+        // Create an ArrayAdapter using the string array defined and spinner_item.xml
+        ArrayAdapter<CharSequence> adapterGameMode = ArrayAdapter.createFromResource(this,
+                R.array.level_or_player_type_array, R.layout.spinner_item);
+        // Layout to use when the list of choices appears
+        adapterGameMode.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinnerGameMode.setAdapter(adapterGameMode);
+    }
+
     /*
-    * Get the board value for position (i,j)
-    */
+     * Get the board value for position (i,j)
+     */
     private int getBoardValue(int i, int j) {
         if (i < 0 || i >= BOARD_SIZE) {
             return TicTacToeUtils.NON_PLAYED_VALUE;
@@ -283,36 +334,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return TicTacToeUtils.NON_PLAYED_VALUE;
         }
         return board[i][j];
-    }
-
-    /*
-    * Returns true if the last canPlay was a win
-    */
-    private boolean isThereAWinner() {
-        int token;
-        if (PLAYER_X_TURN) {
-            token = 1;
-        } else {
-            token = 4;
-        }
-        final int DI[] = {-1, 0, 1, 1};
-        final int DJ[] = {1, 1, 1, 0};
-        for (int i = 0; i < BOARD_SIZE; i++)
-            for (int j = 0; j < BOARD_SIZE; j++) {
-
-                // Skip if the token in board[i][j] is not equal to current token
-                if (board[i][j] != token) continue;
-                for (int k = 0; k < 4; k++) {
-                    int count = 0;
-                    while (getBoardValue(i + DI[k] * count, j + DJ[k] * count) == token) {
-                        count++;
-                        if (count == 3) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        return false;
     }
 
     private void setWinner() {
@@ -605,57 +626,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /*
-     * Listener to handle game mode spinner selection
+     * Returns true if the last canPlay was a win
      */
-    private AdapterView.OnItemSelectedListener gameModeOnItemSelectedListener = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if (userIsInteracting) {
-                switch (position) {
-                    case 0:
-                        // Easy is clicked
-                        GAME_MODE = SINGLE_PLAYER_EASY_MODE;
-                        initGame(GAME_MODE);
-                        resetScoreBoard();
-                        break;
-                    case 1:
-                        // Medium is clicked
-                        GAME_MODE = SINGLE_PLAYER_MEDIUM_MODE;
-                        initGame(GAME_MODE);
-                        resetScoreBoard();
-                        break;
-                    case 2:
-                        // Impossible is clicked
-                        GAME_MODE = SINGLE_PLAYER_IMPOSSIBLE_MODE;
-                        initGame(GAME_MODE);
-                        resetScoreBoard();
-                        break;
-                    case 3:
-                        // Two Players is clicked
-                        GAME_MODE = TWO_PLAYER_MODE;
-                        initGame(GAME_MODE);
-                        resetScoreBoard();
-                        break;
+    private boolean isThereAWinner() {
+        int token;
+        if (PLAYER_X_TURN) {
+            token = 1;
+        } else {
+            token = 4;
+        }
+        final int DI[] = {-1, 0, 1, 1};
+        final int DJ[] = {1, 1, 1, 0};
+        for (int i = 0; i < BOARD_SIZE; i++)
+            for (int j = 0; j < BOARD_SIZE; j++) {
+
+                // Skip if the token in board[i][j] is not equal to current token
+                if (board[i][j] != token) continue;
+                for (int k = 0; k < 4; k++) {
+                    int count = 0;
+                    while (getBoardValue(i + DI[k] * count, j + DJ[k] * count) == token) {
+                        count++;
+                        if (count == 3) {
+                            return true;
+                        }
+                    }
                 }
             }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
-    };
+        return false;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.how_to_menu:
-                WebView webView = new WebView(this);
-                webView.loadUrl("file:///android_asset/how_to.html");
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.how_to_dialog_title)
-                        .setView(webView)
-                        .setCancelable(true)
-                        .show();
+                createHowToWebView();
                 return true;
             case R.id.license_menu:
                 startActivity(new Intent(this, OssLicensesMenuActivity.class));
@@ -664,6 +668,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void createHowToWebView() {
+        WebView webView = new WebView(this);
+        webView.loadUrl("file:///android_asset/how_to.html");
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.how_to_dialog_title)
+                .setView(webView)
+                .setCancelable(true)
+                .show();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

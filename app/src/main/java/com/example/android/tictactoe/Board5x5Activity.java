@@ -111,18 +111,46 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
 
     private boolean userIsInteracting;
 
+    /*
+     * Listener to handle game mode spinner selection
+     */
+    private AdapterView.OnItemSelectedListener gameModeOnItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (userIsInteracting) {
+                switch (position) {
+                    case 0:
+                        GAME_MODE = SINGLE_PLAYER_EASY_MODE;
+                        break;
+                    case 1:
+                        GAME_MODE = SINGLE_PLAYER_MEDIUM_MODE;
+                        break;
+                    case 2:
+                        GAME_MODE = SINGLE_PLAYER_IMPOSSIBLE_MODE;
+                        break;
+                    case 3:
+                        GAME_MODE = TWO_PLAYER_MODE;
+                        break;
+                }
+                initGame(GAME_MODE);
+                resetScoreBoard();
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_board_5x5);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayShowTitleEnabled(false);
-        }
+        setToolbar();
+        hideToolbarTitle();
 
         playerXScoreboard = (TextView) findViewById(R.id.player_x_scoreboard);
         playerOScoreboard = (TextView) findViewById(R.id.player_o_scoreboard);
@@ -162,7 +190,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         row4col3 = (Button) findViewById(R.id.row4_col3);
         row4col4 = (Button) findViewById(R.id.row4_col4);
 
-        Button resetButton = (Button) findViewById(R.id.reset);
+        Button resetButton = (Button) findViewById(R.id.btn_reset);
 
         row0col0.setOnClickListener(this);
         row0col1.setOnClickListener(this);
@@ -216,6 +244,24 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
             playerToMoveTextView.setText(savedInstanceState.getString(PLAYER_TO_MOVE_TEXTVIEW_KEY));
         }
 
+        setBoardSizeSpinner();
+
+        setGameModeSpinner();
+    }
+
+    private void setToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    private void hideToolbarTitle() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
+    }
+
+    private void setBoardSizeSpinner() {
         Spinner spinnerBoard5x5 = (Spinner) findViewById(R.id.board_size_spinner);
         spinnerBoard5x5.setOnItemSelectedListener(this);
         // Create an ArrayAdapter using the string array defined and spinner_item.xml
@@ -225,7 +271,9 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         adapterBoardSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinnerBoard5x5.setAdapter(adapterBoardSpinner);
+    }
 
+    private void setGameModeSpinner() {
         Spinner spinnerGameMode = (Spinner) findViewById(R.id.spinner);
 
         spinnerGameMode.setOnItemSelectedListener(gameModeOnItemSelectedListener);
@@ -236,27 +284,6 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         adapterGameMode.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinnerGameMode.setAdapter(adapterGameMode);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-
-        if (null != board){
-          oneDimArrayOfBoard = TicTacToeUtils.convertBoardToOneDim(BOARD_SIZE, board);
-        }
-
-        outState.putIntArray(STATE_BOARD, oneDimArrayOfBoard);
-        outState.putCharSequence(PLAYER_X_SCOREBOARD_KEY, playerXScoreboard.getText());
-        outState.putCharSequence(PLAYER_O_SCOREBOARD_KEY, playerOScoreboard.getText());
-        outState.putCharSequence(PLAYER_TO_MOVE_TEXTVIEW_KEY, playerToMoveTextView.getText());
-        outState.putInt(STATE_GAME_MODE, GAME_MODE);
-        outState.putInt(STATE_NUMBER_OF_MOVES, numberOfMoves);
-        outState.putBoolean(STATE_PLAYER_X_TURN, PLAYER_X_TURN);
-        outState.putInt(STATE_PLAYER_X_SCORE, playerXScore);
-        outState.putInt(STATE_PLAYER_O_SCORE, playerOScore);
-
-        // Call to superclass so it can save the view hierarchy state
-        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -957,9 +984,34 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         userIsInteracting = true;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        if (null != board) {
+            oneDimArrayOfBoard = TicTacToeUtils.convertBoardToOneDim(BOARD_SIZE, board);
+        }
+
+        outState.putIntArray(STATE_BOARD, oneDimArrayOfBoard);
+        outState.putCharSequence(PLAYER_X_SCOREBOARD_KEY, playerXScoreboard.getText());
+        outState.putCharSequence(PLAYER_O_SCOREBOARD_KEY, playerOScoreboard.getText());
+        outState.putCharSequence(PLAYER_TO_MOVE_TEXTVIEW_KEY, playerToMoveTextView.getText());
+        outState.putInt(STATE_GAME_MODE, GAME_MODE);
+        outState.putInt(STATE_NUMBER_OF_MOVES, numberOfMoves);
+        outState.putBoolean(STATE_PLAYER_X_TURN, PLAYER_X_TURN);
+        outState.putInt(STATE_PLAYER_X_SCORE, playerXScore);
+        outState.putInt(STATE_PLAYER_O_SCORE, playerOScore);
+
+        // Call to superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(outState);
+    }
+
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
+    }
+
     /*
-    * Method to handle board size spinner selection
-    */
+     * Method to handle board size spinner selection
+     */
     public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
         if (userIsInteracting) {
             switch (position) {
@@ -975,82 +1027,33 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    public void onNothingSelected(AdapterView<?> parent) {
-        // Another interface callback
-    }
-
-    /*
-    * Listener to handle game mode spinner selection
-    */
-    private AdapterView.OnItemSelectedListener gameModeOnItemSelectedListener = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if (userIsInteracting) {
-                switch (position) {
-                    case 0:
-                        // Easy is clicked
-                        GAME_MODE = SINGLE_PLAYER_EASY_MODE;
-                        initGame(GAME_MODE);
-                        resetScoreBoard();
-                        break;
-                    case 1:
-                        // Medium is clicked
-                        GAME_MODE = SINGLE_PLAYER_MEDIUM_MODE;
-                        initGame(GAME_MODE);
-                        resetScoreBoard();
-                        break;
-                    case 2:
-                        // Impossible is clicked
-                        GAME_MODE = SINGLE_PLAYER_IMPOSSIBLE_MODE;
-                        initGame(GAME_MODE);
-                        resetScoreBoard();
-                        break;
-                    case 3:
-                        // Two Players is clicked
-                        GAME_MODE = TWO_PLAYER_MODE;
-                        initGame(GAME_MODE);
-                        resetScoreBoard();
-                        break;
-                }
-            }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-
-        }
-    };
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.how_to_menu:
-                // User chose the "How-to" item, show instructions on how to canPlay the game
-                WebView webView = new WebView(this);
-                webView.loadUrl("file:///android_asset/how_to.html");
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.how_to_dialog_title)
-                        .setView(webView)
-                        .setCancelable(true)
-                        .show();
+                createHowToWebView();
                 return true;
             case R.id.license_menu:
-                // User chose the "Licenses" item
-                // Start the Activity used to display a list of all third party licenses in
-                // res/raw/third_party_license_metadata generated by oss licenses gradle plugin.
                 startActivity(new Intent(this, OssLicensesMenuActivity.class));
                 OssLicensesMenuActivity.setActivityTitle(getString(R.string.open_source_license));
                 return true;
-
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }
     }
 
-    public boolean onCreateOptionsMenu(Menu menu){
+    private void createHowToWebView() {
+        WebView webView = new WebView(this);
+        webView.loadUrl("file:///android_asset/how_to.html");
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.how_to_dialog_title)
+                .setView(webView)
+                .setCancelable(true)
+                .show();
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
