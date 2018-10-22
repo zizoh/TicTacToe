@@ -24,6 +24,10 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 
 import java.util.Random;
 
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static com.example.android.tictactoe.utils.TicTacToeUtils.PLAYER_O_PLAYED_VALUE;
 import static com.example.android.tictactoe.utils.TicTacToeUtils.PLAYER_X_PLAYED_VALUE;
 import static com.example.android.tictactoe.utils.TicTacToeUtils.SINGLE_PLAYER_EASY_MODE;
@@ -66,24 +70,65 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int numberOfMoves = 0;
     private int playerXScore = 0;
     private int playerOScore = 0;
-    private Button row0col0;
-    private Button row0col1;
-    private Button row0col2;
 
-    private Button row1col0;
-    private Button row1col1;
-    private Button row1col2;
+    @BindView(R.id.player_x_scoreboard)
+    TextView playerXScoreboard;
+    @BindView(R.id.player_o_scoreboard)
+    TextView playerOScoreboard;
+    @BindView(R.id.player_to_move_tv)
+    TextView playerToMoveTextView;
 
-    private Button row2col0;
-    private Button row2col1;
-    private Button row2col2;
+    @BindView(R.id.player_x_to_move)
+    LinearLayout playerXToMoveButton;
+    @BindView(R.id.player_o_to_move)
+    LinearLayout playerOToMoveButton;
 
-    private TextView playerXScoreboard;
-    private TextView playerOScoreboard;
-    private TextView playerToMoveTextView;
+    @BindView(R.id.row0_col0)
+    Button row0col0;
+    @BindView(R.id.row0_col1)
+    Button row0col1;
+    @BindView(R.id.row0_col2)
+    Button row0col2;
+    @BindView(R.id.row1_col0)
+    Button row1col0;
+    @BindView(R.id.row1_col1)
+    Button row1col1;
+    @BindView(R.id.row1_col2)
+    Button row1col2;
+    @BindView(R.id.row2_col0)
+    Button row2col0;
+    @BindView(R.id.row2_col1)
+    Button row2col1;
+    @BindView(R.id.row2_col2)
+    Button row2col2;
 
-    private LinearLayout playerXToMoveButton;
-    private LinearLayout playerOToMoveButton;
+    @BindView(R.id.btn_reset)
+    Button resetButton;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.board_size_spinner)
+    Spinner spinnerBoard3x3;
+    @BindView(R.id.spinner)
+    Spinner spinnerGameMode;
+
+    @BindString(R.string.x_move)
+    String stringXMove;
+    @BindString(R.string.o_move)
+    String stringOMove;
+    @BindString(R.string.game_over)
+    String stringGameOver;
+    @BindString(R.string.player_x_wins)
+    String stringPlayerXWins;
+    @BindString(R.string.player_o_wins)
+    String stringPlayerOWins;
+    @BindString(R.string.game_draw)
+    String stringGameDraw;
+    @BindString(R.string.open_source_license_title)
+    String openSourceLicenseTitle;
+    @BindString(R.string.how_to_dialog_title)
+    String howToDialogTitle;
+    @BindString(R.string.notice_board)
+    String stringNoticeBoard;
 
     private boolean userIsInteracting;
 
@@ -130,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void onClick(View player_x_to_move) {
             enablePlayerToMoveButtons(false);
             PLAYER_X_TURN = true;
-            playerToMoveTextView.setText(R.string.x_move);
+            playerToMoveTextView.setText(stringXMove);
             if (isSinglePlayerMode(GAME_MODE)) {
                 computerPlay(PLAYER_X_PLAYED_VALUE);
             }
@@ -140,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void onClick(View player_o_to_move) {
             enablePlayerToMoveButtons(false);
             PLAYER_X_TURN = false;
-            playerToMoveTextView.setText(R.string.o_move);
+            playerToMoveTextView.setText(stringOMove);
             if (isSinglePlayerMode(GAME_MODE)) {
                 computerPlay(PLAYER_O_PLAYED_VALUE);
             }
@@ -153,30 +198,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setContentView(R.layout.activity_board_3x3);
 
+        // Bind the views
+        ButterKnife.bind(this);
+
         setToolbar();
         hideToolbarTitle();
 
-        playerXScoreboard = (TextView) findViewById(R.id.player_x_scoreboard);
-        playerOScoreboard = (TextView) findViewById(R.id.player_o_scoreboard);
-        playerToMoveTextView = (TextView) findViewById(R.id.player_to_move_tv);
-
-        playerXToMoveButton = (LinearLayout) findViewById(R.id.player_x_to_move);
         playerXToMoveButton.isSelected();
-        playerOToMoveButton = (LinearLayout) findViewById(R.id.player_o_to_move);
-
-        row0col0 = (Button) findViewById(R.id.row0_col0);
-        row0col1 = (Button) findViewById(R.id.row0_col1);
-        row0col2 = (Button) findViewById(R.id.row0_col2);
-
-        row1col0 = (Button) findViewById(R.id.row1_col0);
-        row1col1 = (Button) findViewById(R.id.row1_col1);
-        row1col2 = (Button) findViewById(R.id.row1_col2);
-
-        row2col0 = (Button) findViewById(R.id.row2_col0);
-        row2col1 = (Button) findViewById(R.id.row2_col1);
-        row2col2 = (Button) findViewById(R.id.row2_col2);
-
-        Button resetButton = (Button) findViewById(R.id.btn_reset);
 
         row0col0.setOnClickListener(this);
         row0col1.setOnClickListener(this);
@@ -216,7 +244,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
 
@@ -228,7 +255,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setBoardSizeSpinner() {
-        Spinner spinnerBoard3x3 = (Spinner) findViewById(R.id.board_size_spinner);
         spinnerBoard3x3.setOnItemSelectedListener(this);
         // Create an ArrayAdapter using the string array defined and spinner_item.xml
         ArrayAdapter<CharSequence> adapterBoardSpinner = ArrayAdapter.createFromResource(this,
@@ -319,9 +345,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void indicatePlayerWithTurn(Boolean playerWithTurn) {
         if (playerWithTurn) {
-            playerToMoveTextView.setText(R.string.o_move);
+            playerToMoveTextView.setText(stringOMove);
         } else {
-            playerToMoveTextView.setText(R.string.x_move);
+            playerToMoveTextView.setText(stringXMove);
         }
     }
 
@@ -331,7 +357,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setGameModeSpinner() {
-        Spinner spinnerGameMode = (Spinner) findViewById(R.id.spinner);
         spinnerGameMode.setOnItemSelectedListener(gameModeOnItemSelectedListener);
         // Create an ArrayAdapter using the string array defined and spinner_item.xml
         ArrayAdapter<CharSequence> adapterGameMode = ArrayAdapter.createFromResource(this,
@@ -357,15 +382,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setWinner() {
         enableAllBoxes(false);
-        playerToMoveTextView.setText(R.string.game_over);
+        playerToMoveTextView.setText(stringGameOver);
         if (PLAYER_X_TURN) {
             playerXScore++;
             playerXScoreboard.setText(String.valueOf(playerXScore));
-            showWinOrDrawDialog(getString(R.string.player_x_wins));
+            showWinOrDrawDialog(stringPlayerXWins);
         } else {
             playerOScore++;
             playerOScoreboard.setText(String.valueOf(playerOScore));
-            showWinOrDrawDialog(getString(R.string.player_o_wins));
+            showWinOrDrawDialog(stringPlayerOWins);
         }
     }
 
@@ -436,8 +461,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void gameDraw() {
-        playerToMoveTextView.setText(R.string.game_draw);
-        showWinOrDrawDialog(getString(R.string.game_draw));
+        playerToMoveTextView.setText(stringGameDraw);
+        showWinOrDrawDialog(stringGameDraw);
     }
 
     private void playRandom() {
@@ -456,7 +481,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             noWinOrBlock = winOrBlockMove(playerWithTurnNumber); // Checking for 2/3 win situation.
             if (!noWinOrBlock) {
                 enableAllBoxes(false);
-                playerToMoveTextView.setText(R.string.game_over);
+                playerToMoveTextView.setText(stringGameOver);
                 return;
             }
         }
@@ -568,7 +593,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         PLAYER_X_TURN = true;
         playerXToMoveButton.isSelected();
-        playerToMoveTextView.setText(R.string.notice_board);
+        playerToMoveTextView.setText(stringNoticeBoard);
         enablePlayerToMoveButtons(true);
         GAME_MODE = gameMode;
         resetBoard();
@@ -654,7 +679,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return true;
             case R.id.license_menu:
                 startActivity(new Intent(this, OssLicensesMenuActivity.class));
-                OssLicensesMenuActivity.setActivityTitle(getString(R.string.open_source_license));
+                OssLicensesMenuActivity.setActivityTitle(openSourceLicenseTitle);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -665,7 +690,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         WebView webView = new WebView(this);
         webView.loadUrl("file:///android_asset/how_to.html");
         new AlertDialog.Builder(this)
-                .setTitle(R.string.how_to_dialog_title)
+                .setTitle(howToDialogTitle)
                 .setView(webView)
                 .setCancelable(true)
                 .show();

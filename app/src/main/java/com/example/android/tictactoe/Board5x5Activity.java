@@ -24,6 +24,10 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 
 import java.util.Random;
 
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static com.example.android.tictactoe.utils.TicTacToeUtils.PLAYER_O_PLAYED_VALUE;
 import static com.example.android.tictactoe.utils.TicTacToeUtils.PLAYER_X_PLAYED_VALUE;
 import static com.example.android.tictactoe.utils.TicTacToeUtils.SINGLE_PLAYER_EASY_MODE;
@@ -71,42 +75,96 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
 
     int[] oneDimArrayOfBoard = new int[BOARD_SIZE * BOARD_SIZE];
 
-    private Button row0col0;
-    private Button row0col1;
-    private Button row0col2;
-    private Button row0col3;
-    private Button row0col4;
+    @BindView(R.id.player_x_scoreboard)
+    TextView playerXScoreboard;
+    @BindView(R.id.player_o_scoreboard)
+    TextView playerOScoreboard;
+    @BindView(R.id.player_to_move_tv)
+    TextView playerToMoveTextView;
 
-    private Button row1col0;
-    private Button row1col1;
-    private Button row1col2;
-    private Button row1col3;
-    private Button row1col4;
+    @BindView(R.id.player_x_to_move)
+    LinearLayout playerXToMoveButton;
+    @BindView(R.id.player_o_to_move)
+    LinearLayout playerOToMoveButton;
 
-    private Button row2col0;
-    private Button row2col1;
-    private Button row2col2;
-    private Button row2col3;
-    private Button row2col4;
+    @BindView(R.id.row0_col0)
+    Button row0col0;
+    @BindView(R.id.row0_col1)
+    Button row0col1;
+    @BindView(R.id.row0_col2)
+    Button row0col2;
+    @BindView(R.id.row0_col3)
+    Button row0col3;
+    @BindView(R.id.row0_col4)
+    Button row0col4;
+    @BindView(R.id.row1_col0)
+    Button row1col0;
+    @BindView(R.id.row1_col1)
+    Button row1col1;
+    @BindView(R.id.row1_col2)
+    Button row1col2;
+    @BindView(R.id.row1_col3)
+    Button row1col3;
+    @BindView(R.id.row1_col4)
+    Button row1col4;
+    @BindView(R.id.row2_col0)
+    Button row2col0;
+    @BindView(R.id.row2_col1)
+    Button row2col1;
+    @BindView(R.id.row2_col2)
+    Button row2col2;
+    @BindView(R.id.row2_col3)
+    Button row2col3;
+    @BindView(R.id.row2_col4)
+    Button row2col4;
+    @BindView(R.id.row3_col0)
+    Button row3col0;
+    @BindView(R.id.row3_col1)
+    Button row3col1;
+    @BindView(R.id.row3_col2)
+    Button row3col2;
+    @BindView(R.id.row3_col3)
+    Button row3col3;
+    @BindView(R.id.row3_col4)
+    Button row3col4;
+    @BindView(R.id.row4_col0)
+    Button row4col0;
+    @BindView(R.id.row4_col1)
+    Button row4col1;
+    @BindView(R.id.row4_col2)
+    Button row4col2;
+    @BindView(R.id.row4_col3)
+    Button row4col3;
+    @BindView(R.id.row4_col4)
+    Button row4col4;
 
-    private Button row3col0;
-    private Button row3col1;
-    private Button row3col2;
-    private Button row3col3;
-    private Button row3col4;
+    @BindView(R.id.btn_reset)
+    Button resetButton;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.board_size_spinner)
+    Spinner spinnerBoard5x5;
+    @BindView(R.id.spinner)
+    Spinner spinnerGameMode;
 
-    private Button row4col0;
-    private Button row4col1;
-    private Button row4col2;
-    private Button row4col3;
-    private Button row4col4;
-
-    private TextView playerXScoreboard;
-    private TextView playerOScoreboard;
-    private TextView playerToMoveTextView;
-
-    private LinearLayout playerXToMoveButton;
-    private LinearLayout playerOToMoveButton;
+    @BindString(R.string.x_move)
+    String stringXMove;
+    @BindString(R.string.o_move)
+    String stringOMove;
+    @BindString(R.string.game_over)
+    String stringGameOver;
+    @BindString(R.string.player_x_wins)
+    String stringPlayerXWins;
+    @BindString(R.string.player_o_wins)
+    String stringPlayerOWins;
+    @BindString(R.string.game_draw)
+    String stringGameDraw;
+    @BindString(R.string.open_source_license_title)
+    String openSourceLicenseTitle;
+    @BindString(R.string.how_to_dialog_title)
+    String howToDialogTitle;
+    @BindString(R.string.notice_board)
+    String stringNoticeBoard;
 
     private boolean userIsInteracting;
 
@@ -141,115 +199,18 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
 
         }
     };
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_board_5x5);
-
-        setToolbar();
-        hideToolbarTitle();
-
-        playerXScoreboard = (TextView) findViewById(R.id.player_x_scoreboard);
-        playerOScoreboard = (TextView) findViewById(R.id.player_o_scoreboard);
-        playerToMoveTextView = (TextView) findViewById(R.id.player_to_move_tv);
-
-        playerXToMoveButton = (LinearLayout) findViewById(R.id.player_x_to_move);
-        playerXToMoveButton.isSelected();
-        playerOToMoveButton = (LinearLayout) findViewById(R.id.player_o_to_move);
-
-        row0col0 = (Button) findViewById(R.id.row0_col0);
-        row0col1 = (Button) findViewById(R.id.row0_col1);
-        row0col2 = (Button) findViewById(R.id.row0_col2);
-        row0col3 = (Button) findViewById(R.id.row0_col3);
-        row0col4 = (Button) findViewById(R.id.row0_col4);
-
-        row1col0 = (Button) findViewById(R.id.row1_col0);
-        row1col1 = (Button) findViewById(R.id.row1_col1);
-        row1col2 = (Button) findViewById(R.id.row1_col2);
-        row1col3 = (Button) findViewById(R.id.row1_col3);
-        row1col4 = (Button) findViewById(R.id.row1_col4);
-
-        row2col0 = (Button) findViewById(R.id.row2_col0);
-        row2col1 = (Button) findViewById(R.id.row2_col1);
-        row2col2 = (Button) findViewById(R.id.row2_col2);
-        row2col3 = (Button) findViewById(R.id.row2_col3);
-        row2col4 = (Button) findViewById(R.id.row2_col4);
-
-        row3col0 = (Button) findViewById(R.id.row3_col0);
-        row3col1 = (Button) findViewById(R.id.row3_col1);
-        row3col2 = (Button) findViewById(R.id.row3_col2);
-        row3col3 = (Button) findViewById(R.id.row3_col3);
-        row3col4 = (Button) findViewById(R.id.row3_col4);
-
-        row4col0 = (Button) findViewById(R.id.row4_col0);
-        row4col1 = (Button) findViewById(R.id.row4_col1);
-        row4col2 = (Button) findViewById(R.id.row4_col2);
-        row4col3 = (Button) findViewById(R.id.row4_col3);
-        row4col4 = (Button) findViewById(R.id.row4_col4);
-
-        Button resetButton = (Button) findViewById(R.id.btn_reset);
-
-        row0col0.setOnClickListener(this);
-        row0col1.setOnClickListener(this);
-        row0col2.setOnClickListener(this);
-        row0col3.setOnClickListener(this);
-        row0col4.setOnClickListener(this);
-
-        row1col0.setOnClickListener(this);
-        row1col1.setOnClickListener(this);
-        row1col2.setOnClickListener(this);
-        row1col3.setOnClickListener(this);
-        row1col4.setOnClickListener(this);
-
-        row2col0.setOnClickListener(this);
-        row2col1.setOnClickListener(this);
-        row2col2.setOnClickListener(this);
-        row2col3.setOnClickListener(this);
-        row2col4.setOnClickListener(this);
-
-        row3col0.setOnClickListener(this);
-        row3col1.setOnClickListener(this);
-        row3col2.setOnClickListener(this);
-        row3col3.setOnClickListener(this);
-        row3col4.setOnClickListener(this);
-
-        row4col0.setOnClickListener(this);
-        row4col1.setOnClickListener(this);
-        row4col2.setOnClickListener(this);
-        row4col3.setOnClickListener(this);
-        row4col4.setOnClickListener(this);
-
-        playerXToMoveButton.setOnClickListener(playerXToMoveButtonListener);
-        playerOToMoveButton.setOnClickListener(playerOToMoveButtonListener);
-        resetButton.setOnClickListener(resetButtonListener);
-
-        if (savedInstanceState != null) {
-            // Restore value of members from saved state
-            // Put back values stored in 1D oneDimArrayOfBoard into 2D board
-            oneDimArrayOfBoard = savedInstanceState.getIntArray(STATE_BOARD);
-            if (null != oneDimArrayOfBoard) {
-                board = TicTacToeUtils.convertBoardToTwoDim(BOARD_SIZE, oneDimArrayOfBoard);
+    private View.OnClickListener playerXToMoveButtonListener = new View.OnClickListener() {
+        public void onClick(View player_x_to_move) {
+            enablePlayerToMoveButtons(false);
+            PLAYER_X_TURN = true;
+            playerToMoveTextView.setText(stringXMove);
+            if (isSinglePlayerMode(GAME_MODE)) {
+                computerPlay(TicTacToeUtils.PLAYER_X_PLAYED_VALUE);
             }
-
-            PLAYER_X_TURN = savedInstanceState.getBoolean(STATE_PLAYER_X_TURN);
-            numberOfMoves = savedInstanceState.getInt(STATE_NUMBER_OF_MOVES);
-            playerXScore = savedInstanceState.getInt(STATE_PLAYER_X_SCORE);
-            playerOScore = savedInstanceState.getInt(STATE_PLAYER_O_SCORE);
-            GAME_MODE = savedInstanceState.getInt(STATE_GAME_MODE);
-            playerXScoreboard.setText(savedInstanceState.getString(STATE_PLAYER_X_SCOREBOARD));
-            playerOScoreboard.setText(savedInstanceState.getString(STATE_PLAYER_O_SCOREBOARD));
-            playerToMoveTextView.setText(savedInstanceState.getString(STATE_PLAYER_TO_MOVE_TEXTVIEW));
         }
-
-        setBoardSizeSpinner();
-
-        setGameModeSpinner();
-    }
+    };
 
     private void setToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
 
@@ -261,7 +222,6 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
     }
 
     private void setBoardSizeSpinner() {
-        Spinner spinnerBoard5x5 = (Spinner) findViewById(R.id.board_size_spinner);
         spinnerBoard5x5.setOnItemSelectedListener(this);
         // Create an ArrayAdapter using the string array defined and spinner_item.xml
         ArrayAdapter<CharSequence> adapterBoardSpinner = ArrayAdapter.createFromResource(this,
@@ -273,8 +233,6 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
     }
 
     private void setGameModeSpinner() {
-        Spinner spinnerGameMode = (Spinner) findViewById(R.id.spinner);
-
         spinnerGameMode.setOnItemSelectedListener(gameModeOnItemSelectedListener);
         // Create an ArrayAdapter using the string array defined and spinner_item.xml
         ArrayAdapter<CharSequence> adapterGameMode = ArrayAdapter.createFromResource(this,
@@ -393,13 +351,16 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void indicatePlayerWithTurn(Boolean playerWithTurn) {
-        if (playerWithTurn) {
-            playerToMoveTextView.setText(R.string.o_move);
-        } else {
-            playerToMoveTextView.setText(R.string.x_move);
+    private View.OnClickListener playerOToMoveButtonListener = new View.OnClickListener() {
+        public void onClick(View player_o_to_move) {
+            enablePlayerToMoveButtons(false);
+            PLAYER_X_TURN = false;
+            playerToMoveTextView.setText(stringOMove);
+            if (isSinglePlayerMode(GAME_MODE)) {
+                computerPlay(TicTacToeUtils.PLAYER_O_PLAYED_VALUE);
+            }
         }
-    }
+    };
 
     /* Get the board value for position (i,j) */
     public int getBoardValue(int i, int j) {
@@ -439,23 +400,83 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         return false;
     }
 
-    private void setWinner() {
-        enableAllBoxes(false);
-        playerToMoveTextView.setText(R.string.game_over);
-        if (PLAYER_X_TURN) {
-            playerXScore++;
-            playerXScoreboard.setText(String.valueOf(playerXScore));
-            showWinOrDrawDialog(getString(R.string.player_x_wins));
-        } else {
-            playerOScore++;
-            playerOScoreboard.setText(String.valueOf(playerOScore));
-            showWinOrDrawDialog(getString(R.string.player_o_wins));
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_board_5x5);
+
+        // Bind the views
+        ButterKnife.bind(this);
+
+        setToolbar();
+        hideToolbarTitle();
+
+        playerXToMoveButton.isSelected();
+
+        row0col0.setOnClickListener(this);
+        row0col1.setOnClickListener(this);
+        row0col2.setOnClickListener(this);
+        row0col3.setOnClickListener(this);
+        row0col4.setOnClickListener(this);
+
+        row1col0.setOnClickListener(this);
+        row1col1.setOnClickListener(this);
+        row1col2.setOnClickListener(this);
+        row1col3.setOnClickListener(this);
+        row1col4.setOnClickListener(this);
+
+        row2col0.setOnClickListener(this);
+        row2col1.setOnClickListener(this);
+        row2col2.setOnClickListener(this);
+        row2col3.setOnClickListener(this);
+        row2col4.setOnClickListener(this);
+
+        row3col0.setOnClickListener(this);
+        row3col1.setOnClickListener(this);
+        row3col2.setOnClickListener(this);
+        row3col3.setOnClickListener(this);
+        row3col4.setOnClickListener(this);
+
+        row4col0.setOnClickListener(this);
+        row4col1.setOnClickListener(this);
+        row4col2.setOnClickListener(this);
+        row4col3.setOnClickListener(this);
+        row4col4.setOnClickListener(this);
+
+        playerXToMoveButton.setOnClickListener(playerXToMoveButtonListener);
+        playerOToMoveButton.setOnClickListener(playerOToMoveButtonListener);
+        resetButton.setOnClickListener(resetButtonListener);
+
+        if (savedInstanceState != null) {
+            // Restore value of members from saved state
+            // Put back values stored in 1D oneDimArrayOfBoard into 2D board
+            oneDimArrayOfBoard = savedInstanceState.getIntArray(STATE_BOARD);
+            if (null != oneDimArrayOfBoard) {
+                board = TicTacToeUtils.convertBoardToTwoDim(BOARD_SIZE, oneDimArrayOfBoard);
+            }
+
+            PLAYER_X_TURN = savedInstanceState.getBoolean(STATE_PLAYER_X_TURN);
+            numberOfMoves = savedInstanceState.getInt(STATE_NUMBER_OF_MOVES);
+            playerXScore = savedInstanceState.getInt(STATE_PLAYER_X_SCORE);
+            playerOScore = savedInstanceState.getInt(STATE_PLAYER_O_SCORE);
+            GAME_MODE = savedInstanceState.getInt(STATE_GAME_MODE);
+            playerXScoreboard.setText(savedInstanceState.getString(STATE_PLAYER_X_SCOREBOARD));
+            playerOScoreboard.setText(savedInstanceState.getString(STATE_PLAYER_O_SCOREBOARD));
+            playerToMoveTextView.setText(savedInstanceState.getString(STATE_PLAYER_TO_MOVE_TEXTVIEW));
         }
+
+        setBoardSizeSpinner();
+
+        setGameModeSpinner();
     }
 
-    private void gameDraw() {
-        playerToMoveTextView.setText(R.string.game_draw);
-        showWinOrDrawDialog(getString(R.string.game_draw));
+    private void indicatePlayerWithTurn(Boolean playerWithTurn) {
+        if (playerWithTurn) {
+            playerToMoveTextView.setText(stringOMove);
+        } else {
+            playerToMoveTextView.setText(stringXMove);
+        }
     }
 
     private void showWinOrDrawDialog(String message) {
@@ -905,14 +926,18 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         }
     };
 
-    private void initGame(int gameMode) {
-        board = TicTacToeUtils.initBoardWithZeros(BOARD_SIZE);
-        PLAYER_X_TURN = true;
-        playerXToMoveButton.isSelected();
-        playerToMoveTextView.setText(R.string.notice_board);
-        enablePlayerToMoveButtons(true);
-        GAME_MODE = gameMode;
-        resetBoard();
+    private void setWinner() {
+        enableAllBoxes(false);
+        playerToMoveTextView.setText(stringGameOver);
+        if (PLAYER_X_TURN) {
+            playerXScore++;
+            playerXScoreboard.setText(String.valueOf(playerXScore));
+            showWinOrDrawDialog(stringPlayerXWins);
+        } else {
+            playerOScore++;
+            playerOScoreboard.setText(String.valueOf(playerOScore));
+            showWinOrDrawDialog(stringPlayerOWins);
+        }
     }
 
     private void enablePlayerToMoveButtons(boolean enableButtons) {
@@ -955,27 +980,20 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         numberOfMoves = 0;
     }
 
-    private View.OnClickListener playerXToMoveButtonListener = new View.OnClickListener() {
-        public void onClick(View player_x_to_move) {
-            enablePlayerToMoveButtons(false);
-            PLAYER_X_TURN = true;
-            playerToMoveTextView.setText(R.string.x_move);
-            if (isSinglePlayerMode(GAME_MODE)) {
-                computerPlay(TicTacToeUtils.PLAYER_X_PLAYED_VALUE);
-            }
-        }
-    };
+    private void gameDraw() {
+        playerToMoveTextView.setText(stringGameDraw);
+        showWinOrDrawDialog(stringGameDraw);
+    }
 
-    private View.OnClickListener playerOToMoveButtonListener = new View.OnClickListener() {
-        public void onClick(View player_o_to_move) {
-            enablePlayerToMoveButtons(false);
-            PLAYER_X_TURN = false;
-            playerToMoveTextView.setText(R.string.o_move);
-            if (isSinglePlayerMode(GAME_MODE)) {
-                computerPlay(TicTacToeUtils.PLAYER_O_PLAYED_VALUE);
-            }
-        }
-    };
+    private void initGame(int gameMode) {
+        board = TicTacToeUtils.initBoardWithZeros(BOARD_SIZE);
+        PLAYER_X_TURN = true;
+        playerXToMoveButton.isSelected();
+        playerToMoveTextView.setText(stringNoticeBoard);
+        enablePlayerToMoveButtons(true);
+        GAME_MODE = gameMode;
+        resetBoard();
+    }
 
     @Override
     public void onUserInteraction() {
@@ -1034,7 +1052,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
                 return true;
             case R.id.license_menu:
                 startActivity(new Intent(this, OssLicensesMenuActivity.class));
-                OssLicensesMenuActivity.setActivityTitle(getString(R.string.open_source_license));
+                OssLicensesMenuActivity.setActivityTitle(openSourceLicenseTitle);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -1046,7 +1064,7 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         WebView webView = new WebView(this);
         webView.loadUrl("file:///android_asset/how_to.html");
         new AlertDialog.Builder(this)
-                .setTitle(R.string.how_to_dialog_title)
+                .setTitle(howToDialogTitle)
                 .setView(webView)
                 .setCancelable(true)
                 .show();

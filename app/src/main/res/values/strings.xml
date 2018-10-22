@@ -6,9 +6,9 @@
     <string name="string_dash">-</string>
     <string name="x_move">X Move</string>
     <string name="o_move">O Move</string>
-    <string name="how_to">How-to</string>
+    <string name="menu_how_to">How-to</string>
     <string name="how_to_dialog_title">How-to</string>
-    <string name="open_source_license">Open Source Licenses</string>
+    <string name="open_source_license_title">Open Source Licenses</string>
 
     <!-- ================ -->
     <!-- Game mode spinner -->
