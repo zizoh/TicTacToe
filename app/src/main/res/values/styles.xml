@@ -1,35 +1,27 @@
 <resources>
 
-    <!-- ====================== -->
     <!-- Base application theme -->
-    <!-- ====================== -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <!-- ============= -->
     <!-- Toolbar theme -->
-    <!-- ============= -->
     <style name="ToolbarTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/white</item>
         <item name="android:textColor">@color/black</item>
     </style>
 
-    <!-- =========== -->
     <!-- Board theme -->
-    <!-- =========== -->
     <style name="BoardTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:background">@color/colorPrimary</item>
         <item name="android:gravity">center</item>
         <item name="android:orientation">vertical</item>
     </style>
 
-    <!-- ============================== -->
     <!-- Parent style for board buttons -->
-    <!-- ============================== -->
     <style name="BoardButtonStyle" parent="Widget.AppCompat.Button">
         <item name="android:background">@color/colorPrimary</item>
         <item name="android:freezesText">true</item>
@@ -39,9 +31,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <!-- =========================== -->
     <!-- Style for 3x3 board buttons -->
-    <!-- =========================== -->
     <style name="Button3x3" parent="BoardButtonStyle">
         <item name="android:paddingLeft">@dimen/button_3x3_paddingLeft</item>
         <item name="android:paddingStart">@dimen/button_3x3_paddingStart</item>
@@ -50,9 +40,7 @@
         <item name="android:textSize">@dimen/button_3x3_textSize</item>
     </style>
 
-    <!-- =========================== -->
     <!-- Style for 5x5 board buttons -->
-    <!-- =========================== -->
     <style name="Button5x5" parent="BoardButtonStyle">
         <item name="android:minHeight">@dimen/button_5x5_minHeight</item>
         <item name="android:minWidth">@dimen/button_5x5_minWidth</item>
@@ -65,9 +53,7 @@
         <item name="android:textSize">@dimen/button_5x5_textSize</item>
     </style>
 
-    <!-- ======================= -->
     <!-- Style for custom dialog -->
-    <!-- ======================= -->
     <style name="AlertDialogCustom" parent="@android:style/Theme.Holo.Dialog.NoActionBar">
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@color/colorPrimary</item>
@@ -77,9 +63,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <!-- ======================= -->
     <!-- Style for custom dialog -->
-    <!-- ======================= -->
     <style name="OssLicensesActivity" parent="@style/AppTheme">
         <item name="windowNoTitle">false</item>
         <item name="windowActionBar">true</item>

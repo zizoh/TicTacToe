@@ -600,17 +600,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void resetBoard() {
-        row0col0.setText("");
-        row0col1.setText("");
-        row0col2.setText("");
+        String emptyString = "";
+        row0col0.setText(emptyString);
+        row0col1.setText(emptyString);
+        row0col2.setText(emptyString);
 
-        row1col0.setText("");
-        row1col1.setText("");
-        row1col2.setText("");
+        row1col0.setText(emptyString);
+        row1col1.setText(emptyString);
+        row1col2.setText(emptyString);
 
-        row2col0.setText("");
-        row2col1.setText("");
-        row2col2.setText("");
+        row2col0.setText(emptyString);
+        row2col1.setText(emptyString);
+        row2col2.setText(emptyString);
 
         enableAllBoxes(true);
         numberOfMoves = 0;

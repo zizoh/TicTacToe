@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="board_3x3_layout_marginTop">24dp</dimen>
-    <dimen name="board_3x3_layout_marginBottom">8dp</dimen>
+    <dimen name="board_3x3_layout_marginTop">8dp</dimen>
+    <dimen name="board_3x3_layout_marginBottom">0dp</dimen>
 
     <dimen name="board_5x5_layout_marginTop">16dp</dimen>
     <dimen name="board_5x5_layout_marginBottom">16dp</dimen>
 
     <!-- Layout top dimensions -->
-    <dimen name="layout_top_spinner_layout_marginTop">16dp</dimen>
+    <dimen name="layout_top_spinner_layout_marginTop">8dp</dimen>
     <dimen name="layout_top_spinner_layout_marginBottom">8dp</dimen>
 
     <dimen name="layout_top_ll_marginLeft">48dp</dimen>

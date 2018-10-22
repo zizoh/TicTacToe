@@ -11,21 +11,13 @@
 
     <include layout="@layout/layout_top" />
 
-    <FrameLayout
-        android:id="@+id/board_content_frame"
+    <include
+        layout="@layout/board_3x3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
-
-        <include
-            layout="@layout/board_3x3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/board_3x3_layout_marginBottom"
-            android:layout_marginTop="@dimen/board_3x3_layout_marginTop" />
-
-    </FrameLayout>
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/board_3x3_layout_marginTop"
+        android:layout_marginBottom="@dimen/board_3x3_layout_marginBottom" />
 
     <include layout="@layout/reset_button" />
 

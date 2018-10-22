@@ -946,35 +946,36 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
     }
 
     private void resetBoard() {
-        row0col0.setText("");
-        row0col1.setText("");
-        row0col2.setText("");
-        row0col3.setText("");
-        row0col4.setText("");
+        String emptyString = "";
+        row0col0.setText(emptyString);
+        row0col1.setText(emptyString);
+        row0col2.setText(emptyString);
+        row0col3.setText(emptyString);
+        row0col4.setText(emptyString);
 
-        row1col0.setText("");
-        row1col1.setText("");
-        row1col2.setText("");
-        row1col3.setText("");
-        row1col4.setText("");
+        row1col0.setText(emptyString);
+        row1col1.setText(emptyString);
+        row1col2.setText(emptyString);
+        row1col3.setText(emptyString);
+        row1col4.setText(emptyString);
 
-        row2col0.setText("");
-        row2col1.setText("");
-        row2col2.setText("");
-        row2col3.setText("");
-        row2col4.setText("");
+        row2col0.setText(emptyString);
+        row2col1.setText(emptyString);
+        row2col2.setText(emptyString);
+        row2col3.setText(emptyString);
+        row2col4.setText(emptyString);
 
-        row3col0.setText("");
-        row3col1.setText("");
-        row3col2.setText("");
-        row3col3.setText("");
-        row3col4.setText("");
+        row3col0.setText(emptyString);
+        row3col1.setText(emptyString);
+        row3col2.setText(emptyString);
+        row3col3.setText(emptyString);
+        row3col4.setText(emptyString);
 
-        row4col0.setText("");
-        row4col1.setText("");
-        row4col2.setText("");
-        row4col3.setText("");
-        row4col4.setText("");
+        row4col0.setText(emptyString);
+        row4col1.setText(emptyString);
+        row4col2.setText(emptyString);
+        row4col3.setText(emptyString);
+        row4col4.setText(emptyString);
 
         enableAllBoxes(true);
         numberOfMoves = 0;
@@ -1033,10 +1034,8 @@ public class Board5x5Activity extends AppCompatActivity implements View.OnClickL
         if (userIsInteracting) {
             switch (position) {
                 case 0:
-                    // 5x5 Board is clicked
                     break;
                 case 1:
-                    // 3x3 Board is clicked
                     Intent myIntent = new Intent(Board5x5Activity.this, MainActivity.class);
                     Board5x5Activity.this.startActivity(myIntent);
                     break;
