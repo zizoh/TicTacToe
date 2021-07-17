@@ -25,36 +25,15 @@ import java.util.*
  * -----------------
  */
 class MainActivity : AppCompatActivity(), View.OnClickListener {
-    var board = Array(BOARD_SIZE) { IntArray(BOARD_SIZE) }
+    var board = Board(BOARD_SIZE)
     var GAME_MODE = TicTacToeUtils.SINGLE_PLAYER_EASY_MODE
-    var PLAYER_X_TURN = true
+    var isPlayerXTurn = true
     var randomNumberForBoardIndex = Random()
-    var oneDimArrayBoard: IntArray? = IntArray(BOARD_SIZE * BOARD_SIZE)
     private var numberOfMoves = 0
     private var playerXScore = 0
     private var playerOScore = 0
 
     private lateinit var binding: ActivityBoard3x3Binding
-
-    private var userIsInteracting = false
-
-    private val resetButtonListener = View.OnClickListener { initGame(GAME_MODE) }
-    private val playerXToMoveButtonListener = View.OnClickListener {
-        enablePlayerToMoveButtons(false)
-        PLAYER_X_TURN = true
-        binding.layoutTop.playerToMoveTv.text = getString(R.string.x_move)
-        if (TicTacToeUtils.isSinglePlayerMode(GAME_MODE)) {
-            computerPlay(TicTacToeUtils.PLAYER_X_PLAYED_VALUE)
-        }
-    }
-    private val playerOToMoveButtonListener = View.OnClickListener {
-        enablePlayerToMoveButtons(false)
-        PLAYER_X_TURN = false
-        binding.layoutTop.playerToMoveTv.text = getString(R.string.o_move)
-        if (TicTacToeUtils.isSinglePlayerMode(GAME_MODE)) {
-            computerPlay(TicTacToeUtils.PLAYER_O_PLAYED_VALUE)
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,11 +57,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (savedInstanceState != null) {
             // Restore value of members from saved state
             // Put back values stored in 1D oneDimArrayOfBoard into 2D board
-            oneDimArrayBoard = savedInstanceState.getIntArray(STATE_BOARD)
+            val oneDimArrayBoard = savedInstanceState.getStringArray(STATE_BOARD)
             oneDimArrayBoard?.let {
-                board = TicTacToeUtils.convertBoardToTwoDim(BOARD_SIZE, it)
+                board = board.convertBoardToTwoDim(it)
             }
-            PLAYER_X_TURN = savedInstanceState.getBoolean(STATE_PLAYER_X_TURN)
+            isPlayerXTurn = savedInstanceState.getBoolean(STATE_PLAYER_X_TURN)
             numberOfMoves = savedInstanceState.getInt(STATE_NUMBER_OF_MOVES)
             playerXScore = savedInstanceState.getInt(STATE_PLAYER_X_SCORE)
             playerOScore = savedInstanceState.getInt(STATE_PLAYER_O_SCORE)
@@ -91,9 +70,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             binding.layoutTop.playerOScoreboard.text = savedInstanceState.getString(STATE_PLAYER_O_SCOREBOARD)
             binding.layoutTop.playerToMoveTv.text = savedInstanceState.getString(STATE_PLAYER_TO_MOVE_TEXTVIEW)
         }
-        binding.layoutTop.playerXToMove.setOnClickListener(playerXToMoveButtonListener)
-        binding.layoutTop.playerOToMove.setOnClickListener(playerOToMoveButtonListener)
-        binding.resetButton.btnReset.setOnClickListener(resetButtonListener)
+        binding.layoutTop.playerXToMove.setOnClickListener {
+            enablePlayerToMoveButtons(false)
+            isPlayerXTurn = true
+            binding.layoutTop.playerToMoveTv.text = getString(R.string.x_move)
+            if (TicTacToeUtils.isSinglePlayerMode(GAME_MODE)) {
+                computerPlay(Board.PLAYER_X)
+            }
+        }
+        binding.layoutTop.playerOToMove.setOnClickListener {
+            enablePlayerToMoveButtons(false)
+            isPlayerXTurn = false
+            binding.layoutTop.playerToMoveTv.text = getString(R.string.o_move)
+            if (TicTacToeUtils.isSinglePlayerMode(GAME_MODE)) {
+                computerPlay(Board.PLAYER_O)
+            }
+        }
+        binding.resetButton.btnReset.setOnClickListener { initGame(GAME_MODE) }
         setBoardSizeSpinner()
         setGameModeSpinner()
     }
@@ -110,16 +103,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun setBoardSizeSpinner() {
         binding.toolbar.boardSizeSpinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val hey = ""
-                val ggd = 1
-                if (userIsInteracting) {
-                    when (position) {
-                        0 -> {
-                        }
-                        1 -> {
-                            val myIntent = Intent(this@MainActivity, Board5x5Activity::class.java)
-                            this@MainActivity.startActivity(myIntent)
-                        }
+                when (position) {
+                    0 -> {
+                    }
+                    1 -> {
+                        val myIntent = Intent(this@MainActivity, Board5x5Activity::class.java)
+                        this@MainActivity.startActivity(myIntent)
                     }
                 }
             }
@@ -139,14 +128,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         // Put the values in each square of board to oneDimArrayOfBoard array
         // Since 2D board array can't be put in outState
-        oneDimArrayBoard = TicTacToeUtils.convertBoardToOneDim(BOARD_SIZE, board)
-        outState.putIntArray(STATE_BOARD, oneDimArrayBoard)
+        val oneDimArrayBoard = board.convertBoardToOneDim(board)
+        outState.putStringArray(STATE_BOARD, oneDimArrayBoard)
         outState.putCharSequence(STATE_PLAYER_X_SCOREBOARD, binding.layoutTop.playerXScoreboard.text)
         outState.putCharSequence(STATE_PLAYER_O_SCOREBOARD, binding.layoutTop.playerOScoreboard.text)
         outState.putCharSequence(STATE_PLAYER_TO_MOVE_TEXTVIEW, binding.layoutTop.playerToMoveTv.text)
         outState.putInt(STATE_GAME_MODE, GAME_MODE)
         outState.putInt(STATE_NUMBER_OF_MOVES, numberOfMoves)
-        outState.putBoolean(STATE_PLAYER_X_TURN, PLAYER_X_TURN)
+        outState.putBoolean(STATE_PLAYER_X_TURN, isPlayerXTurn)
         outState.putInt(STATE_PLAYER_X_SCORE, playerXScore)
         outState.putInt(STATE_PLAYER_O_SCORE, playerOScore)
 
@@ -170,7 +159,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (isThereAWinner) {
             setWinner()
         } else {
-            indicatePlayerWithTurn(PLAYER_X_TURN)
+            indicatePlayerWithTurn(isPlayerXTurn)
             switchTurn()
             numberOfMoves++
             if (numberOfMoves == BOARD_SIZE * BOARD_SIZE) {
@@ -183,10 +172,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun gameOn() {
         if (TicTacToeUtils.isSinglePlayerMode(GAME_MODE)) {
-            if (PLAYER_X_TURN) {
-                computerPlay(TicTacToeUtils.PLAYER_X_PLAYED_VALUE)
+            if (isPlayerXTurn) {
+                computerPlay(Board.PLAYER_X)
             } else {
-                computerPlay(TicTacToeUtils.PLAYER_O_PLAYED_VALUE)
+                computerPlay(Board.PLAYER_O)
             }
         }
     }
@@ -207,49 +196,40 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun setGameModeSpinner() {
         binding.layoutTop.spinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
-                if (userIsInteracting) {
-                    when (position) {
-                        0 ->                         // Easy is selected
-                            GAME_MODE = TicTacToeUtils.SINGLE_PLAYER_EASY_MODE
-                        1 ->                         // Medium is selected
-                            GAME_MODE = TicTacToeUtils.SINGLE_PLAYER_MEDIUM_MODE
-                        2 ->                         // Impossible is selected
-                            GAME_MODE = TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE
-                        3 ->                         // Two Players is selected
-                            GAME_MODE = TicTacToeUtils.TWO_PLAYER_MODE
-                    }
-                    initGame(GAME_MODE)
-                    resetScoreBoard()
+                when (position) {
+                    0 -> GAME_MODE = TicTacToeUtils.SINGLE_PLAYER_EASY_MODE
+                    1 -> GAME_MODE = TicTacToeUtils.SINGLE_PLAYER_MEDIUM_MODE
+                    2 -> GAME_MODE = TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE
+                    3 -> GAME_MODE = TicTacToeUtils.TWO_PLAYER_MODE
                 }
+                initGame(GAME_MODE)
+                resetScoreBoard()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-        // Create an ArrayAdapter using the string array defined and spinner_item.xml
         val adapterGameMode = ArrayAdapter.createFromResource(this,
                 R.array.level_or_player_type_array, R.layout.spinner_item)
-        // Layout to use when the list of choices appears
         adapterGameMode.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        // Apply the adapter to the spinner
         binding.layoutTop.spinner.adapter = adapterGameMode
     }
 
     /*
      * Get the board value for position (i,j)
      */
-    private fun getBoardValue(i: Int, j: Int): Int {
+    private fun getBoardValue(i: Int, j: Int): String {
         if (i < 0 || i >= BOARD_SIZE) {
-            return TicTacToeUtils.NON_PLAYED_VALUE
+            return Board.NOT_PLAYED
         }
         return if (j < 0 || j >= BOARD_SIZE) {
-            TicTacToeUtils.NON_PLAYED_VALUE
-        } else board[i][j]
+            Board.NOT_PLAYED
+        } else board.get(i, j)
     }
 
     private fun setWinner() {
         enableAllBoxes(false)
         binding.layoutTop.playerToMoveTv.text = getString(R.string.game_over)
-        if (PLAYER_X_TURN) {
+        if (isPlayerXTurn) {
             playerXScore++
             binding.layoutTop.playerXScoreboard.text = playerXScore.toString()
             showWinOrDrawDialog(getString(R.string.player_x_wins))
@@ -268,47 +248,47 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun setMoveByPlayerAt(row: Int, column: Int) {
         with(binding.board3x3) {
             if (row == 0 && column == 0) {
-                TicTacToeUtils.setTextOnButtonPlayed(PLAYER_X_TURN, row0Col0.board3x3ButtonO)
+                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row0Col0.board3x3ButtonO)
                 TicTacToeUtils.disableButton(row0Col0.board3x3ButtonO)
             } else if (row == 0 && column == 1) {
-                TicTacToeUtils.setTextOnButtonPlayed(PLAYER_X_TURN, row0Col1.board3x3ButtonO)
+                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row0Col1.board3x3ButtonO)
                 TicTacToeUtils.disableButton(row0Col1.board3x3ButtonO)
             } else if (row == 0 && column == 2) {
-                TicTacToeUtils.setTextOnButtonPlayed(PLAYER_X_TURN, row0Col2.board3x3ButtonO)
+                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row0Col2.board3x3ButtonO)
                 TicTacToeUtils.disableButton(row0Col2.board3x3ButtonO)
             } else if (row == 1 && column == 0) {
-                TicTacToeUtils.setTextOnButtonPlayed(PLAYER_X_TURN, row1Col0.board3x3ButtonO)
+                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row1Col0.board3x3ButtonO)
                 TicTacToeUtils.disableButton(row1Col0.board3x3ButtonO)
             } else if (row == 1 && column == 1) {
-                TicTacToeUtils.setTextOnButtonPlayed(PLAYER_X_TURN, row1Col1.board3x3ButtonO)
+                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row1Col1.board3x3ButtonO)
                 TicTacToeUtils.disableButton(row1Col1.board3x3ButtonO)
             } else if (row == 1 && column == 2) {
-                TicTacToeUtils.setTextOnButtonPlayed(PLAYER_X_TURN, row1Col2.board3x3ButtonO)
+                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row1Col2.board3x3ButtonO)
                 TicTacToeUtils.disableButton(row1Col2.board3x3ButtonO)
             } else if (row == 2 && column == 0) {
-                TicTacToeUtils.setTextOnButtonPlayed(PLAYER_X_TURN, row2Col0.board3x3ButtonO)
+                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row2Col0.board3x3ButtonO)
                 TicTacToeUtils.disableButton(row2Col0.board3x3ButtonO)
             } else if (row == 2 && column == 1) {
-                TicTacToeUtils.setTextOnButtonPlayed(PLAYER_X_TURN, row2Col1.board3x3ButtonO)
+                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row2Col1.board3x3ButtonO)
                 TicTacToeUtils.disableButton(row2Col1.board3x3ButtonO)
             } else if (row == 2 && column == 2) {
-                TicTacToeUtils.setTextOnButtonPlayed(PLAYER_X_TURN, row2Col2.board3x3ButtonO)
+                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row2Col2.board3x3ButtonO)
                 TicTacToeUtils.disableButton(row2Col2.board3x3ButtonO)
             }
         }
-        if (PLAYER_X_TURN) {
-            board[row][column] = 1
+        if (isPlayerXTurn) {
+            board.set(row, column, Board.PLAYER_X)
         } else {
-            board[row][column] = 4
+            board.set(row, column, Board.PLAYER_O)
         }
     }
 
-    private fun computerPlay(playerWithTurnNumber: Int) {
+    private fun computerPlay(playerWithTurn: String) {
         if (GAME_MODE == TicTacToeUtils.SINGLE_PLAYER_EASY_MODE) {
             playRandom()
         } else if (GAME_MODE == TicTacToeUtils.SINGLE_PLAYER_MEDIUM_MODE
                 || GAME_MODE == TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE) {
-            playMediumOrImpossibleMode(playerWithTurnNumber)
+            playMediumOrImpossibleMode(playerWithTurn)
         }
         if (isThereAWinner) {
             setWinner()
@@ -317,14 +297,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             if (numberOfMoves == BOARD_SIZE * BOARD_SIZE) {
                 gameDraw()
             } else {
-                indicatePlayerWithTurn(PLAYER_X_TURN)
+                indicatePlayerWithTurn(isPlayerXTurn)
                 switchTurn()
             }
         }
     }
 
     private fun switchTurn() {
-        PLAYER_X_TURN = !PLAYER_X_TURN
+        isPlayerXTurn = !isPlayerXTurn
     }
 
     private fun gameDraw() {
@@ -342,10 +322,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun playMediumOrImpossibleMode(playerWithTurnNumber: Int) {
+    private fun playMediumOrImpossibleMode(playerWithTurn: String) {
         var noWinOrBlock = true // Is used so that only one module is executed.
         if (GAME_MODE == TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE) {
-            noWinOrBlock = winOrBlockMove(playerWithTurnNumber) // Checking for 2/3 win situation.
+            noWinOrBlock = winOrBlockMove(playerWithTurn) // Checking for 2/3 win situation.
             if (!noWinOrBlock) {
                 enableAllBoxes(false)
                 binding.layoutTop.playerToMoveTv.text = getString(R.string.game_over)
@@ -371,11 +351,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     return
                 }
                 numberOfMoves > 1 -> {
-                    // playerWithTurnNumber: 1 for X and 4 for O
-                    noWinOrBlock = if (PLAYER_X_TURN) {
-                        winOrBlockMove(4) // Checking for situation where loss may occur.
+                    noWinOrBlock = if (isPlayerXTurn) {
+                        winOrBlockMove("OO")
                     } else {
-                        winOrBlockMove(1)
+                        winOrBlockMove("XX")
                     }
                 }
             }
@@ -393,15 +372,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         setMoveByPlayerAt(c, d)
     }
 
-    private fun winOrBlockMove(playerWithTurnNumber: Int): Boolean {
+    private fun winOrBlockMove(playerWithTurn: String): Boolean {
         for (i in 0 until BOARD_SIZE) {
             for (j in 0 until BOARD_SIZE) {
                 //Checking corresponding row for 2/3 situation
-                if (board[i][0] + board[i][1] + board[i][2] == playerWithTurnNumber * 2) {
+                if ((board.get(i, 0) + board.get(i, 1) + board.get(i, 2)).contains(playerWithTurn)) {
                     if (canPlay(i, j)) {   // Play the move.
                         return false
                     }
-                } else if (board[0][j] + board[1][j] + board[2][j] == playerWithTurnNumber * 2) {
+                } else if ((board.get(0, j) + board.get(1, j) + board.get(2, j)).contains(playerWithTurn)) {
                     if (canPlay(i, j)) {
                         return false
                     }
@@ -409,13 +388,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
         // Checking left-to-right diagonal for 2/3
-        if (board[0][0] + board[1][1] + board[2][2] == playerWithTurnNumber * 2) {
+        if ((board.get(0, 0) + board.get(1, 1) + board.get(2, 2)).contains(playerWithTurn)) {
             for (i in 0 until BOARD_SIZE) {
                 if (canPlay(i, i)) {
                     return false
                 }
             }
-        } else if (board[0][2] + board[1][1] + board[2][0] == playerWithTurnNumber * 2) {
+        } else if ((board.get(0, 2) + board.get(1, 1) + board.get(2, 0)).contains(playerWithTurn)) {
             var i = 0
             var j = 2
             while (i < BOARD_SIZE) {
@@ -430,8 +409,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun canPlay(row: Int, column: Int): Boolean {
-        // If square hasn't been played yet
-        return if (board[row][column] == 0) {
+        return if (board.get(row, column) == Board.NOT_PLAYED) {
             setMoveByPlayerAt(row, column)
             true
         } else false
@@ -459,8 +437,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun initGame(gameMode: Int) {
-        board = TicTacToeUtils.initBoardWithZeros(BOARD_SIZE)
-        PLAYER_X_TURN = true
+        board = Board(BOARD_SIZE)
+        isPlayerXTurn = true
         binding.layoutTop.playerXToMove.isSelected
         binding.layoutTop.playerToMoveTv.text = getString(R.string.notice_board)
         enablePlayerToMoveButtons(true)
@@ -469,7 +447,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun resetBoard() {
-        val emptyString = ""
+        val emptyString = Board.NOT_PLAYED
         with(binding.board3x3) {
             row0Col0.board3x3ButtonO.text = emptyString
             row0Col1.board3x3ButtonO.text = emptyString
@@ -485,27 +463,22 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         numberOfMoves = 0
     }
 
-    override fun onUserInteraction() {
-        super.onUserInteraction()
-        userIsInteracting = true
-    }
-
     /*
      * Returns true if the last canPlay was a win
      */
     private val isThereAWinner: Boolean
         get() {
-            val token: Int = if (PLAYER_X_TURN) {
-                1
+            val token: String = if (isPlayerXTurn) {
+                Board.PLAYER_X
             } else {
-                4
+                Board.PLAYER_O
             }
             val DI = intArrayOf(-1, 0, 1, 1)
             val DJ = intArrayOf(1, 1, 1, 0)
             for (i in 0 until BOARD_SIZE) for (j in 0 until BOARD_SIZE) {
 
-                // Skip if the token in board[i][j] is not equal to current token
-                if (board[i][j] != token) continue
+                // Skip if the token in board.get(i,j) is not equal to current token
+                if (board.get(i, j) != token) continue
                 for (k in 0..3) {
                     var count = 0
                     while (getBoardValue(i + DI[k] * count, j + DJ[k] * count) == token) {
@@ -551,7 +524,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     companion object {
-        // Keys to identify the data saved
         const val STATE_BOARD = "BOARD"
         const val STATE_PLAYER_X_SCOREBOARD = "PLAYER_X_SCOREBOARD"
         const val STATE_PLAYER_O_SCOREBOARD = "PLAYER_O_SCOREBOARD"
