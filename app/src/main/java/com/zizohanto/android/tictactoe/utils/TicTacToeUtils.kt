@@ -17,9 +17,10 @@ object TicTacToeUtils {
      *
      * @param gameMode the game mode selected by the user
      */
-    fun isSinglePlayerMode(gameMode: Int): Boolean {
-        return gameMode == SINGLE_PLAYER_EASY_MODE || gameMode == SINGLE_PLAYER_MEDIUM_MODE || gameMode == SINGLE_PLAYER_IMPOSSIBLE_MODE
-    }
+    fun isSinglePlayerMode(gameMode: Int) =
+            gameMode == SINGLE_PLAYER_EASY_MODE
+                    || gameMode == SINGLE_PLAYER_MEDIUM_MODE
+                    || gameMode == SINGLE_PLAYER_IMPOSSIBLE_MODE
 
     /**
      * Returns an array of values from the two dimensional array board.
@@ -71,8 +72,8 @@ object TicTacToeUtils {
         return board
     }
 
-    fun setTextOnButtonPlayed(PLAYER_X_TURN: Boolean, row0col0: Button) {
-        if (PLAYER_X_TURN) {
+    fun setTextOnButtonPlayed(isPlayerXTurn: Boolean, row0col0: Button) {
+        if (isPlayerXTurn) {
             row0col0.setText(R.string.string_x)
         } else {
             row0col0.setText(R.string.string_o)
