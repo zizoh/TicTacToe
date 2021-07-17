@@ -9,7 +9,7 @@
 
     <include
         android:id="@+id/row0_col0"
-        layout="@layout/board_3x3_button_x"
+        layout="@layout/board_3x3_button_o"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -31,7 +31,7 @@
 
     <include
         android:id="@+id/row0_col2"
-        layout="@layout/board_3x3_button_x"
+        layout="@layout/board_3x3_button_o"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -55,7 +55,7 @@
 
     <include
         android:id="@+id/row1_col1"
-        layout="@layout/board_3x3_button_x"
+        layout="@layout/board_3x3_button_o"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/row0_col1"
@@ -76,7 +76,7 @@
 
     <include
         android:id="@+id/row2_col0"
-        layout="@layout/board_3x3_button_x"
+        layout="@layout/board_3x3_button_o"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -96,7 +96,7 @@
 
     <include
         android:id="@+id/row2_col2"
-        layout="@layout/board_3x3_button_x"
+        layout="@layout/board_3x3_button_o"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/row1_col2"
