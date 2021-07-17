@@ -25,11 +25,10 @@ import java.util.*
  * -----------------
  */
 class MainActivity : AppCompatActivity(), View.OnClickListener {
-    var board: Array<IntArray> = Array(BOARD_SIZE) { IntArray(BOARD_SIZE) }
+    var board = Board(BOARD_SIZE)
     var GAME_MODE = TicTacToeUtils.SINGLE_PLAYER_EASY_MODE
     var isPlayerXTurn = true
     var randomNumberForBoardIndex = Random()
-    var oneDimArrayBoard: IntArray? = IntArray(BOARD_SIZE * BOARD_SIZE)
     private var numberOfMoves = 0
     private var playerXScore = 0
     private var playerOScore = 0
@@ -58,9 +57,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (savedInstanceState != null) {
             // Restore value of members from saved state
             // Put back values stored in 1D oneDimArrayOfBoard into 2D board
-            oneDimArrayBoard = savedInstanceState.getIntArray(STATE_BOARD)
+            val oneDimArrayBoard = savedInstanceState.getStringArray(STATE_BOARD)
             oneDimArrayBoard?.let {
-                board = TicTacToeUtils.convertBoardToTwoDim(BOARD_SIZE, it)
+                board = board.convertBoardToTwoDim(it)
             }
             isPlayerXTurn = savedInstanceState.getBoolean(STATE_PLAYER_X_TURN)
             numberOfMoves = savedInstanceState.getInt(STATE_NUMBER_OF_MOVES)
@@ -76,7 +75,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             isPlayerXTurn = true
             binding.layoutTop.playerToMoveTv.text = getString(R.string.x_move)
             if (TicTacToeUtils.isSinglePlayerMode(GAME_MODE)) {
-                computerPlay(TicTacToeUtils.PLAYER_X_PLAYED_VALUE)
+                computerPlay(Board.PLAYER_X)
             }
         }
         binding.layoutTop.playerOToMove.setOnClickListener {
@@ -84,7 +83,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             isPlayerXTurn = false
             binding.layoutTop.playerToMoveTv.text = getString(R.string.o_move)
             if (TicTacToeUtils.isSinglePlayerMode(GAME_MODE)) {
-                computerPlay(TicTacToeUtils.PLAYER_O_PLAYED_VALUE)
+                computerPlay(Board.PLAYER_O)
             }
         }
         binding.resetButton.btnReset.setOnClickListener { initGame(GAME_MODE) }
@@ -129,8 +128,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         // Put the values in each square of board to oneDimArrayOfBoard array
         // Since 2D board array can't be put in outState
-        oneDimArrayBoard = TicTacToeUtils.convertBoardToOneDim(BOARD_SIZE, board)
-        outState.putIntArray(STATE_BOARD, oneDimArrayBoard)
+        val oneDimArrayBoard = board.convertBoardToOneDim(board)
+        outState.putStringArray(STATE_BOARD, oneDimArrayBoard)
         outState.putCharSequence(STATE_PLAYER_X_SCOREBOARD, binding.layoutTop.playerXScoreboard.text)
         outState.putCharSequence(STATE_PLAYER_O_SCOREBOARD, binding.layoutTop.playerOScoreboard.text)
         outState.putCharSequence(STATE_PLAYER_TO_MOVE_TEXTVIEW, binding.layoutTop.playerToMoveTv.text)
@@ -174,9 +173,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun gameOn() {
         if (TicTacToeUtils.isSinglePlayerMode(GAME_MODE)) {
             if (isPlayerXTurn) {
-                computerPlay(TicTacToeUtils.PLAYER_X_PLAYED_VALUE)
+                computerPlay(Board.PLAYER_X)
             } else {
-                computerPlay(TicTacToeUtils.PLAYER_O_PLAYED_VALUE)
+                computerPlay(Board.PLAYER_O)
             }
         }
     }
@@ -218,13 +217,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     /*
      * Get the board value for position (i,j)
      */
-    private fun getBoardValue(i: Int, j: Int): Int {
+    private fun getBoardValue(i: Int, j: Int): String {
         if (i < 0 || i >= BOARD_SIZE) {
-            return TicTacToeUtils.NON_PLAYED_VALUE
+            return Board.NOT_PLAYED
         }
         return if (j < 0 || j >= BOARD_SIZE) {
-            TicTacToeUtils.NON_PLAYED_VALUE
-        } else board[i][j]
+            Board.NOT_PLAYED
+        } else board.get(i, j)
     }
 
     private fun setWinner() {
@@ -278,18 +277,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
         if (isPlayerXTurn) {
-            board[row][column] = 1
+            board.set(row, column, Board.PLAYER_X)
         } else {
-            board[row][column] = 4
+            board.set(row, column, Board.PLAYER_O)
         }
     }
 
-    private fun computerPlay(playerWithTurnNumber: Int) {
+    private fun computerPlay(playerWithTurn: String) {
         if (GAME_MODE == TicTacToeUtils.SINGLE_PLAYER_EASY_MODE) {
             playRandom()
         } else if (GAME_MODE == TicTacToeUtils.SINGLE_PLAYER_MEDIUM_MODE
                 || GAME_MODE == TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE) {
-            playMediumOrImpossibleMode(playerWithTurnNumber)
+            playMediumOrImpossibleMode(playerWithTurn)
         }
         if (isThereAWinner) {
             setWinner()
@@ -323,10 +322,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun playMediumOrImpossibleMode(playerWithTurnNumber: Int) {
+    private fun playMediumOrImpossibleMode(playerWithTurn: String) {
         var noWinOrBlock = true // Is used so that only one module is executed.
         if (GAME_MODE == TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE) {
-            noWinOrBlock = winOrBlockMove(playerWithTurnNumber) // Checking for 2/3 win situation.
+            noWinOrBlock = winOrBlockMove(playerWithTurn) // Checking for 2/3 win situation.
             if (!noWinOrBlock) {
                 enableAllBoxes(false)
                 binding.layoutTop.playerToMoveTv.text = getString(R.string.game_over)
@@ -352,11 +351,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     return
                 }
                 numberOfMoves > 1 -> {
-                    // playerWithTurnNumber: 1 for X and 4 for O
                     noWinOrBlock = if (isPlayerXTurn) {
-                        winOrBlockMove(4) // Checking for situation where loss may occur.
+                        winOrBlockMove("OO")
                     } else {
-                        winOrBlockMove(1)
+                        winOrBlockMove("XX")
                     }
                 }
             }
@@ -374,15 +372,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         setMoveByPlayerAt(c, d)
     }
 
-    private fun winOrBlockMove(playerWithTurnNumber: Int): Boolean {
+    private fun winOrBlockMove(playerWithTurn: String): Boolean {
         for (i in 0 until BOARD_SIZE) {
             for (j in 0 until BOARD_SIZE) {
                 //Checking corresponding row for 2/3 situation
-                if (board[i][0] + board[i][1] + board[i][2] == playerWithTurnNumber * 2) {
+                if ((board.get(i, 0) + board.get(i, 1) + board.get(i, 2)).contains(playerWithTurn)) {
                     if (canPlay(i, j)) {   // Play the move.
                         return false
                     }
-                } else if (board[0][j] + board[1][j] + board[2][j] == playerWithTurnNumber * 2) {
+                } else if ((board.get(0, j) + board.get(1, j) + board.get(2, j)).contains(playerWithTurn)) {
                     if (canPlay(i, j)) {
                         return false
                     }
@@ -390,13 +388,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
         // Checking left-to-right diagonal for 2/3
-        if (board[0][0] + board[1][1] + board[2][2] == playerWithTurnNumber * 2) {
+        if ((board.get(0, 0) + board.get(1, 1) + board.get(2, 2)).contains(playerWithTurn)) {
             for (i in 0 until BOARD_SIZE) {
                 if (canPlay(i, i)) {
                     return false
                 }
             }
-        } else if (board[0][2] + board[1][1] + board[2][0] == playerWithTurnNumber * 2) {
+        } else if ((board.get(0, 2) + board.get(1, 1) + board.get(2, 0)).contains(playerWithTurn)) {
             var i = 0
             var j = 2
             while (i < BOARD_SIZE) {
@@ -411,8 +409,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun canPlay(row: Int, column: Int): Boolean {
-        // If square hasn't been played yet
-        return if (board[row][column] == 0) {
+        return if (board.get(row, column) == Board.NOT_PLAYED) {
             setMoveByPlayerAt(row, column)
             true
         } else false
@@ -440,7 +437,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun initGame(gameMode: Int) {
-        board = TicTacToeUtils.initBoardWithZeros(BOARD_SIZE)
+        board = Board(BOARD_SIZE)
         isPlayerXTurn = true
         binding.layoutTop.playerXToMove.isSelected
         binding.layoutTop.playerToMoveTv.text = getString(R.string.notice_board)
@@ -450,7 +447,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun resetBoard() {
-        val emptyString = ""
+        val emptyString = Board.NOT_PLAYED
         with(binding.board3x3) {
             row0Col0.board3x3ButtonO.text = emptyString
             row0Col1.board3x3ButtonO.text = emptyString
@@ -471,17 +468,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
      */
     private val isThereAWinner: Boolean
         get() {
-            val token: Int = if (isPlayerXTurn) {
-                1
+            val token: String = if (isPlayerXTurn) {
+                Board.PLAYER_X
             } else {
-                4
+                Board.PLAYER_O
             }
             val DI = intArrayOf(-1, 0, 1, 1)
             val DJ = intArrayOf(1, 1, 1, 0)
             for (i in 0 until BOARD_SIZE) for (j in 0 until BOARD_SIZE) {
 
-                // Skip if the token in board[i][j] is not equal to current token
-                if (board[i][j] != token) continue
+                // Skip if the token in board.get(i,j) is not equal to current token
+                if (board.get(i, j) != token) continue
                 for (k in 0..3) {
                     var count = 0
                     while (getBoardValue(i + DI[k] * count, j + DJ[k] * count) == token) {
