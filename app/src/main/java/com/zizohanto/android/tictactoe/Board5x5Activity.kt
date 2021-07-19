@@ -279,8 +279,8 @@ class Board5x5Activity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun showWinOrDrawDialog(message: String) {
-        val newFragment: DialogFragment = WinOrDrawDialog(message)
+    private fun showWinOrDrawDialog(resId: Int) {
+        val newFragment: DialogFragment = WinOrDrawDialog(resId)
         newFragment.show(supportFragmentManager, "WinOrDrawDialog")
     }
 
@@ -721,11 +721,11 @@ class Board5x5Activity : AppCompatActivity(), View.OnClickListener {
         if (PLAYER_X_TURN) {
             playerXScore++
             binding.layoutTop.playerXScoreboard.text = playerXScore.toString()
-            showWinOrDrawDialog(getString(R.string.player_x_wins))
+            showWinOrDrawDialog(R.string.player_x_wins)
         } else {
             playerOScore++
             binding.layoutTop.playerOScoreboard.text = playerOScore.toString()
-            showWinOrDrawDialog(getString(R.string.player_o_wins))
+            showWinOrDrawDialog(R.string.player_o_wins)
         }
     }
 
@@ -769,7 +769,7 @@ class Board5x5Activity : AppCompatActivity(), View.OnClickListener {
 
     private fun gameDraw() {
         binding.layoutTop.playerToMoveTv.text = getString(R.string.game_draw)
-        showWinOrDrawDialog(getString(R.string.game_draw))
+        showWinOrDrawDialog(R.string.game_draw)
     }
 
     private fun initGame(gameMode: Int) {
