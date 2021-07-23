@@ -9,11 +9,15 @@
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/toolbar" />
+        layout="@layout/toolbar"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
     <include
         android:id="@+id/layout_top"
-        layout="@layout/layout_top" />
+        layout="@layout/layout_top"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
     <include
         android:id="@+id/board_3x3"
@@ -22,10 +26,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/board_3x3_layout_marginTop"
-        android:layout_marginBottom="@dimen/board_3x3_layout_marginBottom" />
+        android:layout_marginBottom="@dimen/board_3x3_layout_marginBottom"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
     <include
         android:id="@+id/reset_button"
-        layout="@layout/reset_button" />
+        layout="@layout/reset_button"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
 </LinearLayout>

@@ -72,11 +72,11 @@ object TicTacToeUtils {
         return board
     }
 
-    fun setTextOnButtonPlayed(isPlayerXTurn: Boolean, row0col0: Button) {
+    fun setTextOnButtonPlayed(isPlayerXTurn: Boolean, button: Button) {
         if (isPlayerXTurn) {
-            row0col0.setText(R.string.string_x)
+            button.setText(R.string.string_x)
         } else {
-            row0col0.setText(R.string.string_o)
+            button.setText(R.string.string_o)
         }
     }
 

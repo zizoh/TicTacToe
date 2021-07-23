@@ -17,6 +17,9 @@ class MainActivityViewModel : ViewModel() {
     private var playerXScore = 0
     private var playerOScore = 0
 
+    private val _viewState: MutableLiveData<ViewStates> = MutableLiveData()
+    val viewStates: LiveData<ViewStates> = _viewState
+
     private val _playAt: MutableLiveData<Pair<Int, Int>> = MutableLiveData()
     val playAt: LiveData<Pair<Int, Int>> = _playAt
 
@@ -44,34 +47,41 @@ class MainActivityViewModel : ViewModel() {
     private val _showDialog: MutableLiveData<Int> = MutableLiveData()
     val showDialog: LiveData<Int> = _showDialog
 
-    /*
-     * Returns true if the last canPlay was a win
-     */
-    private val isThereAWinner: Boolean
-        get() {
-            val token: String = if (isPlayerXTurn) {
-                Board.PLAYER_X
-            } else {
-                Board.PLAYER_O
-            }
-            val DI = intArrayOf(-1, 0, 1, 1)
-            val DJ = intArrayOf(1, 1, 1, 0)
-            for (i in 0 until MainActivity.BOARD_SIZE) for (j in 0 until MainActivity.BOARD_SIZE) {
+    init {
+        _viewState.value = ViewStates.Idle(
+                MainActivity.BOARD_SIZE,
+                gameMode,
+                playerXScore,
+                playerOScore,
+                R.string.notice_board,
+                board
+        )
+    }
 
-                // Skip if the token in board.get(i,j) is not equal to current token
-                if (board.get(i, j) != token) continue
-                for (k in 0..3) {
-                    var count = 0
-                    while (getBoardValue(i + DI[k] * count, j + DJ[k] * count) == token) {
-                        count++
-                        if (count == 3) {
-                            return true
-                        }
+    private fun isThereAWinner(): Boolean {
+        val token: String = if (isPlayerXTurn) {
+            Board.PLAYER_X
+        } else {
+            Board.PLAYER_O
+        }
+        val DI = intArrayOf(-1, 0, 1, 1)
+        val DJ = intArrayOf(1, 1, 1, 0)
+        for (i in 0 until MainActivity.BOARD_SIZE) for (j in 0 until MainActivity.BOARD_SIZE) {
+
+            // Skip if the token in board.get(i,j) is not equal to current token
+            if (board.get(i, j) != token) continue
+            for (k in 0..3) {
+                var count = 0
+                while (getBoardValue(i + DI[k] * count, j + DJ[k] * count) == token) {
+                    count++
+                    if (count == 3) {
+                        return true
                     }
                 }
             }
-            return false
         }
+        return false
+    }
 
     /*
      * Get the board value for position (i,j)
@@ -217,7 +227,7 @@ class MainActivityViewModel : ViewModel() {
                 || gameMode == TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE) {
             playMediumOrImpossibleMode(playerWithTurn)
         }
-        if (isThereAWinner) {
+        if (isThereAWinner()) {
             setWinner()
         } else {
             numberOfMoves++
@@ -294,7 +304,7 @@ class MainActivityViewModel : ViewModel() {
     }
 
     fun checkMove() {
-        if (isThereAWinner) {
+        if (isThereAWinner()) {
             setWinner()
         } else {
             _indicatePlayerWithTurn.value = isPlayerXTurn()

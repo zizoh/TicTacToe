@@ -11,6 +11,7 @@ import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.zizohanto.android.tictactoe.databinding.ActivityBoard3x3Binding
@@ -24,7 +25,7 @@ import com.zizohanto.android.tictactoe.utils.TicTacToeUtils
  * (2,0) (2,1) (2,2)
  * -----------------
  */
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : AppCompatActivity() {
 
     val viewModel: MainActivityViewModel by viewModels()
 
@@ -37,19 +38,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         setToolbar()
         hideToolbarTitle()
-        binding.layoutTop.playerXToMove.isSelected
-        val mainActivity = this@MainActivity
-        with(binding.board3x3) {
-            row0Col0.board3x3ButtonO.setOnClickListener(mainActivity)
-            row0Col1.board3x3ButtonO.setOnClickListener(mainActivity)
-            row0Col2.board3x3ButtonO.setOnClickListener(mainActivity)
-            row1Col0.board3x3ButtonO.setOnClickListener(mainActivity)
-            row1Col1.board3x3ButtonO.setOnClickListener(mainActivity)
-            row1Col2.board3x3ButtonO.setOnClickListener(mainActivity)
-            row2Col0.board3x3ButtonO.setOnClickListener(mainActivity)
-            row2Col1.board3x3ButtonO.setOnClickListener(mainActivity)
-            row2Col2.board3x3ButtonO.setOnClickListener(mainActivity)
-        }
         if (savedInstanceState != null) {
             with(viewModel) {
                 val oneDimArrayBoard = savedInstanceState.getStringArray(STATE_BOARD)
@@ -70,7 +58,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         with(viewModel) {
-            playAt.observe(mainActivity) { showMoveByPlayerAt(it.first, it.second) }
+            val mainActivity = this@MainActivity
+            viewStates.observe(mainActivity, ::setViewStates)
+            playAt.observe(mainActivity) {
+                val (row, column) = it
+                showMoveByPlayerAt(row, column)
+                viewModel.setMoveByPlayerAt(row, column)
+            }
             enableAllBoxes.observe(mainActivity, ::enableAllBoxes)
             indicatePlayerWithTurn.observe(mainActivity, ::indicatePlayerWithTurn)
             gameOver.observe(mainActivity, ::gameOver)
@@ -97,8 +91,75 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
         binding.resetButton.btnReset.setOnClickListener { initGame(viewModel.getGameMode()) }
-        setBoardSizeSpinner()
-        setGameModeSpinner()
+    }
+
+    private fun setViewStates(viewStates: ViewStates) {
+        when (viewStates) {
+            is ViewStates.Idle -> {
+                setBoardSizeSpinner()
+                setGameModeSpinner()
+                binding.layoutTop.playerXToMove.isSelected
+                binding.toolbar.root.isVisible = true
+                binding.layoutTop.root.isVisible = true
+                binding.board3x3.root.isVisible = true
+                binding.resetButton.root.isVisible = true
+                enablePlayerToMoveButtons(true)
+                with(binding.board3x3) {
+                    row0Col0.board3x3ButtonO.setOnClickListener {
+                        showMoveByPlayerAt(0, 0)
+                        viewModel.setMoveByPlayerAt(0, 0)
+                        viewModel.checkMove()
+                    }
+                    row0Col1.board3x3ButtonO.setOnClickListener {
+                        showMoveByPlayerAt(0, 1)
+                        viewModel.setMoveByPlayerAt(0, 1)
+                        viewModel.checkMove()
+                    }
+                    row0Col2.board3x3ButtonO.setOnClickListener {
+                        showMoveByPlayerAt(0, 2)
+                        viewModel.setMoveByPlayerAt(0, 2)
+                        viewModel.checkMove()
+                    }
+                    row1Col0.board3x3ButtonO.setOnClickListener {
+                        showMoveByPlayerAt(1, 0)
+                        viewModel.setMoveByPlayerAt(1, 0)
+                        viewModel.checkMove()
+                    }
+                    row1Col1.board3x3ButtonO.setOnClickListener {
+                        showMoveByPlayerAt(1, 1)
+                        viewModel.setMoveByPlayerAt(1, 1)
+                        viewModel.checkMove()
+                    }
+                    row1Col2.board3x3ButtonO.setOnClickListener {
+                        showMoveByPlayerAt(1, 2)
+                        viewModel.setMoveByPlayerAt(1, 2)
+                        viewModel.checkMove()
+                    }
+                    row2Col0.board3x3ButtonO.setOnClickListener {
+                        showMoveByPlayerAt(2, 0)
+                        viewModel.setMoveByPlayerAt(2, 0)
+                        viewModel.checkMove()
+                    }
+                    row2Col1.board3x3ButtonO.setOnClickListener {
+                        showMoveByPlayerAt(2, 1)
+                        viewModel.setMoveByPlayerAt(2, 1)
+                        viewModel.checkMove()
+                    }
+                    row2Col2.board3x3ButtonO.setOnClickListener {
+                        showMoveByPlayerAt(2, 2)
+                        viewModel.setMoveByPlayerAt(2, 2)
+                        viewModel.checkMove()
+                    }
+                }
+            }
+            is ViewStates.Started -> {
+                enablePlayerToMoveButtons(false)
+            }
+            is ViewStates.GameOver -> TODO()
+            is ViewStates.GameDraw -> TODO()
+            is ViewStates.ViewHowTo -> TODO()
+            is ViewStates.ViewLicenses -> TODO()
+        }
     }
 
     private fun playerXScore(score: String) {
@@ -157,22 +218,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         outState.putInt(STATE_PLAYER_X_SCORE, viewModel.getPlayerXScore())
         outState.putInt(STATE_PLAYER_O_SCORE, viewModel.getPlayerOScore())
         super.onSaveInstanceState(outState)
-    }
-
-    override fun onClick(v: View) {
-        enablePlayerToMoveButtons(false)
-        when (v.id) {
-            R.id.row0_col0 -> showMoveByPlayerAt(0, 0)
-            R.id.row0_col1 -> showMoveByPlayerAt(0, 1)
-            R.id.row0_col2 -> showMoveByPlayerAt(0, 2)
-            R.id.row1_col0 -> showMoveByPlayerAt(1, 0)
-            R.id.row1_col1 -> showMoveByPlayerAt(1, 1)
-            R.id.row1_col2 -> showMoveByPlayerAt(1, 2)
-            R.id.row2_col0 -> showMoveByPlayerAt(2, 0)
-            R.id.row2_col1 -> showMoveByPlayerAt(2, 1)
-            R.id.row2_col2 -> showMoveByPlayerAt(2, 2)
-        }
-        viewModel.checkMove()
     }
 
     private fun indicatePlayerWithTurn(playerWithTurn: Boolean) {
@@ -246,7 +291,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 TicTacToeUtils.disableButton(row2Col2.board3x3ButtonO)
             }
         }
-        viewModel.setMoveByPlayerAt(row, column)
     }
 
     private fun gameDraw(resId: Int) {
