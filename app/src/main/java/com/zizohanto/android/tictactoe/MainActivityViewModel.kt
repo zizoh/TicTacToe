@@ -150,11 +150,15 @@ class MainActivityViewModel : ViewModel() {
             for (j in 0 until MainActivity.BOARD_SIZE) {
                 //Checking corresponding row for 2/3 situation
                 if ((board.get(i, 0) + board.get(i, 1) + board.get(i, 2)).contains(playerWithTurn)) {
-                    if (canPlay(i, j)) {   // Play the move.
+                    if (positionIsNotPlayed(i, j)) {   // Play the move.
+                        _playAt.value = Pair(i, j)
+                        setMoveByPlayerAt(i, j)
                         return false
                     }
                 } else if ((board.get(0, j) + board.get(1, j) + board.get(2, j)).contains(playerWithTurn)) {
-                    if (canPlay(i, j)) {
+                    if (positionIsNotPlayed(i, j)) {
+                        _playAt.value = Pair(i, j)
+                        setMoveByPlayerAt(i, j)
                         return false
                     }
                 }
@@ -163,7 +167,9 @@ class MainActivityViewModel : ViewModel() {
         // Checking left-to-right diagonal for 2/3
         if ((board.get(0, 0) + board.get(1, 1) + board.get(2, 2)).contains(playerWithTurn)) {
             for (i in 0 until MainActivity.BOARD_SIZE) {
-                if (canPlay(i, i)) {
+                if (positionIsNotPlayed(i, i)) {
+                    _playAt.value = Pair(i, i)
+                    setMoveByPlayerAt(i, i)
                     return false
                 }
             }
@@ -171,7 +177,9 @@ class MainActivityViewModel : ViewModel() {
             var i = 0
             var j = 2
             while (i < MainActivity.BOARD_SIZE) {
-                if (canPlay(i, j)) {
+                if (positionIsNotPlayed(i, j)) {
+                    _playAt.value = Pair(i, j)
+                    setMoveByPlayerAt(i, j)
                     return false
                 }
                 i++
@@ -181,13 +189,7 @@ class MainActivityViewModel : ViewModel() {
         return true
     }
 
-    private fun canPlay(row: Int, column: Int): Boolean {
-        return if (board.get(row, column) == Board.NOT_PLAYED) {
-            _playAt.value = Pair(row, column)
-            setMoveByPlayerAt(row, column)
-            true
-        } else false
-    }
+    private fun positionIsNotPlayed(row: Int, column: Int): Boolean = board.get(row, column) == Board.NOT_PLAYED
 
     fun setMoveByPlayerAt(row: Int, column: Int) {
         if (isPlayerXTurn) {
@@ -200,11 +202,13 @@ class MainActivityViewModel : ViewModel() {
     private fun playRandom() {
         var iIndex = 0
         var jIndex = 1
-        while (!canPlay(iIndex, jIndex)) {
+        while (!positionIsNotPlayed(iIndex, jIndex)) {
             // Keep trying until a successful move is played
             iIndex = randomNumberForBoardIndex.nextInt(MainActivity.BOARD_SIZE)
             jIndex = randomNumberForBoardIndex.nextInt(MainActivity.BOARD_SIZE)
         }
+        _playAt.value = Pair(iIndex, jIndex)
+        setMoveByPlayerAt(iIndex, jIndex)
     }
 
     private fun playAnyCornerButton() {
@@ -258,9 +262,10 @@ class MainActivityViewModel : ViewModel() {
                 }
                 numberOfMoves == 1 -> {
                     if (gameMode == TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE) {
-                        if (!canPlay(1, 1)) {
+                        if (!positionIsNotPlayed(1, 1)) {
                             playAnyCornerButton()
                         } else {
+                            _playAt.value = Pair(1, 1)
                             setMoveByPlayerAt(1, 1)
                         }
                     } else {
