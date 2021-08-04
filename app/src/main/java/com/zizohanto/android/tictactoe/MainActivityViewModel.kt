@@ -8,7 +8,8 @@ import java.util.*
 
 class MainActivityViewModel : ViewModel() {
 
-    private var board = Board(MainActivity.BOARD_SIZE)
+    private val boardSize = MainActivity.BOARD_SIZE
+    private var board = Board(boardSize)
 
     private var randomNumberForBoardIndex = Random()
     private var isPlayerXTurn = true
@@ -20,17 +21,11 @@ class MainActivityViewModel : ViewModel() {
     private val _viewState: MutableLiveData<ViewStates> = MutableLiveData()
     val viewStates: LiveData<ViewStates> = _viewState
 
-    private val _playAt: MutableLiveData<Pair<Int, Int>> = MutableLiveData()
-    val playAt: LiveData<Pair<Int, Int>> = _playAt
-
     private val _enableAllBoxes: MutableLiveData<Boolean> = MutableLiveData()
     val enableAllBoxes: LiveData<Boolean> = _enableAllBoxes
 
     private val _gameOver: MutableLiveData<Int> = MutableLiveData()
     val gameOver: LiveData<Int> = _gameOver
-
-    private val _indicatePlayerWithTurn: MutableLiveData<Boolean> = MutableLiveData()
-    val indicatePlayerWithTurn: LiveData<Boolean> = _indicatePlayerWithTurn
 
     private val _playerToMoveText: MutableLiveData<Int> = MutableLiveData()
     val playerToMoveText: LiveData<Int> = _playerToMoveText
@@ -49,10 +44,10 @@ class MainActivityViewModel : ViewModel() {
 
     init {
         _viewState.value = ViewStates.Idle(
-                MainActivity.BOARD_SIZE,
+                boardSize,
                 gameMode,
-                playerXScore,
-                playerOScore,
+                playerXScore.toString(),
+                playerOScore.toString(),
                 R.string.notice_board,
                 board
         )
@@ -62,16 +57,16 @@ class MainActivityViewModel : ViewModel() {
      * Get the board value for position (i,j)
      */
     private fun getBoardValue(i: Int, j: Int): String {
-        if (i < 0 || i >= MainActivity.BOARD_SIZE) {
+        if (i < 0 || i >= boardSize) {
             return Board.NOT_PLAYED
         }
-        return if (j < 0 || j >= MainActivity.BOARD_SIZE) {
+        return if (j < 0 || j >= boardSize) {
             Board.NOT_PLAYED
         } else board.get(i, j)
     }
 
     fun initGame(gameMode: Int) {
-        board = Board(MainActivity.BOARD_SIZE)
+        board = Board(boardSize)
         isPlayerXTurn = true
         setGameMode(gameMode)
     }
@@ -88,8 +83,6 @@ class MainActivityViewModel : ViewModel() {
 
     fun setIsPlayerXTurn(isPlayerXTurn: Boolean) {
         this.isPlayerXTurn = isPlayerXTurn
-        _playerToMoveText.value = if (isPlayerXTurn) R.string.x_move
-        else R.string.o_move
     }
 
     fun setNumberOfMoves(moves: Int) {
@@ -121,8 +114,8 @@ class MainActivityViewModel : ViewModel() {
     }
 
     private fun winOrBlockMove(playerWithTurn: String): Boolean {
-        for (i in 0 until MainActivity.BOARD_SIZE) {
-            for (j in 0 until MainActivity.BOARD_SIZE) {
+        for (i in 0 until boardSize) {
+            for (j in 0 until boardSize) {
                 //Checking corresponding row for 2/3 situation
                 if ((board.get(i, 0) + board.get(i, 1) + board.get(i, 2)).contains(playerWithTurn)) {
                     if (positionIsNotPlayed(i, j)) {   // Play the move.
@@ -139,7 +132,7 @@ class MainActivityViewModel : ViewModel() {
         }
         // Checking left-to-right diagonal for 2/3
         if ((board.get(0, 0) + board.get(1, 1) + board.get(2, 2)).contains(playerWithTurn)) {
-            for (i in 0 until MainActivity.BOARD_SIZE) {
+            for (i in 0 until boardSize) {
                 if (positionIsNotPlayed(i, i)) {
                     setMoveByPlayerAt(i, i)
                     return false
@@ -148,7 +141,7 @@ class MainActivityViewModel : ViewModel() {
         } else if ((board.get(0, 2) + board.get(1, 1) + board.get(2, 0)).contains(playerWithTurn)) {
             var i = 0
             var j = 2
-            while (i < MainActivity.BOARD_SIZE) {
+            while (i < boardSize) {
                 if (positionIsNotPlayed(i, j)) {
                     setMoveByPlayerAt(i, j)
                     return false
@@ -165,7 +158,7 @@ class MainActivityViewModel : ViewModel() {
     fun playMoveByPlayerAt(row: Int, column: Int) {
         setMoveByPlayerAt(row, column)
         val isGameOver = isGameOver()
-        if(!isGameOver) {
+        if (!isGameOver) {
             passTurn()
         }
     }
@@ -176,7 +169,16 @@ class MainActivityViewModel : ViewModel() {
         } else {
             setMove(row, column, Board.PLAYER_O)
         }
-        _playAt.value = Pair(row, column)
+        val playerWithTurn = if (!isPlayerXTurn) R.string.x_move
+        else R.string.o_move
+        _viewState.value = ViewStates.Started(
+                boardSize,
+                gameMode,
+                playerXScore.toString(),
+                playerOScore.toString(),
+                playerWithTurn,
+                board
+        )
     }
 
     fun computerPlay(playerWithTurn: String) {
@@ -195,11 +197,9 @@ class MainActivityViewModel : ViewModel() {
             return true
         } else {
             numberOfMoves++
-            if (numberOfMoves == MainActivity.BOARD_SIZE * MainActivity.BOARD_SIZE) {
+            if (numberOfMoves == boardSize * boardSize) {
                 _gameDraw.value = R.string.game_draw
                 return true
-            } else {
-                _indicatePlayerWithTurn.value = isPlayerXTurn()
             }
         }
         switchTurn()
@@ -211,8 +211,8 @@ class MainActivityViewModel : ViewModel() {
         var jIndex = 1
         while (!positionIsNotPlayed(iIndex, jIndex)) {
             // Keep trying until a successful move is played
-            iIndex = randomNumberForBoardIndex.nextInt(MainActivity.BOARD_SIZE)
-            jIndex = randomNumberForBoardIndex.nextInt(MainActivity.BOARD_SIZE)
+            iIndex = randomNumberForBoardIndex.nextInt(boardSize)
+            jIndex = randomNumberForBoardIndex.nextInt(boardSize)
         }
         setMoveByPlayerAt(iIndex, jIndex)
     }
@@ -275,7 +275,7 @@ class MainActivityViewModel : ViewModel() {
         }
         val DI = intArrayOf(-1, 0, 1, 1)
         val DJ = intArrayOf(1, 1, 1, 0)
-        for (i in 0 until MainActivity.BOARD_SIZE) for (j in 0 until MainActivity.BOARD_SIZE) {
+        for (i in 0 until boardSize) for (j in 0 until boardSize) {
 
             // Skip if the token in board.get(i,j) is not equal to current token
             if (board.get(i, j) != token) continue

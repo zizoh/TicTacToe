@@ -60,12 +60,7 @@ class MainActivity : AppCompatActivity() {
         with(viewModel) {
             val mainActivity = this@MainActivity
             viewStates.observe(mainActivity, ::setViewStates)
-            playAt.observe(mainActivity) {
-                val (row, column) = it
-                showMoveByPlayerAt(row, column)
-            }
             enableAllBoxes.observe(mainActivity, ::enableAllBoxes)
-            indicatePlayerWithTurn.observe(mainActivity, ::indicatePlayerWithTurn)
             gameOver.observe(mainActivity, ::gameOver)
             playerToMoveText.observe(mainActivity, ::showPlayerToMoveText)
             gameDraw.observe(mainActivity, ::gameDraw)
@@ -117,6 +112,16 @@ class MainActivity : AppCompatActivity() {
             }
             is ViewStates.Started -> {
                 enablePlayerToMoveButtons(false)
+                binding.layoutTop.playerXScoreboard.text = viewStates.playerXScore
+                binding.layoutTop.playerOScoreboard.text = viewStates.playerOScore
+                binding.layoutTop.playerToMoveTv.setText(viewStates.playerWithTurn)
+                for (row in 0 until viewStates.boardSize) {
+                    for (column in 0 until viewStates.boardSize) {
+                        val buttonText = viewStates.board.get(row, column)
+                        showMoveByPlayerAt(row, column, buttonText)
+                    }
+                }
+
             }
             is ViewStates.GameOver -> TODO()
             is ViewStates.GameDraw -> TODO()
@@ -183,14 +188,6 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
     }
 
-    private fun indicatePlayerWithTurn(playerWithTurn: Boolean) {
-        if (playerWithTurn) {
-            binding.layoutTop.playerToMoveTv.text = getString(R.string.o_move)
-        } else {
-            binding.layoutTop.playerToMoveTv.text = getString(R.string.x_move)
-        }
-    }
-
     private fun enablePlayerToMoveButtons(enableButtons: Boolean) {
         binding.layoutTop.playerXToMove.isEnabled = enableButtons
         binding.layoutTop.playerOToMove.isEnabled = enableButtons
@@ -222,36 +219,53 @@ class MainActivity : AppCompatActivity() {
         newFragment.show(supportFragmentManager, "WinOrDrawDialog")
     }
 
-    private fun showMoveByPlayerAt(row: Int, column: Int) {
-        val isPlayerXTurn = viewModel.isPlayerXTurn()
+    private fun showMoveByPlayerAt(row: Int, column: Int, buttonText: String) {
         with(binding.board3x3) {
             if (row == 0 && column == 0) {
-                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row0Col0.board3x3ButtonO)
-                TicTacToeUtils.disableButton(row0Col0.board3x3ButtonO)
+                with(row0Col0.board3x3ButtonO) {
+                    text = buttonText
+                    isEnabled = buttonText.isEmpty()
+                }
             } else if (row == 0 && column == 1) {
-                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row0Col1.board3x3ButtonO)
-                TicTacToeUtils.disableButton(row0Col1.board3x3ButtonO)
+                with(row0Col1.board3x3ButtonO) {
+                    text = buttonText
+                    isEnabled = buttonText.isEmpty()
+                }
             } else if (row == 0 && column == 2) {
-                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row0Col2.board3x3ButtonO)
-                TicTacToeUtils.disableButton(row0Col2.board3x3ButtonO)
+                with(row0Col2.board3x3ButtonO) {
+                    text = buttonText
+                    isEnabled = buttonText.isEmpty()
+                }
             } else if (row == 1 && column == 0) {
-                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row1Col0.board3x3ButtonO)
-                TicTacToeUtils.disableButton(row1Col0.board3x3ButtonO)
+                with(row1Col0.board3x3ButtonO) {
+                    text = buttonText
+                    isEnabled = buttonText.isEmpty()
+                }
             } else if (row == 1 && column == 1) {
-                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row1Col1.board3x3ButtonO)
-                TicTacToeUtils.disableButton(row1Col1.board3x3ButtonO)
+                with(row1Col1.board3x3ButtonO) {
+                    text = buttonText
+                    isEnabled = buttonText.isEmpty()
+                }
             } else if (row == 1 && column == 2) {
-                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row1Col2.board3x3ButtonO)
-                TicTacToeUtils.disableButton(row1Col2.board3x3ButtonO)
+                with(row1Col2.board3x3ButtonO) {
+                    text = buttonText
+                    isEnabled = buttonText.isEmpty()
+                }
             } else if (row == 2 && column == 0) {
-                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row2Col0.board3x3ButtonO)
-                TicTacToeUtils.disableButton(row2Col0.board3x3ButtonO)
+                with(row2Col0.board3x3ButtonO) {
+                    text = buttonText
+                    isEnabled = buttonText.isEmpty()
+                }
             } else if (row == 2 && column == 1) {
-                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row2Col1.board3x3ButtonO)
-                TicTacToeUtils.disableButton(row2Col1.board3x3ButtonO)
-            } else if (row == 2 && column == 2) {
-                TicTacToeUtils.setTextOnButtonPlayed(isPlayerXTurn, row2Col2.board3x3ButtonO)
-                TicTacToeUtils.disableButton(row2Col2.board3x3ButtonO)
+                with(row2Col1.board3x3ButtonO) {
+                    text = buttonText
+                    isEnabled = buttonText.isEmpty()
+                }
+            } else {
+                with(row2Col2.board3x3ButtonO) {
+                    text = buttonText
+                    isEnabled = buttonText.isEmpty()
+                }
             }
         }
     }
