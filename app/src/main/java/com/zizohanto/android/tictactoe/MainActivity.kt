@@ -60,13 +60,7 @@ class MainActivity : AppCompatActivity() {
         with(viewModel) {
             val mainActivity = this@MainActivity
             viewStates.observe(mainActivity, ::setViewStates)
-            enableAllBoxes.observe(mainActivity, ::enableAllBoxes)
-            gameOver.observe(mainActivity, ::gameOver)
-            playerToMoveText.observe(mainActivity, ::showPlayerToMoveText)
             gameDraw.observe(mainActivity, ::gameDraw)
-            playerXScoreString.observe(mainActivity, ::playerXScore)
-            playerOScoreString.observe(mainActivity, ::playerOScore)
-            showDialog.observe(mainActivity, ::showGameStatusDialog)
         }
         with(binding.layoutTop) {
             playerXToMove.setOnClickListener {
@@ -121,29 +115,19 @@ class MainActivity : AppCompatActivity() {
                         showMoveByPlayerAt(row, column, buttonText)
                     }
                 }
-
             }
-            is ViewStates.GameOver -> TODO()
+            is ViewStates.GameOver -> {
+                enablePlayerToMoveButtons(false)
+                enableAllBoxes(false)
+                binding.layoutTop.playerXScoreboard.text = viewStates.playerXScore
+                binding.layoutTop.playerOScoreboard.text = viewStates.playerOScore
+                binding.layoutTop.playerToMoveTv.setText(viewStates.playerWithTurn)
+                showGameStatusDialog(viewStates.winnerMessage)
+            }
             is ViewStates.GameDraw -> TODO()
             is ViewStates.ViewHowTo -> TODO()
             is ViewStates.ViewLicenses -> TODO()
         }
-    }
-
-    private fun playerXScore(score: String) {
-        binding.layoutTop.playerXScoreboard.text = score
-    }
-
-    private fun playerOScore(score: String) {
-        binding.layoutTop.playerOScoreboard.text = score
-    }
-
-    private fun showPlayerToMoveText(resId: Int) {
-        binding.layoutTop.playerToMoveTv.setText(resId)
-    }
-
-    private fun gameOver(resId: Int) {
-        binding.layoutTop.playerToMoveTv.setText(resId)
     }
 
     private fun setToolbar() {

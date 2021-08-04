@@ -21,26 +21,8 @@ class MainActivityViewModel : ViewModel() {
     private val _viewState: MutableLiveData<ViewStates> = MutableLiveData()
     val viewStates: LiveData<ViewStates> = _viewState
 
-    private val _enableAllBoxes: MutableLiveData<Boolean> = MutableLiveData()
-    val enableAllBoxes: LiveData<Boolean> = _enableAllBoxes
-
-    private val _gameOver: MutableLiveData<Int> = MutableLiveData()
-    val gameOver: LiveData<Int> = _gameOver
-
-    private val _playerToMoveText: MutableLiveData<Int> = MutableLiveData()
-    val playerToMoveText: LiveData<Int> = _playerToMoveText
-
     private val _gameDraw: MutableLiveData<Int> = MutableLiveData()
     val gameDraw: LiveData<Int> = _gameDraw
-
-    private val _playerXScore: MutableLiveData<String> = MutableLiveData()
-    val playerXScoreString: LiveData<String> = _playerXScore
-
-    private val _playerOScore: MutableLiveData<String> = MutableLiveData()
-    val playerOScoreString: LiveData<String> = _playerOScore
-
-    private val _showDialog: MutableLiveData<Int> = MutableLiveData()
-    val showDialog: LiveData<Int> = _showDialog
 
     init {
         _viewState.value = ViewStates.Idle(
@@ -230,8 +212,6 @@ class MainActivityViewModel : ViewModel() {
         if (gameMode == TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE) {
             noWinOrBlock = winOrBlockMove(playerWithTurn) // Checking for 2/3 win situation.
             if (!noWinOrBlock) {
-                _enableAllBoxes.value = false
-                _gameOver.value = R.string.game_over
                 return
             }
         }
@@ -293,16 +273,19 @@ class MainActivityViewModel : ViewModel() {
     }
 
     private fun setWinner() {
-        _enableAllBoxes.value = false
-        _playerToMoveText.value = R.string.game_over
         addPlayerScore()
-        if (isPlayerXTurn()) {
-            _playerXScore.value = playerXScore.toString()
-            _showDialog.value = R.string.player_x_wins
-        } else {
-            _playerOScore.value = playerOScore.toString()
-            _showDialog.value = R.string.player_o_wins
-        }
+        val winner = if (isPlayerXTurn()) R.string.player_x_wins
+        else R.string.player_o_wins
+
+        _viewState.value = ViewStates.GameOver(
+                boardSize,
+                gameMode,
+                playerXScore.toString(),
+                playerOScore.toString(),
+                R.string.game_over,
+                board,
+                winner,
+        )
     }
 
     private fun addPlayerScore() {

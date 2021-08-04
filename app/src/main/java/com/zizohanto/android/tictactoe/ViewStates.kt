@@ -21,7 +21,7 @@ sealed class ViewStates {
                    val playerOScore: String,
                    val playerWithTurn: Int,
                    val board: Board,
-                   val gameOverMessage: Int) : ViewStates()
+                   val winnerMessage: Int) : ViewStates()
 
     class GameDraw(val boardSize: Int,
                    val gameMode: Int,
