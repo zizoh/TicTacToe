@@ -63,7 +63,6 @@ class MainActivity : AppCompatActivity() {
             playAt.observe(mainActivity) {
                 val (row, column) = it
                 showMoveByPlayerAt(row, column)
-                viewModel.setMoveByPlayerAt(row, column)
             }
             enableAllBoxes.observe(mainActivity, ::enableAllBoxes)
             indicatePlayerWithTurn.observe(mainActivity, ::indicatePlayerWithTurn)
@@ -105,51 +104,15 @@ class MainActivity : AppCompatActivity() {
                 binding.resetButton.root.isVisible = true
                 enablePlayerToMoveButtons(true)
                 with(binding.board3x3) {
-                    row0Col0.board3x3ButtonO.setOnClickListener {
-                        showMoveByPlayerAt(0, 0)
-                        viewModel.setMoveByPlayerAt(0, 0)
-                        viewModel.checkMove()
-                    }
-                    row0Col1.board3x3ButtonO.setOnClickListener {
-                        showMoveByPlayerAt(0, 1)
-                        viewModel.setMoveByPlayerAt(0, 1)
-                        viewModel.checkMove()
-                    }
-                    row0Col2.board3x3ButtonO.setOnClickListener {
-                        showMoveByPlayerAt(0, 2)
-                        viewModel.setMoveByPlayerAt(0, 2)
-                        viewModel.checkMove()
-                    }
-                    row1Col0.board3x3ButtonO.setOnClickListener {
-                        showMoveByPlayerAt(1, 0)
-                        viewModel.setMoveByPlayerAt(1, 0)
-                        viewModel.checkMove()
-                    }
-                    row1Col1.board3x3ButtonO.setOnClickListener {
-                        showMoveByPlayerAt(1, 1)
-                        viewModel.setMoveByPlayerAt(1, 1)
-                        viewModel.checkMove()
-                    }
-                    row1Col2.board3x3ButtonO.setOnClickListener {
-                        showMoveByPlayerAt(1, 2)
-                        viewModel.setMoveByPlayerAt(1, 2)
-                        viewModel.checkMove()
-                    }
-                    row2Col0.board3x3ButtonO.setOnClickListener {
-                        showMoveByPlayerAt(2, 0)
-                        viewModel.setMoveByPlayerAt(2, 0)
-                        viewModel.checkMove()
-                    }
-                    row2Col1.board3x3ButtonO.setOnClickListener {
-                        showMoveByPlayerAt(2, 1)
-                        viewModel.setMoveByPlayerAt(2, 1)
-                        viewModel.checkMove()
-                    }
-                    row2Col2.board3x3ButtonO.setOnClickListener {
-                        showMoveByPlayerAt(2, 2)
-                        viewModel.setMoveByPlayerAt(2, 2)
-                        viewModel.checkMove()
-                    }
+                    row0Col0.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(0, 0) }
+                    row0Col1.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(0, 1) }
+                    row0Col2.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(0, 2) }
+                    row1Col0.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(1, 0) }
+                    row1Col1.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(1, 1) }
+                    row1Col2.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(1, 2) }
+                    row2Col0.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(2, 0) }
+                    row2Col1.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(2, 1) }
+                    row2Col2.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(2, 2) }
                 }
             }
             is ViewStates.Started -> {

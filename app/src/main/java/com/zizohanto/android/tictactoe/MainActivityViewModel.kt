@@ -58,31 +58,6 @@ class MainActivityViewModel : ViewModel() {
         )
     }
 
-    private fun isThereAWinner(): Boolean {
-        val token: String = if (isPlayerXTurn) {
-            Board.PLAYER_X
-        } else {
-            Board.PLAYER_O
-        }
-        val DI = intArrayOf(-1, 0, 1, 1)
-        val DJ = intArrayOf(1, 1, 1, 0)
-        for (i in 0 until MainActivity.BOARD_SIZE) for (j in 0 until MainActivity.BOARD_SIZE) {
-
-            // Skip if the token in board.get(i,j) is not equal to current token
-            if (board.get(i, j) != token) continue
-            for (k in 0..3) {
-                var count = 0
-                while (getBoardValue(i + DI[k] * count, j + DJ[k] * count) == token) {
-                    count++
-                    if (count == 3) {
-                        return true
-                    }
-                }
-            }
-        }
-        return false
-    }
-
     /*
      * Get the board value for position (i,j)
      */
@@ -151,13 +126,11 @@ class MainActivityViewModel : ViewModel() {
                 //Checking corresponding row for 2/3 situation
                 if ((board.get(i, 0) + board.get(i, 1) + board.get(i, 2)).contains(playerWithTurn)) {
                     if (positionIsNotPlayed(i, j)) {   // Play the move.
-                        _playAt.value = Pair(i, j)
                         setMoveByPlayerAt(i, j)
                         return false
                     }
                 } else if ((board.get(0, j) + board.get(1, j) + board.get(2, j)).contains(playerWithTurn)) {
                     if (positionIsNotPlayed(i, j)) {
-                        _playAt.value = Pair(i, j)
                         setMoveByPlayerAt(i, j)
                         return false
                     }
@@ -168,7 +141,6 @@ class MainActivityViewModel : ViewModel() {
         if ((board.get(0, 0) + board.get(1, 1) + board.get(2, 2)).contains(playerWithTurn)) {
             for (i in 0 until MainActivity.BOARD_SIZE) {
                 if (positionIsNotPlayed(i, i)) {
-                    _playAt.value = Pair(i, i)
                     setMoveByPlayerAt(i, i)
                     return false
                 }
@@ -178,7 +150,6 @@ class MainActivityViewModel : ViewModel() {
             var j = 2
             while (i < MainActivity.BOARD_SIZE) {
                 if (positionIsNotPlayed(i, j)) {
-                    _playAt.value = Pair(i, j)
                     setMoveByPlayerAt(i, j)
                     return false
                 }
@@ -191,12 +162,48 @@ class MainActivityViewModel : ViewModel() {
 
     private fun positionIsNotPlayed(row: Int, column: Int): Boolean = board.get(row, column) == Board.NOT_PLAYED
 
-    fun setMoveByPlayerAt(row: Int, column: Int) {
+    fun playMoveByPlayerAt(row: Int, column: Int) {
+        setMoveByPlayerAt(row, column)
+        val isGameOver = isGameOver()
+        if(!isGameOver) {
+            passTurn()
+        }
+    }
+
+    private fun setMoveByPlayerAt(row: Int, column: Int) {
         if (isPlayerXTurn) {
             setMove(row, column, Board.PLAYER_X)
         } else {
             setMove(row, column, Board.PLAYER_O)
         }
+        _playAt.value = Pair(row, column)
+    }
+
+    fun computerPlay(playerWithTurn: String) {
+        if (gameMode == TicTacToeUtils.SINGLE_PLAYER_EASY_MODE) {
+            playRandom()
+        } else if (gameMode == TicTacToeUtils.SINGLE_PLAYER_MEDIUM_MODE
+                || gameMode == TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE) {
+            playMediumOrImpossibleMode(playerWithTurn)
+        }
+        isGameOver()
+    }
+
+    private fun isGameOver(): Boolean {
+        if (isThereAWinner()) {
+            setWinner()
+            return true
+        } else {
+            numberOfMoves++
+            if (numberOfMoves == MainActivity.BOARD_SIZE * MainActivity.BOARD_SIZE) {
+                _gameDraw.value = R.string.game_draw
+                return true
+            } else {
+                _indicatePlayerWithTurn.value = isPlayerXTurn()
+            }
+        }
+        switchTurn()
+        return false
     }
 
     private fun playRandom() {
@@ -207,7 +214,6 @@ class MainActivityViewModel : ViewModel() {
             iIndex = randomNumberForBoardIndex.nextInt(MainActivity.BOARD_SIZE)
             jIndex = randomNumberForBoardIndex.nextInt(MainActivity.BOARD_SIZE)
         }
-        _playAt.value = Pair(iIndex, jIndex)
         setMoveByPlayerAt(iIndex, jIndex)
     }
 
@@ -216,32 +222,7 @@ class MainActivityViewModel : ViewModel() {
         val j = 2
         val c = if (randomNumberForBoardIndex.nextBoolean()) i else j
         val d = if (randomNumberForBoardIndex.nextBoolean()) i else j
-        _playAt.value = Pair(c, d)
         setMoveByPlayerAt(c, d)
-    }
-
-    private fun switchTurn() {
-        isPlayerXTurn = !isPlayerXTurn
-    }
-
-    fun computerPlay(playerWithTurn: String) {
-        if (gameMode == TicTacToeUtils.SINGLE_PLAYER_EASY_MODE) {
-            playRandom()
-        } else if (gameMode == TicTacToeUtils.SINGLE_PLAYER_MEDIUM_MODE
-                || gameMode == TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE) {
-            playMediumOrImpossibleMode(playerWithTurn)
-        }
-        if (isThereAWinner()) {
-            setWinner()
-        } else {
-            numberOfMoves++
-            if (numberOfMoves == MainActivity.BOARD_SIZE * MainActivity.BOARD_SIZE) {
-                _gameDraw.value = R.string.game_draw
-            } else {
-                _indicatePlayerWithTurn.value = isPlayerXTurn()
-                switchTurn()
-            }
-        }
     }
 
     private fun playMediumOrImpossibleMode(playerWithTurn: String) {
@@ -262,11 +243,10 @@ class MainActivityViewModel : ViewModel() {
                 }
                 numberOfMoves == 1 -> {
                     if (gameMode == TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE) {
-                        if (!positionIsNotPlayed(1, 1)) {
-                            playAnyCornerButton()
-                        } else {
-                            _playAt.value = Pair(1, 1)
+                        if (positionIsNotPlayed(1, 1)) {
                             setMoveByPlayerAt(1, 1)
+                        } else {
+                            playAnyCornerButton()
                         }
                     } else {
                         playRandom()
@@ -285,6 +265,31 @@ class MainActivityViewModel : ViewModel() {
         if (noWinOrBlock) {
             playRandom()
         }
+    }
+
+    private fun isThereAWinner(): Boolean {
+        val token: String = if (isPlayerXTurn) {
+            Board.PLAYER_X
+        } else {
+            Board.PLAYER_O
+        }
+        val DI = intArrayOf(-1, 0, 1, 1)
+        val DJ = intArrayOf(1, 1, 1, 0)
+        for (i in 0 until MainActivity.BOARD_SIZE) for (j in 0 until MainActivity.BOARD_SIZE) {
+
+            // Skip if the token in board.get(i,j) is not equal to current token
+            if (board.get(i, j) != token) continue
+            for (k in 0..3) {
+                var count = 0
+                while (getBoardValue(i + DI[k] * count, j + DJ[k] * count) == token) {
+                    count++
+                    if (count == 3) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
     }
 
     private fun setWinner() {
@@ -308,22 +313,11 @@ class MainActivityViewModel : ViewModel() {
         }
     }
 
-    fun checkMove() {
-        if (isThereAWinner()) {
-            setWinner()
-        } else {
-            _indicatePlayerWithTurn.value = isPlayerXTurn()
-            switchTurn()
-            numberOfMoves++
-            if (numberOfMoves == MainActivity.BOARD_SIZE * MainActivity.BOARD_SIZE) {
-                _gameDraw.value = R.string.game_draw
-            } else {
-                gameOn()
-            }
-        }
+    private fun switchTurn() {
+        isPlayerXTurn = !isPlayerXTurn
     }
 
-    private fun gameOn() {
+    private fun passTurn() {
         if (TicTacToeUtils.isSinglePlayerMode(getGameMode())) {
             if (isPlayerXTurn) {
                 computerPlay(Board.PLAYER_X)
