@@ -57,11 +57,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        with(viewModel) {
-            val mainActivity = this@MainActivity
-            viewStates.observe(mainActivity, ::setViewStates)
-            gameDraw.observe(mainActivity, ::gameDraw)
-        }
+        viewModel.viewStates.observe(this, ::setViewStates)
         with(binding.layoutTop) {
             playerXToMove.setOnClickListener {
                 enablePlayerToMoveButtons(false)
@@ -124,7 +120,14 @@ class MainActivity : AppCompatActivity() {
                 binding.layoutTop.playerToMoveTv.setText(viewStates.playerWithTurn)
                 showGameStatusDialog(viewStates.winnerMessage)
             }
-            is ViewStates.GameDraw -> TODO()
+            is ViewStates.GameDraw -> {
+                enablePlayerToMoveButtons(false)
+                enableAllBoxes(false)
+                binding.layoutTop.playerXScoreboard.text = viewStates.playerXScore
+                binding.layoutTop.playerOScoreboard.text = viewStates.playerOScore
+                binding.layoutTop.playerToMoveTv.setText(viewStates.playerWithTurn)
+                showGameStatusDialog(viewStates.gameDrawMessage)
+            }
             is ViewStates.ViewHowTo -> TODO()
             is ViewStates.ViewLicenses -> TODO()
         }
@@ -205,58 +208,54 @@ class MainActivity : AppCompatActivity() {
 
     private fun showMoveByPlayerAt(row: Int, column: Int, buttonText: String) {
         with(binding.board3x3) {
+            val isEnableButton = buttonText.isEmpty()
             if (row == 0 && column == 0) {
                 with(row0Col0.board3x3ButtonO) {
                     text = buttonText
-                    isEnabled = buttonText.isEmpty()
+                    isEnabled = isEnableButton
                 }
             } else if (row == 0 && column == 1) {
                 with(row0Col1.board3x3ButtonO) {
                     text = buttonText
-                    isEnabled = buttonText.isEmpty()
+                    isEnabled = isEnableButton
                 }
             } else if (row == 0 && column == 2) {
                 with(row0Col2.board3x3ButtonO) {
                     text = buttonText
-                    isEnabled = buttonText.isEmpty()
+                    isEnabled = isEnableButton
                 }
             } else if (row == 1 && column == 0) {
                 with(row1Col0.board3x3ButtonO) {
                     text = buttonText
-                    isEnabled = buttonText.isEmpty()
+                    isEnabled = isEnableButton
                 }
             } else if (row == 1 && column == 1) {
                 with(row1Col1.board3x3ButtonO) {
                     text = buttonText
-                    isEnabled = buttonText.isEmpty()
+                    isEnabled = isEnableButton
                 }
             } else if (row == 1 && column == 2) {
                 with(row1Col2.board3x3ButtonO) {
                     text = buttonText
-                    isEnabled = buttonText.isEmpty()
+                    isEnabled = isEnableButton
                 }
             } else if (row == 2 && column == 0) {
                 with(row2Col0.board3x3ButtonO) {
                     text = buttonText
-                    isEnabled = buttonText.isEmpty()
+                    isEnabled = isEnableButton
                 }
             } else if (row == 2 && column == 1) {
                 with(row2Col1.board3x3ButtonO) {
                     text = buttonText
-                    isEnabled = buttonText.isEmpty()
+                    isEnabled = isEnableButton
                 }
             } else {
                 with(row2Col2.board3x3ButtonO) {
                     text = buttonText
-                    isEnabled = buttonText.isEmpty()
+                    isEnabled = isEnableButton
                 }
             }
         }
-    }
-
-    private fun gameDraw(resId: Int) {
-        binding.layoutTop.playerToMoveTv.setText(resId)
-        showGameStatusDialog(resId)
     }
 
     private fun enableAllBoxes(enableBoxes: Boolean) {

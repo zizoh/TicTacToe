@@ -21,9 +21,6 @@ class MainActivityViewModel : ViewModel() {
     private val _viewState: MutableLiveData<ViewStates> = MutableLiveData()
     val viewStates: LiveData<ViewStates> = _viewState
 
-    private val _gameDraw: MutableLiveData<Int> = MutableLiveData()
-    val gameDraw: LiveData<Int> = _gameDraw
-
     init {
         _viewState.value = ViewStates.Idle(
                 boardSize,
@@ -180,7 +177,15 @@ class MainActivityViewModel : ViewModel() {
         } else {
             numberOfMoves++
             if (numberOfMoves == boardSize * boardSize) {
-                _gameDraw.value = R.string.game_draw
+                _viewState.value = ViewStates.GameOver(
+                        boardSize,
+                        gameMode,
+                        playerXScore.toString(),
+                        playerOScore.toString(),
+                        R.string.game_over,
+                        board,
+                        R.string.game_draw,
+                )
                 return true
             }
         }
