@@ -23,12 +23,12 @@ class MainActivityViewModel : ViewModel() {
 
     init {
         _viewState.value = ViewStates.Idle(
-                boardSize,
-                gameMode,
-                playerXScore.toString(),
-                playerOScore.toString(),
-                R.string.notice_board,
-                board
+            boardSize,
+            gameMode,
+            playerXScore.toString(),
+            playerOScore.toString(),
+            R.string.notice_board,
+            board
         )
     }
 
@@ -96,12 +96,19 @@ class MainActivityViewModel : ViewModel() {
         for (i in 0 until boardSize) {
             for (j in 0 until boardSize) {
                 //Checking corresponding row for 2/3 situation
-                if ((board.get(i, 0) + board.get(i, 1) + board.get(i, 2)).contains(playerWithTurn)) {
+                if ((board.get(i, 0) + board.get(i, 1) + board.get(
+                        i,
+                        2
+                    )).contains(playerWithTurn)
+                ) {
                     if (positionIsNotPlayed(i, j)) {   // Play the move.
                         setMoveByPlayerAt(i, j)
                         return false
                     }
-                } else if ((board.get(0, j) + board.get(1, j) + board.get(2, j)).contains(playerWithTurn)) {
+                } else if ((board.get(0, j) + board.get(1, j) + board.get(2, j)).contains(
+                        playerWithTurn
+                    )
+                ) {
                     if (positionIsNotPlayed(i, j)) {
                         setMoveByPlayerAt(i, j)
                         return false
@@ -132,7 +139,8 @@ class MainActivityViewModel : ViewModel() {
         return true
     }
 
-    private fun positionIsNotPlayed(row: Int, column: Int): Boolean = board.get(row, column) == Board.NOT_PLAYED
+    private fun positionIsNotPlayed(row: Int, column: Int): Boolean =
+        board.get(row, column) == Board.NOT_PLAYED
 
     fun playMoveByPlayerAt(row: Int, column: Int) {
         setMoveByPlayerAt(row, column)
@@ -151,12 +159,12 @@ class MainActivityViewModel : ViewModel() {
         val playerWithTurn = if (!isPlayerXTurn) R.string.x_move
         else R.string.o_move
         _viewState.value = ViewStates.Started(
-                boardSize,
-                gameMode,
-                playerXScore.toString(),
-                playerOScore.toString(),
-                playerWithTurn,
-                board
+            boardSize,
+            gameMode,
+            playerXScore.toString(),
+            playerOScore.toString(),
+            playerWithTurn,
+            board
         )
     }
 
@@ -164,7 +172,8 @@ class MainActivityViewModel : ViewModel() {
         if (gameMode == TicTacToeUtils.SINGLE_PLAYER_EASY_MODE) {
             playRandom()
         } else if (gameMode == TicTacToeUtils.SINGLE_PLAYER_MEDIUM_MODE
-                || gameMode == TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE) {
+            || gameMode == TicTacToeUtils.SINGLE_PLAYER_IMPOSSIBLE_MODE
+        ) {
             playMediumOrImpossibleMode(playerWithTurn)
         }
         isGameOver()
@@ -178,13 +187,13 @@ class MainActivityViewModel : ViewModel() {
             numberOfMoves++
             if (numberOfMoves == boardSize * boardSize) {
                 _viewState.value = ViewStates.GameOver(
-                        boardSize,
-                        gameMode,
-                        playerXScore.toString(),
-                        playerOScore.toString(),
-                        R.string.game_over,
-                        board,
-                        R.string.game_draw,
+                    boardSize,
+                    gameMode,
+                    playerXScore.toString(),
+                    playerOScore.toString(),
+                    R.string.game_over,
+                    board,
+                    R.string.game_draw,
                 )
                 return true
             }
@@ -283,13 +292,13 @@ class MainActivityViewModel : ViewModel() {
         else R.string.player_o_wins
 
         _viewState.value = ViewStates.GameOver(
-                boardSize,
-                gameMode,
-                playerXScore.toString(),
-                playerOScore.toString(),
-                R.string.game_over,
-                board,
-                winner,
+            boardSize,
+            gameMode,
+            playerXScore.toString(),
+            playerOScore.toString(),
+            R.string.game_over,
+            board,
+            winner,
         )
     }
 
@@ -317,5 +326,9 @@ class MainActivityViewModel : ViewModel() {
 
     fun showHowTo() {
         _viewState.value = ViewStates.ViewHowTo(R.string.how_to_dialog_title)
+    }
+
+    fun showLicenses() {
+        _viewState.value = ViewStates.ViewLicenses
     }
 }

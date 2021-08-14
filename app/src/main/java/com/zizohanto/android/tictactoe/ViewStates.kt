@@ -41,13 +41,5 @@ sealed class ViewStates {
 
     class ViewHowTo(val howToMessage: Int) : ViewStates()
 
-    class ViewLicenses(
-        val boardSize: Int,
-        val gameMode: Int,
-        val playerXScore: String,
-        val playerOScore: String,
-        val playerWithTurn: Int,
-        val board: Board,
-        val licenses: Int
-    ) : ViewStates()
+    object ViewLicenses : ViewStates()
 }

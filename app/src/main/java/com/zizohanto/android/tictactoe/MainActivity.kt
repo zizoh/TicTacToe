@@ -174,8 +174,13 @@ class MainActivity : AppCompatActivity() {
                 showGameStatusDialog(viewStates.gameDrawMessage)
             }
             is ViewStates.ViewHowTo -> createHowToWebView(viewStates.howToMessage)
-            is ViewStates.ViewLicenses -> TODO()
+            is ViewStates.ViewLicenses -> showLicenses()
         }
+    }
+
+    private fun showLicenses() {
+        startActivity(Intent(this, OssLicensesMenuActivity::class.java))
+        OssLicensesMenuActivity.setActivityTitle(getString(R.string.open_source_license_title))
     }
 
     private fun setToolbar() {
@@ -379,8 +384,7 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.license_menu -> {
-                startActivity(Intent(this, OssLicensesMenuActivity::class.java))
-                OssLicensesMenuActivity.setActivityTitle(getString(R.string.open_source_license_title))
+                viewModel.showLicenses()
                 true
             }
             else -> super.onOptionsItemSelected(item)
