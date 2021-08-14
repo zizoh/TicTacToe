@@ -89,15 +89,60 @@ class MainActivity : AppCompatActivity() {
                 binding.resetButton.root.isVisible = true
                 enablePlayerToMoveButtons(true)
                 with(binding.board3x3) {
-                    row0Col0.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(0, 0) }
-                    row0Col1.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(0, 1) }
-                    row0Col2.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(0, 2) }
-                    row1Col0.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(1, 0) }
-                    row1Col1.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(1, 1) }
-                    row1Col2.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(1, 2) }
-                    row2Col0.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(2, 0) }
-                    row2Col1.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(2, 1) }
-                    row2Col2.board3x3ButtonO.setOnClickListener { viewModel.playMoveByPlayerAt(2, 2) }
+                    row0Col0.board3x3ButtonO.setOnClickListener {
+                        viewModel.playMoveByPlayerAt(
+                            0,
+                            0
+                        )
+                    }
+                    row0Col1.board3x3ButtonO.setOnClickListener {
+                        viewModel.playMoveByPlayerAt(
+                            0,
+                            1
+                        )
+                    }
+                    row0Col2.board3x3ButtonO.setOnClickListener {
+                        viewModel.playMoveByPlayerAt(
+                            0,
+                            2
+                        )
+                    }
+                    row1Col0.board3x3ButtonO.setOnClickListener {
+                        viewModel.playMoveByPlayerAt(
+                            1,
+                            0
+                        )
+                    }
+                    row1Col1.board3x3ButtonO.setOnClickListener {
+                        viewModel.playMoveByPlayerAt(
+                            1,
+                            1
+                        )
+                    }
+                    row1Col2.board3x3ButtonO.setOnClickListener {
+                        viewModel.playMoveByPlayerAt(
+                            1,
+                            2
+                        )
+                    }
+                    row2Col0.board3x3ButtonO.setOnClickListener {
+                        viewModel.playMoveByPlayerAt(
+                            2,
+                            0
+                        )
+                    }
+                    row2Col1.board3x3ButtonO.setOnClickListener {
+                        viewModel.playMoveByPlayerAt(
+                            2,
+                            1
+                        )
+                    }
+                    row2Col2.board3x3ButtonO.setOnClickListener {
+                        viewModel.playMoveByPlayerAt(
+                            2,
+                            2
+                        )
+                    }
                 }
             }
             is ViewStates.Started -> {
@@ -128,7 +173,7 @@ class MainActivity : AppCompatActivity() {
                 binding.layoutTop.playerToMoveTv.setText(viewStates.playerWithTurn)
                 showGameStatusDialog(viewStates.gameDrawMessage)
             }
-            is ViewStates.ViewHowTo -> TODO()
+            is ViewStates.ViewHowTo -> createHowToWebView(viewStates.howToMessage)
             is ViewStates.ViewLicenses -> TODO()
         }
     }
@@ -143,7 +188,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun setBoardSizeSpinner() {
         binding.toolbar.boardSizeSpinner.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 when (position) {
                     0 -> {
                     }
@@ -156,17 +206,28 @@ class MainActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-        binding.toolbar.boardSizeSpinner.adapter = ArrayAdapter.createFromResource(this,
-                R.array.board_size_3x3_array, R.layout.spinner_item).apply {
+        binding.toolbar.boardSizeSpinner.adapter = ArrayAdapter.createFromResource(
+            this,
+            R.array.board_size_3x3_array, R.layout.spinner_item
+        ).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
     }
 
     public override fun onSaveInstanceState(outState: Bundle) {
         outState.putStringArray(STATE_BOARD, viewModel.getOneDimBoard())
-        outState.putCharSequence(STATE_PLAYER_X_SCOREBOARD, binding.layoutTop.playerXScoreboard.text)
-        outState.putCharSequence(STATE_PLAYER_O_SCOREBOARD, binding.layoutTop.playerOScoreboard.text)
-        outState.putCharSequence(STATE_PLAYER_TO_MOVE_TEXTVIEW, binding.layoutTop.playerToMoveTv.text)
+        outState.putCharSequence(
+            STATE_PLAYER_X_SCOREBOARD,
+            binding.layoutTop.playerXScoreboard.text
+        )
+        outState.putCharSequence(
+            STATE_PLAYER_O_SCOREBOARD,
+            binding.layoutTop.playerOScoreboard.text
+        )
+        outState.putCharSequence(
+            STATE_PLAYER_TO_MOVE_TEXTVIEW,
+            binding.layoutTop.playerToMoveTv.text
+        )
         outState.putInt(STATE_GAME_MODE, viewModel.getGameMode())
         outState.putInt(STATE_NUMBER_OF_MOVES, viewModel.getNumberOfMoves())
         outState.putBoolean(STATE_PLAYER_X_TURN, viewModel.isPlayerXTurn())
@@ -182,7 +243,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun setGameModeSpinner() {
         binding.layoutTop.spinner.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
                 when (position) {
                     0 -> viewModel.setGameMode(TicTacToeUtils.SINGLE_PLAYER_EASY_MODE)
                     1 -> viewModel.setGameMode(TicTacToeUtils.SINGLE_PLAYER_MEDIUM_MODE)
@@ -195,8 +261,10 @@ class MainActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-        binding.layoutTop.spinner.adapter = ArrayAdapter.createFromResource(this,
-                R.array.level_or_player_type_array, R.layout.spinner_item).apply {
+        binding.layoutTop.spinner.adapter = ArrayAdapter.createFromResource(
+            this,
+            R.array.level_or_player_type_array, R.layout.spinner_item
+        ).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
     }
@@ -307,7 +375,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.how_to_menu -> {
-                createHowToWebView()
+                viewModel.showHowTo()
                 true
             }
             R.id.license_menu -> {
@@ -319,14 +387,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun createHowToWebView() {
-        val webView = WebView(this)
-        webView.loadUrl("file:///android_asset/how_to.html")
-        AlertDialog.Builder(this)
-                .setTitle(getString(R.string.how_to_dialog_title))
-                .setView(webView)
+    private fun createHowToWebView(message: Int) {
+        with(WebView(this)) {
+            loadUrl("file:///android_asset/how_to.html")
+            AlertDialog.Builder(this@MainActivity)
+                .setTitle(message)
+                .setView(this)
                 .setCancelable(true)
                 .show()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

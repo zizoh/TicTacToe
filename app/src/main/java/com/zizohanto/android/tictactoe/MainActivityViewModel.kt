@@ -314,4 +314,8 @@ class MainActivityViewModel : ViewModel() {
             }
         }
     }
+
+    fun showHowTo() {
+        _viewState.value = ViewStates.ViewHowTo(R.string.how_to_dialog_title)
+    }
 }
