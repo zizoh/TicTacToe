@@ -7,8 +7,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.webkit.WebView
-import android.widget.*
+import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -82,12 +83,13 @@ class MainActivity : AppCompatActivity() {
             is ViewStates.Idle -> {
                 setBoardSizeSpinner()
                 setGameModeSpinner()
-                binding.layoutTop.playerXToMove.isSelected
-                binding.toolbar.root.isVisible = true
-                binding.layoutTop.root.isVisible = true
-                binding.board3x3.root.isVisible = true
-                binding.resetButton.root.isVisible = true
-                enablePlayerToMoveButtons(true)
+                with(viewStates) {
+                    binding.toolbar.root.isVisible = isToolbarVisible
+                    binding.layoutTop.root.isVisible = isTopLayoutVisible
+                    binding.board3x3.root.isVisible = isBoard3x3Visible
+                    binding.resetButton.root.isVisible = isResetButtonVisible
+                    enablePlayerToMoveButtons(enablePlayerToMoveButtons)
+                }
                 with(binding.board3x3) {
                     row0Col0.board3x3ButtonO.setOnClickListener {
                         viewModel.playMoveByPlayerAt(

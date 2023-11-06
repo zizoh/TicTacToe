@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.zizohanto.android.tictactoe.utils.TicTacToeUtils
-import java.util.*
+import java.util.Random
 
 class MainActivityViewModel : ViewModel() {
 
@@ -23,6 +23,11 @@ class MainActivityViewModel : ViewModel() {
 
     init {
         _viewState.value = ViewStates.Idle(
+            isToolbarVisible = true,
+            isTopLayoutVisible = true,
+            isBoard3x3Visible = true,
+            isResetButtonVisible = true,
+            enablePlayerToMoveButtons = true,
             boardSize,
             gameMode,
             playerXScore.toString(),
